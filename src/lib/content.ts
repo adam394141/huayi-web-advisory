@@ -113,6 +113,29 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   return data as BlogPost | null;
 }
 
+export interface StorageImage {
+  name: string;
+  url: string;
+}
+
+export async function getWorkStorageImages(slug: string): Promise<StorageImage[]> {
+  const supabase = getReadOnlyClient();
+  const { data } = await supabase.storage
+    .from("published-assets")
+    .list(`works/${slug}/original`, {
+      sortBy: { column: "name", order: "asc" },
+      limit: 200,
+    });
+  if (!data) return [];
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  return data
+    .filter((f) => f.name && /\.(jpe?g|png|webp|gif|svg)$/i.test(f.name))
+    .map((f) => ({
+      name: f.name,
+      url: `${baseUrl}/storage/v1/object/public/published-assets/works/${slug}/original/${f.name}`,
+    }));
+}
+
 export async function getHomepagePosts(): Promise<BlogPost[]> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase

@@ -1,11 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { ScrollReveal } from "@/components/scroll-reveal";
 import type { Work } from "@/lib/content";
 
-export function WorkDetail({ work }: { work: Work }) {
+export function WorkDetail({
+  work,
+  galleryUrls,
+}: {
+  work: Work;
+  galleryUrls: string[];
+}) {
   const heroSrc = work.hero_image || work.cover_image;
 
   return (
@@ -19,12 +26,7 @@ export function WorkDetail({ work }: { work: Work }) {
         </Link>
 
         {heroSrc && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            className="overflow-hidden rounded-[var(--radius-module)] bg-[var(--color-surface)]"
-          >
+          <div className="overflow-hidden rounded-[var(--radius-module)] bg-[var(--color-surface)]">
             <Image
               src={heroSrc}
               alt={work.title}
@@ -33,7 +35,7 @@ export function WorkDetail({ work }: { work: Work }) {
               className="w-full object-contain"
               priority
             />
-          </motion.div>
+          </div>
         )}
 
         <div className="mx-auto mt-12 max-w-[800px]">
@@ -59,25 +61,12 @@ export function WorkDetail({ work }: { work: Work }) {
           )}
         </div>
 
-        {work.gallery && work.gallery.length > 0 && (
-          <div className="mx-auto mt-16 max-w-[1280px] space-y-8">
-            {work.gallery.map((img, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
-                className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]"
-              >
-                <Image
-                  src={img.src}
-                  alt={img.alt || work.title}
-                  width={img.width || 1280}
-                  height={img.height || 800}
-                  className="w-full object-contain"
-                />
-              </motion.div>
+        {galleryUrls.length > 0 && (
+          <div className="mt-16 space-y-6">
+            {galleryUrls.map((url, i) => (
+              <ScrollReveal key={url} delay={0}>
+                <GalleryImage url={url} alt={`${work.title} - ${i + 1}`} />
+              </ScrollReveal>
             ))}
           </div>
         )}
@@ -92,5 +81,30 @@ export function WorkDetail({ work }: { work: Work }) {
         </div>
       </div>
     </article>
+  );
+}
+
+function GalleryImage({ url, alt }: { url: string; alt: string }) {
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return (
+      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[13px] text-[var(--color-subtle)]">
+        圖片載入失敗
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]">
+      <Image
+        src={url}
+        alt={alt}
+        width={1280}
+        height={800}
+        className="w-full object-contain"
+        onError={() => setError(true)}
+      />
+    </div>
   );
 }

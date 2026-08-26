@@ -25,7 +25,8 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    setMenuOpen(false);
+    const id = setTimeout(() => setMenuOpen(false), 0);
+    return () => clearTimeout(id);
   }, [pathname]);
 
   useEffect(() => {

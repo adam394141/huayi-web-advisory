@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getWorkBySlug } from "@/lib/content";
+import { getWorkBySlug, getWorkStorageImages } from "@/lib/content";
 import { WorkDetail } from "./work-detail";
 
 export const revalidate = 60;
@@ -39,8 +39,18 @@ export default async function WorkDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const work = await getWorkBySlug(slug);
+  const [work, storageImages] = await Promise.all([
+    getWorkBySlug(slug),
+    getWorkStorageImages(slug),
+  ]);
   if (!work) notFound();
+
+  const coverFilename = work.cover_image
+    ? work.cover_image.split("/").pop()
+    : null;
+  const galleryUrls = storageImages
+    .filter((img) => img.name !== coverFilename)
+    .map((img) => img.url);
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -58,7 +68,7 @@ export default async function WorkDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <WorkDetail work={work} />
+      <WorkDetail work={work} galleryUrls={galleryUrls} />
     </>
   );
 }

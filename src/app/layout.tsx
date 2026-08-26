@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { LogoMotion } from "@/components/logo-motion";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -48,6 +49,7 @@ export default function RootLayout({
       className={`${notoSansTC.variable} ${notoSerifTC.variable}`}
     >
       <body className="font-sans antialiased">
+        <LogoMotion />
         <Header />
         <main className="pt-[60px] md:pt-[72px]">{children}</main>
         <Footer />
