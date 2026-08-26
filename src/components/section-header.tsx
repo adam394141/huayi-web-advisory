@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useRef, useEffect, useState } from "react";
+import { shouldAnimate } from "@/lib/motion";
 
 interface SectionHeaderProps {
   label: string;
@@ -26,7 +27,7 @@ export function SectionHeader({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!shouldAnimate()) return;
 
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight + 60) {

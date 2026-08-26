@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useRef, useEffect, useState } from "react";
+import { shouldAnimate } from "@/lib/motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -16,7 +17,7 @@ export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealPro
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!shouldAnimate()) return;
 
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight + 60) return;

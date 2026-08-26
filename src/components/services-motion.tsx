@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { Compass, Bot, TrendingUp, Palette } from "lucide-react";
+import { shouldAnimate } from "@/lib/motion";
 
 const ICON_MAP: Record<string, React.ElementType> = { Compass, Bot, TrendingUp, Palette };
 
@@ -26,10 +27,10 @@ export function ServicesMotion({ services }: ServicesMotionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const animate = shouldAnimate();
     const isMobile = window.innerWidth < 768;
 
-    if (!reducedMotion && containerRef.current) {
+    if (animate && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       if (rect.top >= window.innerHeight + 60) {
         setRevealed(false);
@@ -170,7 +171,7 @@ function MobileCard({ service: s, index }: { service: ServicesMotionProps["servi
   const [vis, setVis] = useState(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!shouldAnimate()) return;
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();

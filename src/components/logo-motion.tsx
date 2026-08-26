@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { shouldAnimate, isForceMode } from "@/lib/motion";
 
 const SESSION_KEY = "huayi-logo-played";
 
@@ -8,17 +9,19 @@ export function LogoMotion() {
   const [phase, setPhase] = useState<"idle" | "reveal" | "fade" | "done">("idle");
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!shouldAnimate()) {
       const id = setTimeout(() => setPhase("done"), 0);
       return () => clearTimeout(id);
     }
 
-    try {
-      if (sessionStorage.getItem(SESSION_KEY)) {
-        const id = setTimeout(() => setPhase("done"), 0);
-        return () => clearTimeout(id);
-      }
-    } catch { /* SSR or private browsing */ }
+    if (!isForceMode()) {
+      try {
+        if (sessionStorage.getItem(SESSION_KEY)) {
+          const id = setTimeout(() => setPhase("done"), 0);
+          return () => clearTimeout(id);
+        }
+      } catch { /* SSR or private browsing */ }
+    }
 
     const t1 = setTimeout(() => setPhase("reveal"), 50);
     const t2 = setTimeout(() => setPhase("fade"), 900);

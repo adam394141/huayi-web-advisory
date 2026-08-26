@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { shouldAnimate } from "@/lib/motion";
 
 interface ChallengesMotionProps {
   items: Array<{ title: string; desc: string }>;
@@ -12,7 +13,7 @@ export function ChallengesMotion({ items }: ChallengesMotionProps) {
   const [headerRevealed, setHeaderRevealed] = useState(true);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!shouldAnimate()) return;
 
     const container = containerRef.current;
     if (!container) return;

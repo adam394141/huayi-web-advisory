@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import { shouldAnimate } from "@/lib/motion";
 
 const CAPABILITIES = [
   "BRAND STRATEGY",
@@ -15,7 +16,7 @@ export function HeroMotion() {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!shouldAnimate()) return;
     const t1 = setTimeout(() => setStage("ready"), 0);
     const t2 = setTimeout(() => setStage("animate"), 50);
     return () => { clearTimeout(t1); clearTimeout(t2); };

@@ -3,6 +3,7 @@ import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { LogoMotion } from "@/components/logo-motion";
+import { MotionBadge } from "@/components/motion-badge";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -38,6 +39,8 @@ export const viewport: Viewport = {
   themeColor: "#FDFCFA",
 };
 
+const motionInitScript = `(function(){var p=new URLSearchParams(window.location.search);var f=p.get("motion")==="force";var r=window.matchMedia("(prefers-reduced-motion:reduce)").matches;document.documentElement.dataset.motion=f?"force":r?"reduce":"normal"})()`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,7 +52,9 @@ export default function RootLayout({
       className={`${notoSansTC.variable} ${notoSerifTC.variable}`}
     >
       <body className="font-sans antialiased">
+        <script dangerouslySetInnerHTML={{ __html: motionInitScript }} />
         <LogoMotion />
+        <MotionBadge />
         <Header />
         <main className="pt-[60px] md:pt-[72px]">{children}</main>
         <Footer />

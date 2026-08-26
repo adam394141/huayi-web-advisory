@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { shouldAnimate } from "@/lib/motion";
 
 interface WorkItem {
   id: string;
@@ -32,9 +33,9 @@ function WorkCard({ work, index }: { work: WorkItem; index: number }) {
     const el = ref.current;
     if (!el) return;
 
-    const isReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    reducedRef.current = isReduced;
-    if (isReduced) return;
+    const animate = shouldAnimate();
+    reducedRef.current = !animate;
+    if (!animate) return;
 
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight + 60) return;
@@ -77,26 +78,32 @@ function WorkCard({ work, index }: { work: WorkItem; index: number }) {
     <div ref={ref}>
       <Link href={`/works/${work.slug}`} className="group block">
         <div
-          className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]"
           style={{
-            clipPath: revealed ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
-            transition: revealed
-              ? `clip-path 0.7s cubic-bezier(0.23,1,0.32,1) ${delay}s`
-              : "none",
+            transform: `translateY(${parallax}px)`,
+            transition: "transform 0.1s linear",
           }}
         >
-          {work.cover_image ? (
-            <Image
-              src={work.cover_image}
-              alt={work.title}
-              width={600}
-              height={750}
-              className="aspect-[4/5] w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
-              style={{ transform: `translateY(${parallax}px)` }}
-            />
-          ) : (
-            <div className="aspect-[4/5] w-full" />
-          )}
+          <div
+            className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]"
+            style={{
+              clipPath: revealed ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+              transition: revealed
+                ? `clip-path 0.7s cubic-bezier(0.23,1,0.32,1) ${delay}s`
+                : "none",
+            }}
+          >
+            {work.cover_image ? (
+              <Image
+                src={work.cover_image}
+                alt={work.title}
+                width={600}
+                height={750}
+                className="aspect-[4/5] w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+            ) : (
+              <div className="aspect-[4/5] w-full" />
+            )}
+          </div>
         </div>
         <div className="mt-4 flex items-center gap-1">
           <h3
