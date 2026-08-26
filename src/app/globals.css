@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-noto-sans-tc), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif-tc), ui-serif, Georgia, serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* === Advisory 設計系統 === */
+
+  /* 品牌色 */
+  --color-gold: #FFBF00;
+  --color-gold-light: #F5CF38;
+  --color-gold-dark: #D4A000;
+
+  /* 語意色 */
+  --color-fg: #1A1A1A;
+  --color-body: #5A5A5A;
+  --color-subtle: #999999;
+  --color-faint: #CCCCCC;
+  --color-surface: #F8F7F4;
+  --color-surface-alt: #F2F0EB;
+  --color-warm-white: #FDFCFA;
+
+  /* AI 深色區塊 */
+  --color-ai-bg: #1A1A2E;
+  --color-ai-surface: #242442;
+  --color-ai-accent: #3A3A5C;
+  --color-ai-text: #E8E8F0;
+  --color-ai-muted: #9999B0;
+
+  /* 圓角尺度 — Advisory 風格 */
+  --radius-module: 28px;
+  --radius-card: 20px;
+  --radius-image: 20px;
+  --radius-button: 9999px;
+  --radius-input: 14px;
+
+  /* 間距尺度 */
+  --space-page-x: clamp(1.25rem, 4vw, 3rem);
+  --space-section-y: clamp(80px, 10vw, 140px);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-fast: 200ms;
+  --duration-normal: 400ms;
+  --duration-slow: 700ms;
+
+  /* 色彩語意 */
+  --color-background: #FDFCFA;
+  --color-foreground: #1A1A1A;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@utility vertical-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
 }
