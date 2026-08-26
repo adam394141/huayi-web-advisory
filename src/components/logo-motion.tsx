@@ -2,18 +2,31 @@
 
 import { useState, useEffect } from "react";
 
+const SESSION_KEY = "huayi-logo-played";
+
 export function LogoMotion() {
-  const [phase, setPhase] = useState<"idle" | "reveal" | "done">("idle");
+  const [phase, setPhase] = useState<"idle" | "reveal" | "fade" | "done">("idle");
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const id = setTimeout(() => setPhase("done"), 0);
       return () => clearTimeout(id);
     }
-    const revealId = setTimeout(() => setPhase("reveal"), 16);
-    const doneId = setTimeout(() => setPhase("done"), 1600);
-    return () => { clearTimeout(revealId); clearTimeout(doneId); };
+
+    try {
+      if (sessionStorage.getItem(SESSION_KEY)) {
+        const id = setTimeout(() => setPhase("done"), 0);
+        return () => clearTimeout(id);
+      }
+    } catch { /* SSR or private browsing */ }
+
+    const t1 = setTimeout(() => setPhase("reveal"), 50);
+    const t2 = setTimeout(() => setPhase("fade"), 900);
+    const t3 = setTimeout(() => {
+      setPhase("done");
+      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* */ }
+    }, 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   if (phase === "done") return null;
@@ -28,56 +41,49 @@ export function LogoMotion() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "var(--color-warm-white, #FDFCFA)",
-        opacity: phase === "reveal" ? 1 : 1,
-        transition: "opacity 0.4s ease",
+        background: "#FDFCFA",
+        opacity: phase === "fade" ? 0 : 1,
+        transition: "opacity 0.3s ease",
         pointerEvents: "none",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "baseline",
-          gap: "12px",
-          opacity: phase === "reveal" ? 1 : 0,
-          transform: phase === "reveal" ? "translateY(0)" : "translateY(8px)",
-          transition:
-            "opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1)",
-        }}
-      >
-        <span
+      <div style={{ textAlign: "center" }}>
+        <div
           style={{
-            fontFamily: "var(--font-noto-serif-tc), serif",
-            fontSize: "2.4rem",
-            fontWeight: 600,
-            color: "var(--color-fg, #1A1A1A)",
-            letterSpacing: "0.05em",
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "center",
+            gap: "10px",
+            opacity: phase === "reveal" || phase === "fade" ? 1 : 0,
+            transform: phase === "reveal" || phase === "fade" ? "translateY(0)" : "translateY(6px)",
+            transition: "opacity 0.5s cubic-bezier(0.23,1,0.32,1), transform 0.5s cubic-bezier(0.23,1,0.32,1)",
           }}
         >
-          華翼
-        </span>
-        <span
+          <span
+            style={{
+              fontFamily: "var(--font-noto-serif-tc, serif)",
+              fontSize: "2.2rem",
+              fontWeight: 600,
+              color: "#1A1A1A",
+              letterSpacing: "0.05em",
+            }}
+          >
+            華翼
+          </span>
+          <span style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "#999" }}>
+            HUAYI
+          </span>
+        </div>
+        <div
           style={{
-            fontSize: "0.7rem",
-            letterSpacing: "0.3em",
-            color: "var(--color-subtle, #999)",
+            margin: "12px auto 0",
+            height: "2px",
+            background: "#FFBF00",
+            width: phase === "reveal" || phase === "fade" ? "36px" : "0px",
+            transition: "width 0.6s cubic-bezier(0.23,1,0.32,1) 0.2s",
           }}
-        >
-          HUAYI
-        </span>
+        />
       </div>
-      <div
-        style={{
-          position: "absolute",
-          bottom: "40%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: phase === "reveal" ? "40px" : "0px",
-          height: "2px",
-          background: "var(--color-gold, #FFBF00)",
-          transition: "width 0.8s cubic-bezier(0.23,1,0.32,1) 0.3s",
-        }}
-      />
     </div>
   );
 }

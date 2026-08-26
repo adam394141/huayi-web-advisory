@@ -1,18 +1,16 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Compass, Bot, TrendingUp, Palette } from "lucide-react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { SectionHeader } from "@/components/section-header";
+import { HeroMotion } from "@/components/hero-motion";
+import { ChallengesMotion } from "@/components/challenges-motion";
+import { ServicesMotion } from "@/components/services-motion";
+import { AiSectionMotion } from "@/components/ai-section-motion";
+import { WorksMotion } from "@/components/works-motion";
 import { getHomepageWorks, getHomepagePosts } from "@/lib/content";
 
 export const revalidate = 60;
-
-const CAPABILITIES = [
-  "Brand Strategy",
-  "AI Transformation",
-  "Growth Marketing",
-  "Brand Experience",
-];
 
 const PAIN_POINTS = [
   {
@@ -33,30 +31,38 @@ const PAIN_POINTS = [
   },
 ];
 
-const SERVICES = [
+const SERVICES_DATA = [
   {
-    icon: Compass,
+    num: "01",
+    iconName: "Compass",
     title: "品牌策略",
-    desc: "從市場研究到品牌定位，建立清晰的品牌差異化資產。",
+    desc: "從市場研究到品牌定位，建立清晰的品牌差異化資產。我們運用 SWOT、STP、4P、品牌金字塔等框架，讓品牌不只有方向，更有可執行的路徑。",
     href: "/services",
+    deliverables: ["品牌定位報告", "市場競品分析", "差異化策略方案", "品牌金字塔建構", "目標客群定義"],
   },
   {
-    icon: Bot,
+    num: "02",
+    iconName: "Bot",
     title: "企業 AI 導入",
-    desc: "評估 AI 導入機會，從內訓到系統建置，用技術加速企業成長。",
+    desc: "不賣工具，而是協助企業找到 AI 真正能創造價值的切入點。從導入評估、企業內訓到系統建置，以 MVP 思維快速驗證，開發週期 2-3 天。",
     href: "/services",
+    deliverables: ["AI 導入評估報告", "企業內訓課程", "MVP 系統快速開發", "流程自動化方案", "AI 內容產出系統"],
   },
   {
-    icon: TrendingUp,
+    num: "03",
+    iconName: "TrendingUp",
     title: "品牌行銷與商業成長",
-    desc: "整合廣告投放、社群與內容行銷，讓每一筆預算發揮最大效益。",
+    desc: "整合 Facebook 與 Google 廣告投放、社群經營與內容行銷，讓每一筆預算發揮最大效益。不只做曝光，更聚焦轉換與實際商業成長。",
     href: "/services",
+    deliverables: ["Facebook / Google 廣告投放", "社群經營策略", "內容行銷規劃", "數據分析與優化", "行銷漏斗建置"],
   },
   {
-    icon: Palette,
+    num: "04",
+    iconName: "Palette",
     title: "品牌體驗與設計",
-    desc: "從品牌識別到包裝設計，打造一致且有記憶點的品牌體驗。",
+    desc: "從品牌識別到包裝設計，打造一致且有記憶點的品牌體驗。不只是好看，更要能在市場中被辨識、被記住。",
     href: "/services",
+    deliverables: ["CIS 品牌識別系統", "包裝設計", "活動主視覺設計", "品牌周邊設計", "品牌應用規範"],
   },
 ];
 
@@ -85,120 +91,28 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <Section className="pb-0 pt-20 md:pt-28">
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.4em] text-[var(--color-gold-dark)]">
-            HUAYI BRAND STRATEGY
-          </p>
-          <h1 className="mt-6 font-serif text-[2rem] font-semibold leading-[1.5] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.8rem]">
-            品牌決定企業方向，
-            <br />
-            AI 決定企業速度。
-          </h1>
-          <div className="mt-8 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-[14px] font-medium tracking-wider text-[var(--color-gold-dark)]">
-                診斷 × 定位 × 策略 = 企業差異化資產
-              </p>
-              <p className="mt-5">
-                <Link
-                  href="/contact"
-                  className="border-b border-[var(--color-fg)] pb-1 text-[12px] tracking-[0.12em] text-[var(--color-fg)] transition-colors hover:border-[var(--color-gold-dark)] hover:text-[var(--color-gold-dark)]"
-                >
-                  合作洽詢 →
-                </Link>
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-6 md:gap-10">
-              {CAPABILITIES.map((cap) => (
-                <span
-                  key={cap}
-                  className="text-[10px] tracking-[0.2em] text-[var(--color-faint)]"
-                >
-                  {cap.toUpperCase()}
-                </span>
-              ))}
-            </div>
-          </div>
-        </ScrollReveal>
-      </Section>
+      {/* 1. Hero — 遮罩揭露 + AI 節點背景 */}
+      <HeroMotion />
 
-      {/* Problem */}
+      <div className="h-16 md:h-24" />
+
+      {/* 2. 企業挑戰 — 桌面交錯上移，手機垂直 reveal */}
       <Section>
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            CHALLENGES
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-            企業經營的真實挑戰
-          </h2>
-        </ScrollReveal>
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {PAIN_POINTS.map((p, i) => (
-            <ScrollReveal key={p.title} delay={i * 0.08}>
-              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-8 md:p-10">
-                <h3 className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
-                  {p.title}
-                </h3>
-                <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-body)]">
-                  {p.desc}
-                </p>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
+        <ChallengesMotion items={PAIN_POINTS} />
       </Section>
 
-      {/* Services */}
+      {/* 3. 四大服務 — 桌面 sticky 切換，手機卡片 */}
       <Section className="bg-[var(--color-surface)]">
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            SERVICES
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-            四大服務
-          </h2>
-        </ScrollReveal>
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          {SERVICES.map((s, i) => (
-            <ScrollReveal key={s.title} delay={i * 0.08}>
-              <div className="flex flex-col rounded-[var(--radius-card)] bg-[var(--color-warm-white)] p-8 md:p-10">
-                <s.icon
-                  className="h-7 w-7 text-[var(--color-gold-dark)]"
-                  strokeWidth={1.5}
-                />
-                <h3 className="mt-5 font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
-                  {s.title}
-                </h3>
-                <p className="mt-3 flex-1 text-[14px] leading-relaxed text-[var(--color-body)]">
-                  {s.desc}
-                </p>
-                <Link
-                  href={s.href}
-                  className="mt-6 inline-block text-[12px] tracking-wider text-[var(--color-fg)] transition-colors hover:text-[var(--color-gold-dark)]"
-                >
-                  了解更多 →
-                </Link>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
+        <ServicesMotion services={SERVICES_DATA} />
       </Section>
 
-      {/* Method */}
+      {/* 4. 顧問方法 — 統一 reveal + stagger + 黃線 */}
       <Section>
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            METHODOLOGY
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-            顧問方法
-          </h2>
-          <p className="mt-4 max-w-[560px] text-[14px] leading-relaxed text-[var(--color-body)]">
-            我們不做套裝方案。每一次合作都從理解企業痛點開始，找出真正需要解決的問題，再設計最適合的策略與執行路徑。
-          </p>
-        </ScrollReveal>
+        <SectionHeader
+          label="METHODOLOGY"
+          title="顧問方法"
+          description="我們不做套裝方案。每一次合作都從理解企業痛點開始，找出真正需要解決的問題，再設計最適合的策略與執行路徑。"
+        />
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {METHOD_STEPS.map((s, i) => (
             <ScrollReveal key={s.num} delay={i * 0.1}>
@@ -223,111 +137,44 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* AI Dark Section */}
-      <Section dark>
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-gold)]">
-            AI INTEGRATION
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-ai-text)] md:text-[2.2rem]">
-            AI 不只是工具，是策略的一部分
-          </h2>
-          <p className="mt-4 max-w-[560px] text-[14px] leading-relaxed text-[var(--color-ai-muted)]">
-            我們不賣 AI 工具，而是協助企業找到 AI
-            真正能創造價值的切入點，從流程優化到內容產出，讓技術成為品牌成長的加速器。
-          </p>
-        </ScrollReveal>
-        <div
-          className="mt-12 grid gap-6 md:grid-cols-3"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        >
-          {AI_CAPABILITIES.map((c, i) => (
-            <ScrollReveal key={c.title} delay={i * 0.1}>
-              <div className="rounded-[var(--radius-card)] border border-[var(--color-ai-accent)] bg-[var(--color-ai-surface)] p-8">
-                <div className="mb-4 h-px w-8 bg-[var(--color-gold)]" />
-                <h3 className="font-serif text-[1rem] font-semibold text-[var(--color-ai-text)]">
-                  {c.title}
-                </h3>
-                <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-ai-muted)]">
-                  {c.desc}
-                </p>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </Section>
+      {/* 5. AI 深色區塊 — 網格 + 節點脈衝 + 流程路徑 */}
+      <AiSectionMotion items={AI_CAPABILITIES} />
 
-      {/* Selected Works */}
+      {/* 6. 精選作品 — 遮罩展開 + 輕視差 */}
       <Section>
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            SELECTED WORKS
-          </p>
-          <div className="mt-3 flex items-end justify-between">
-            <h2 className="font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-              精選作品
-            </h2>
-            <Link
-              href="/works"
-              className="text-[12px] tracking-wider text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)]"
-            >
-              查看所有作品 →
-            </Link>
-          </div>
-        </ScrollReveal>
-        <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {works.map((work, i) => (
-            <ScrollReveal key={work.id} delay={i * 0.08}>
-              <Link href={`/works/${work.slug}`} className="group block">
-                <div className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]">
-                  {work.cover_image ? (
-                    <Image
-                      src={work.cover_image}
-                      alt={work.title}
-                      width={600}
-                      height={750}
-                      className="aspect-[4/5] w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-                    />
-                  ) : (
-                    <div className="aspect-[4/5] w-full" />
-                  )}
-                </div>
-                <h3 className="mt-4 text-[14px] font-medium text-[var(--color-fg)]">
-                  {work.title}
-                </h3>
-                {work.description && (
-                  <p className="mt-1 line-clamp-1 text-[12px] text-[var(--color-subtle)]">
-                    {work.description}
-                  </p>
-                )}
-              </Link>
-            </ScrollReveal>
-          ))}
+        <div className="flex items-end justify-between">
+          <SectionHeader label="SELECTED WORKS" title="精選作品" />
+          <Link
+            href="/works"
+            className="hidden text-[12px] tracking-wider text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)] md:block"
+          >
+            查看所有作品 →
+          </Link>
         </div>
+        <div className="mt-10">
+          <WorksMotion works={works} />
+        </div>
+        <p className="mt-8 text-center md:hidden">
+          <Link
+            href="/works"
+            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+          >
+            查看所有作品 →
+          </Link>
+        </p>
       </Section>
 
-      {/* Blog */}
+      {/* 7. 最新觀點 — 統一 reveal */}
       <Section className="bg-[var(--color-surface)]">
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            INSIGHTS
-          </p>
-          <div className="mt-3 flex items-end justify-between">
-            <h2 className="font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-              最新觀點
-            </h2>
-            <Link
-              href="/blog"
-              className="text-[12px] tracking-wider text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)]"
-            >
-              查看全部文章 →
-            </Link>
-          </div>
-        </ScrollReveal>
+        <div className="flex items-end justify-between">
+          <SectionHeader label="INSIGHTS" title="最新觀點" />
+          <Link
+            href="/blog"
+            className="hidden text-[12px] tracking-wider text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)] md:block"
+          >
+            查看全部文章 →
+          </Link>
+        </div>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {posts.map((post, i) => (
             <ScrollReveal key={post.id} delay={i * 0.08}>
@@ -362,18 +209,19 @@ export default async function HomePage() {
             </ScrollReveal>
           ))}
         </div>
+        <p className="mt-8 text-center md:hidden">
+          <Link
+            href="/blog"
+            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+          >
+            查看全部文章 →
+          </Link>
+        </p>
       </Section>
 
-      {/* Team */}
+      {/* 7. 團隊 — 統一 reveal */}
       <Section>
-        <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
-            TEAM
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-            華翼團隊
-          </h2>
-        </ScrollReveal>
+        <SectionHeader label="TEAM" title="華翼團隊" />
         <div className="mt-10 grid max-w-[640px] gap-8 md:grid-cols-2">
           {TEAM.map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
@@ -393,7 +241,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* CTA */}
+      {/* 7. CTA — 統一 reveal */}
       <Section className="text-center">
         <ScrollReveal>
           <h2 className="mx-auto font-serif text-[1.4rem] text-[var(--color-fg)] md:text-[1.8rem]">
