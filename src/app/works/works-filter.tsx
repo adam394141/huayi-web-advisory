@@ -21,7 +21,7 @@ export function WorksFilter({ works }: { works: Work[] }) {
             <button
               key={cat}
               onClick={() => setActive(cat)}
-              className={`relative border-b-2 pb-2 text-[13px] tracking-wider transition-colors ${
+              className={`relative border-b-2 pb-2 text-[15px] tracking-wider transition-colors ${
                 active === cat
                   ? "border-[var(--color-gold)] text-[var(--color-fg)]"
                   : "border-transparent text-[var(--color-subtle)] hover:text-[var(--color-body)]"
@@ -55,7 +55,7 @@ export function WorksFilter({ works }: { works: Work[] }) {
                         alt={work.title}
                         width={600}
                         height={750}
-                        className="aspect-[4/5] w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                        className="aspect-[4/5] w-full object-contain"
                       />
                     ) : (
                       <div className="aspect-[4/5] w-full" />

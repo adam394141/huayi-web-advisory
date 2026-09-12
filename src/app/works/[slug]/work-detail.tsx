@@ -20,7 +20,7 @@ export function WorkDetail({
       <div className="mx-auto max-w-[1280px]">
         <Link
           href="/works"
-          className="mb-10 inline-block text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+          className="mb-10 inline-block text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
         >
           ← 返回作品列表
         </Link>
@@ -39,7 +39,7 @@ export function WorkDetail({
         )}
 
         <div className="mx-auto mt-12 max-w-[800px]">
-          <span className="inline-block rounded-full bg-[var(--color-surface)] px-4 py-1.5 text-[11px] tracking-wider text-[var(--color-body)]">
+          <span className="inline-block rounded-full bg-[var(--color-surface)] px-4 py-1.5 text-[12px] tracking-wider text-[var(--color-body)]">
             {work.category}
           </span>
 
@@ -74,7 +74,7 @@ export function WorkDetail({
         <div className="mx-auto mt-16 max-w-[800px] border-t border-[var(--color-surface-alt)] pt-10">
           <Link
             href="/works"
-            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+            className="text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
           >
             ← 返回作品列表
           </Link>
@@ -89,7 +89,7 @@ function GalleryImage({ url, alt }: { url: string; alt: string }) {
 
   if (error) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[13px] text-[var(--color-subtle)]">
+      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[15px] text-[var(--color-subtle)]">
         圖片載入失敗
       </div>
     );

@@ -17,12 +17,12 @@ export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealPro
     const el = ref.current;
     if (!el) return;
 
-    if (!shouldAnimate()) return;
+    if (!shouldAnimate() || !("IntersectionObserver" in window)) return;
 
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight + 60) return;
 
-    setVisible(false);
+    const hide = requestAnimationFrame(() => setVisible(false));
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -31,22 +31,23 @@ export function ScrollReveal({ children, className, delay = 0 }: ScrollRevealPro
           observer.disconnect();
         }
       },
-      { rootMargin: "-60px" },
+      { rootMargin: "0px 0px -24px 0px", threshold: 0.04 },
     );
     observer.observe(el);
 
-    return () => observer.disconnect();
+    return () => { cancelAnimationFrame(hide); observer.disconnect(); };
   }, []);
 
   return (
     <div
       ref={ref}
+      data-scroll-reveal
       className={className}
       style={{
         opacity: visible ? 1 : 0,
-        transform: visible ? "none" : "translateY(24px)",
+        transform: visible ? "none" : "translateY(18px)",
         transition: visible
-          ? `opacity 0.6s cubic-bezier(0.23,1,0.32,1) ${delay}s, transform 0.6s cubic-bezier(0.23,1,0.32,1) ${delay}s`
+          ? `opacity 0.95s cubic-bezier(0.23,1,0.32,1) ${delay}s, transform 0.95s cubic-bezier(0.23,1,0.32,1) ${delay}s`
           : "none",
       }}
     >

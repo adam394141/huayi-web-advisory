@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/section-header";
 import { ImagePlaceholder } from "@/components/image-placeholder";
 import { getPublishedWorks, getHomepagePosts } from "@/lib/content";
 import { getImageById } from "@/lib/home-images";
+import { LogoMotion } from "@/components/logo-motion";
 
 export const revalidate = 60;
 
@@ -35,28 +36,31 @@ export default async function HomePage() {
   return (
     <>
       {/* 1. Hero — 大型圖片 + 極簡文案 */}
-      <section className="px-[var(--space-page-x)] pt-20 md:pt-28">
+      <LogoMotion />
+      <section className="home-hero px-[var(--space-page-x)] pt-8 md:pt-12">
         <div className="mx-auto max-w-[1280px]">
-          <ScrollReveal>
+          <ScrollReveal className="hero-entrance">
             <ImagePlaceholder
+              caption="AI 情境示意，非實際客戶合照"
               src={heroImg?.file}
               alt={heroImg?.alt ?? ""}
               aspect="21/9"
               rounded="var(--radius-module)"
               priority
+              className="hero-image"
             />
           </ScrollReveal>
-          <ScrollReveal delay={0.1}>
-            <h1 className="mt-10 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
+          <ScrollReveal delay={0.1} className="hero-entrance">
+            <h1 className="mt-7 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
               品牌決定方向，AI 決定速度。
             </h1>
-            <p className="mt-4 max-w-[520px] text-[14px] leading-relaxed text-[var(--color-body)]">
+            <p className="mt-4 max-w-[520px] text-[16px] leading-relaxed text-[var(--color-body)]">
               為台灣中小企業與二代接班人，打造差異化品牌資產
             </p>
             <p className="mt-6">
               <Link
                 href="/contact"
-                className="inline-block rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[13px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
+                className="inline-block rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[15px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
               >
                 開始合作
               </Link>
@@ -82,7 +86,7 @@ export default async function HomePage() {
           <div className="mt-8 flex flex-wrap justify-center gap-3 md:gap-4">
             {CHALLENGE_TAGS.map((tag, i) => (
               <ScrollReveal key={tag} delay={i * 0.06}>
-                <span className="inline-block rounded-full border border-[var(--color-faint)]/50 px-5 py-2 text-[13px] tracking-wider text-[var(--color-body)]">
+                <span className="inline-block rounded-full border border-[var(--color-faint)]/50 px-5 py-2 text-[15px] tracking-wider text-[var(--color-body)]">
                   {tag}
                 </span>
               </ScrollReveal>
@@ -112,7 +116,7 @@ export default async function HomePage() {
                   <h3 className="mt-4 font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
                     {svc.title}
                   </h3>
-                  <p className="mt-1 text-[13px] text-[var(--color-body)]">
+                  <p className="mt-1 text-[15px] text-[var(--color-body)]">
                     {svc.desc}
                   </p>
                 </Link>
@@ -163,13 +167,13 @@ export default async function HomePage() {
             />
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <p className="text-[10px] tracking-[0.3em] text-[var(--color-gold)]">
+            <p className="text-[12px] tracking-[0.3em] text-[var(--color-gold)]">
               AI INTEGRATION
             </p>
             <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-ai-text)] md:text-[2rem]">
               AI 是策略的一部分
             </h2>
-            <p className="mt-4 text-[14px] leading-relaxed text-[var(--color-ai-muted)]">
+            <p className="mt-4 text-[16px] leading-relaxed text-[var(--color-ai-muted)]">
               協助企業找到 AI 真正創造價值的切入點
             </p>
             <p className="mt-6">
@@ -206,7 +210,7 @@ export default async function HomePage() {
               >
                 <Link href={`/works/${work.slug}`} className="group relative block">
                   <div
-                    className="overflow-hidden bg-[var(--color-surface)]"
+                    className="relative overflow-hidden bg-[var(--color-surface)]"
                     style={{
                       borderRadius: "var(--radius-card)",
                       aspectRatio: isLarge ? "8/5" : "4/5",
@@ -217,7 +221,7 @@ export default async function HomePage() {
                         src={work.cover_image}
                         alt={work.title}
                         fill
-                        className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+                        className="object-contain"
                         sizes={isLarge ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
                       />
                     ) : (
@@ -225,11 +229,11 @@ export default async function HomePage() {
                     )}
                   </div>
                   <div className="mt-3 flex items-center gap-2">
-                    <span className="text-[10px] tracking-wider text-[var(--color-subtle)]">
+                    <span className="text-[12px] tracking-wider text-[var(--color-subtle)]">
                       {work.category}
                     </span>
                   </div>
-                  <h3 className="mt-1 text-[14px] font-medium text-[var(--color-fg)]">
+                  <h3 className="mt-1 text-[16px] font-medium text-[var(--color-fg)]">
                     {work.title}
                   </h3>
                 </Link>
@@ -240,7 +244,7 @@ export default async function HomePage() {
         <p className="mt-10 text-center">
           <Link
             href="/works"
-            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+            className="text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
           >
             查看所有作品 →
           </Link>
@@ -275,7 +279,7 @@ export default async function HomePage() {
                     <div className="aspect-[3/2] w-full" />
                   )}
                 </div>
-                <p className="mt-4 text-[11px] text-[var(--color-subtle)]">
+                <p className="mt-4 text-[12px] text-[var(--color-subtle)]">
                   {post.category}
                 </p>
                 <h3 className="mt-1 text-[15px] font-medium leading-snug text-[var(--color-fg)]">
@@ -288,7 +292,7 @@ export default async function HomePage() {
         <p className="mt-8 text-center md:hidden">
           <Link
             href="/blog"
-            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+            className="text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
           >
             查看全部文章 →
           </Link>
@@ -313,7 +317,7 @@ export default async function HomePage() {
               <h3 className="mt-4 text-[16px] font-medium text-[var(--color-fg)]">
                 {member.name}
               </h3>
-              <p className="mt-1 text-[13px] text-[var(--color-body)]">
+              <p className="mt-1 text-[15px] text-[var(--color-body)]">
                 品牌顧問
               </p>
             </ScrollReveal>
@@ -341,7 +345,7 @@ export default async function HomePage() {
             <p className="mt-8">
               <Link
                 href="/contact"
-                className="inline-block rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[13px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
+                className="inline-block rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[15px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
               >
                 聯絡我們
               </Link>
