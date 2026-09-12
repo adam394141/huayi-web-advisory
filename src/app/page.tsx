@@ -41,7 +41,6 @@ export default async function HomePage() {
         <div className="mx-auto max-w-[1280px]">
           <ScrollReveal className="hero-entrance">
             <ImagePlaceholder
-              caption="AI 情境示意，非實際客戶合照"
               src={heroImg?.file}
               alt={heroImg?.alt ?? ""}
               aspect="21/9"

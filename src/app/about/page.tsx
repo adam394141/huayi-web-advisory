@@ -6,7 +6,7 @@ import { ImagePlaceholder } from "@/components/image-placeholder";
 export const metadata: Metadata = {
   title: "關於華翼｜華翼品牌策略",
   description:
-    "華翼品牌形象設計，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
+    "華翼品牌策略，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
 };
 
 const METHOD_STEPS = [
@@ -79,7 +79,7 @@ export default function AboutPage() {
           <ScrollReveal delay={0.1}>
             <div className="space-y-5 text-[16px] leading-[1.9] text-[var(--color-body)]">
               <p>
-                華翼品牌形象設計立足台灣，以品牌策略顧問的角色，服務中小企業與二代接班人。
+                華翼品牌策略立足台灣，以品牌策略顧問的角色，服務中小企業與二代接班人。
               </p>
               <p>
                 我們相信，品牌不只是一個 Logo

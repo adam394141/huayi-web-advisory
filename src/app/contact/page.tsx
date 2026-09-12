@@ -175,10 +175,10 @@ export default function ContactPage() {
                   EMAIL
                 </p>
                 <a
-                  href="mailto:hy24687418@gmail.com"
+                  href="mailto:888@huayi.tw"
                   className="mt-1 block text-[16px] text-[var(--color-fg)] transition-colors hover:text-[var(--color-gold-dark)]"
                 >
-                  hy24687418@gmail.com
+                  888@huayi.tw
                 </a>
               </div>
 

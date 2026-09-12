@@ -41,17 +41,17 @@ export function Footer() {
               聯繫
             </p>
             <a
-              href="mailto:hy24687418@gmail.com"
+              href="mailto:888@huayi.tw"
               className="text-[15px] text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)]"
             >
-              hy24687418@gmail.com
+              888@huayi.tw
             </a>
           </div>
         </div>
 
         <div className="mt-16 border-t border-[var(--color-faint)]/30 pt-6">
           <p className="text-[12px] text-[var(--color-subtle)]">
-            © 2026 華翼品牌形象設計 HUAYI. All rights reserved.
+            © 2026 華翼品牌策略 HUAYI. All rights reserved.
           </p>
         </div>
       </div>
