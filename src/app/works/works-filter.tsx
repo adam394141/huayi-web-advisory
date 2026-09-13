@@ -47,7 +47,7 @@ export function WorksFilter({ works }: { works: Work[] }) {
               </p>
             ) : (
               filtered.map((work) => (
-                <Link key={work.id} href={`/works/${work.slug}`} className="group">
+                <Link key={work.id} href={`/works/${work.slug}`} className="group flex h-full flex-col">
                   <WorkCover src={work.cover_image} title={work.title} />
                   <h3 className="mt-4 min-h-12 line-clamp-2 font-sans text-[15px] leading-6 font-medium text-[var(--color-fg)]">
                     {work.title}

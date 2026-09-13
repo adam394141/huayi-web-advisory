@@ -205,8 +205,9 @@ export default async function HomePage() {
               <ScrollReveal
                 key={work.id}
                 delay={i * 0.06}
+                className="h-full"
               >
-                <Link href={`/works/${work.slug}`} className="group relative block">
+                <Link href={`/works/${work.slug}`} className="group relative flex h-full flex-col">
                   <WorkCover src={work.cover_image} title={work.title} />
                   <div className="mt-3 flex items-center gap-2">
                     <span className="text-[12px] tracking-wider text-[var(--color-subtle)]">
