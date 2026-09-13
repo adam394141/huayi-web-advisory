@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { CookieNotice } from "@/components/cookie-notice";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -56,6 +57,7 @@ export default function RootLayout({
         <Header />
         <main className="pt-[60px] md:pt-[72px]">{children}</main>
         <Footer />
+        <CookieNotice />
       </body>
     </html>
   );

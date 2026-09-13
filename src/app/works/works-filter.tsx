@@ -54,14 +54,15 @@ export function WorksFilter({ works }: { works: Work[] }) {
                         src={work.cover_image}
                         alt={work.title}
                         width={600}
-                        height={750}
-                        className="aspect-[4/5] w-full object-contain"
+                        height={450}
+                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                        className="aspect-[4/3] w-full object-contain"
                       />
                     ) : (
-                      <div className="aspect-[4/5] w-full" />
+                      <div className="aspect-[4/3] w-full" />
                     )}
                   </div>
-                  <h3 className="mt-4 font-sans text-[15px] font-medium text-[var(--color-fg)]">
+                  <h3 className="mt-4 min-h-12 line-clamp-2 font-sans text-[15px] leading-6 font-medium text-[var(--color-fg)]">
                     {work.title}
                   </h3>
                   {work.description && (

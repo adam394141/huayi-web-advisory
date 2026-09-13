@@ -187,7 +187,7 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 6. Works — 首頁面積最大，不對稱排列 */}
+      {/* 6. Works — 等高網格，保留完整設計圖 */}
       <Section>
         <div className="flex items-end justify-between">
           <SectionHeader label="SELECTED WORKS" title="精選作品" />
@@ -198,21 +198,19 @@ export default async function HomePage() {
             查看所有作品 →
           </Link>
         </div>
-        <div className="mt-10 grid gap-5 md:grid-cols-3">
+        <div className="mt-10 grid gap-x-6 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
           {works.map((work, i) => {
-            const isLarge = i % 3 === (Math.floor(i / 3) % 2 === 0 ? 0 : 2);
             return (
               <ScrollReveal
                 key={work.id}
                 delay={i * 0.06}
-                className={isLarge ? "md:col-span-2" : ""}
               >
                 <Link href={`/works/${work.slug}`} className="group relative block">
                   <div
                     className="relative overflow-hidden bg-[var(--color-surface)]"
                     style={{
                       borderRadius: "var(--radius-card)",
-                      aspectRatio: isLarge ? "8/5" : "4/5",
+                      aspectRatio: "4/3",
                     }}
                   >
                     {work.cover_image ? (
@@ -221,7 +219,7 @@ export default async function HomePage() {
                         alt={work.title}
                         fill
                         className="object-contain"
-                        sizes={isLarge ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
+                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="h-full w-full" />
@@ -232,7 +230,7 @@ export default async function HomePage() {
                       {work.category}
                     </span>
                   </div>
-                  <h3 className="mt-1 text-[16px] font-medium text-[var(--color-fg)]">
+                  <h3 className="mt-1 min-h-12 line-clamp-2 text-[16px] leading-6 font-medium text-[var(--color-fg)]">
                     {work.title}
                   </h3>
                 </Link>
