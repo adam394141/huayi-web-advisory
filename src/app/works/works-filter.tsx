@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { WorkCover } from "@/components/work-cover";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Work } from "@/lib/content";
@@ -48,20 +48,7 @@ export function WorksFilter({ works }: { works: Work[] }) {
             ) : (
               filtered.map((work) => (
                 <Link key={work.id} href={`/works/${work.slug}`} className="group">
-                  <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-surface)]">
-                    {work.cover_image ? (
-                      <Image
-                        src={work.cover_image}
-                        alt={work.title}
-                        width={600}
-                        height={450}
-                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                        className="aspect-[4/3] w-full object-contain"
-                      />
-                    ) : (
-                      <div className="aspect-[4/3] w-full" />
-                    )}
-                  </div>
+                  <WorkCover src={work.cover_image} title={work.title} />
                   <h3 className="mt-4 min-h-12 line-clamp-2 font-sans text-[15px] leading-6 font-medium text-[var(--color-fg)]">
                     {work.title}
                   </h3>

@@ -7,6 +7,7 @@ import { ImagePlaceholder } from "@/components/image-placeholder";
 import { getPublishedWorks, getHomepagePosts } from "@/lib/content";
 import { getImageById } from "@/lib/home-images";
 import { LogoMotion } from "@/components/logo-motion";
+import { WorkCover } from "@/components/work-cover";
 
 export const revalidate = 60;
 
@@ -206,25 +207,7 @@ export default async function HomePage() {
                 delay={i * 0.06}
               >
                 <Link href={`/works/${work.slug}`} className="group relative block">
-                  <div
-                    className="relative overflow-hidden bg-[var(--color-surface)]"
-                    style={{
-                      borderRadius: "var(--radius-card)",
-                      aspectRatio: "4/3",
-                    }}
-                  >
-                    {work.cover_image ? (
-                      <Image
-                        src={work.cover_image}
-                        alt={work.title}
-                        fill
-                        className="object-contain"
-                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="h-full w-full" />
-                    )}
-                  </div>
+                  <WorkCover src={work.cover_image} title={work.title} />
                   <div className="mt-3 flex items-center gap-2">
                     <span className="text-[12px] tracking-wider text-[var(--color-subtle)]">
                       {work.category}
