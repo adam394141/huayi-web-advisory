@@ -1,6 +1,11 @@
 import { getReadOnlyClient } from "./supabase";
+import "server-only";
+import { cleanContent } from "./content-safety";
 
 // 唯讀資料適配器 — 只提供 SELECT，不含任何 mutation
+// 公開 DTO 明列欄位，避免來源備註或未來新增的內部欄位進入瀏覽器。
+const WORK_FIELDS = "id,title,slug,description,category,cover_image,status,sort_order,show_on_homepage,created_at,updated_at";
+const POST_FIELDS = "id,title,slug,excerpt,category,cover_image,author,status,show_on_homepage,published_at,created_at,updated_at";
 
 export interface GalleryAsset {
   src: string;
@@ -59,7 +64,7 @@ export async function getPublishedWorks(limit?: number): Promise<Work[]> {
   const supabase = getReadOnlyClient();
   let query = supabase
     .from("works")
-    .select("*")
+    .select(WORK_FIELDS)
     .eq("status", "published")
     .order("sort_order", { ascending: true });
   if (limit) query = query.limit(limit);
@@ -71,18 +76,18 @@ export async function getWorkBySlug(slug: string): Promise<Work | null> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase
     .from("works")
-    .select("*")
+    .select(`${WORK_FIELDS},content,client,services,design_rationale,hero_image,gallery,seo_title,seo_description,og_image,published_at`)
     .eq("slug", slug)
     .eq("status", "published")
     .single();
-  return data as Work | null;
+  return data ? { ...data, content: data.content ? cleanContent(data.content) : data.content } as Work : null;
 }
 
 export async function getHomepageWorks(): Promise<Work[]> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase
     .from("works")
-    .select("*")
+    .select(WORK_FIELDS)
     .eq("status", "published")
     .eq("show_on_homepage", true)
     .order("sort_order", { ascending: true })
@@ -94,7 +99,7 @@ export async function getPublishedPosts(limit?: number): Promise<BlogPost[]> {
   const supabase = getReadOnlyClient();
   let query = supabase
     .from("blog_posts")
-    .select("*")
+    .select(POST_FIELDS)
     .eq("status", "published")
     .order("published_at", { ascending: false });
   if (limit) query = query.limit(limit);
@@ -106,11 +111,11 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase
     .from("blog_posts")
-    .select("*")
+    .select(`${POST_FIELDS},content,faq,seo_title,seo_description,og_image`)
     .eq("slug", slug)
     .eq("status", "published")
     .single();
-  return data as BlogPost | null;
+  return data ? { ...data, content: data.content ? cleanContent(data.content) : data.content } as BlogPost : null;
 }
 
 export interface StorageImage {
@@ -140,7 +145,7 @@ export async function getHomepagePosts(): Promise<BlogPost[]> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase
     .from("blog_posts")
-    .select("*")
+    .select(POST_FIELDS)
     .eq("status", "published")
     .eq("show_on_homepage", true)
     .order("published_at", { ascending: false })

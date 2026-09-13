@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPostBySlug } from "@/lib/content";
 import { BlogContent } from "./blog-content";
+import { safeJsonLd } from "@/lib/content-safety";
 
 export const revalidate = 60;
 
@@ -71,7 +72,7 @@ export default async function BlogPostPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(articleLd) }}
       />
       <BlogContent post={post} />
     </>

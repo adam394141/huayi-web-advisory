@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getWorkBySlug, getWorkStorageImages } from "@/lib/content";
 import { WorkDetail } from "./work-detail";
+import { safeJsonLd } from "@/lib/content-safety";
 
 export const revalidate = 60;
 
@@ -66,7 +67,7 @@ export default async function WorkDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
       />
       <WorkDetail work={work} galleryUrls={galleryUrls} />
     </>
