@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     if (message.includes("CONFLICT")) return reply({ error: "文章已被更新，請重新載入後再執行 AI。" }, 409);
     return reply({ error: "無法建立 AI 任務，文章沒有被修改。" }, 503);
   }
-  const job = data as { id: string; status: string; created_at: string };
-  after(() => processContentAiRun(auth.client, job.id));
+  const job = data as { id: string; status: string; created_at: string; reused?: boolean };
+  if (!job.reused) after(() => processContentAiRun(auth.client, job.id));
   return reply({ job }, 202);
 }

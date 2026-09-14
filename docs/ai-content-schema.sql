@@ -6,6 +6,7 @@ set local statement_timeout = '20s';
 
 alter table public.blog_posts add column if not exists tags text[] not null default '{}';
 alter table public.blog_posts add column if not exists ai_summary text;
+alter table public.blog_posts add column if not exists faq jsonb not null default '[]'::jsonb;
 alter table public.blog_posts add column if not exists reviewed_at timestamptz;
 alter table public.blog_posts add column if not exists reviewed_by uuid;
 
@@ -141,6 +142,13 @@ begin
     and status in ('pending','running') and created_at>now()-interval '3 minutes') then
     raise exception 'CMS_AI_ALREADY_RUNNING' using errcode='PT409';
   end if;
+  select * into v_run from public.content_ai_runs
+  where content_id=p_content_id and requested_by=auth.uid() and status in ('needs_review','completed')
+    and input_hash=p_input_hash and prompt_version=btrim(p_prompt_version) and model=btrim(p_model)
+  order by created_at desc limit 1;
+  if found then
+    return jsonb_build_object('id',v_run.id,'status',v_run.status,'created_at',v_run.created_at,'reused',true);
+  end if;
   insert into public.content_ai_runs(content_type,content_id,requested_by,status,input_snapshot,prompt_version,model,input_hash)
   values ('article',p_content_id,auth.uid(),'pending',jsonb_build_object(
     'article',to_jsonb(v_post),
@@ -148,7 +156,7 @@ begin
     'known_internal_paths',jsonb_build_array('/','/about','/services','/works','/blog','/contact')
   ),btrim(p_prompt_version),btrim(p_model),p_input_hash)
   returning * into v_run;
-  return jsonb_build_object('id',v_run.id,'status',v_run.status,'created_at',v_run.created_at);
+  return jsonb_build_object('id',v_run.id,'status',v_run.status,'created_at',v_run.created_at,'reused',false);
 end;
 $$;
 
@@ -310,7 +318,8 @@ begin
     excerpt=nullif(left(coalesce(v_snapshot->>'excerpt',''),5000),''),content=left(coalesce(v_snapshot->>'content',''),200000),
     category=left(coalesce(v_snapshot->>'category',category),80),cover_image=nullif(v_snapshot->>'cover_image',''),
     author=nullif(left(coalesce(v_snapshot->>'author',''),180),''),
-    status=case when v_snapshot->>'status' in ('draft','preview','approved','published','archived') then v_snapshot->>'status' else 'draft' end,
+    -- 還原只能回到待檢視狀態；不得藉版本還原繞過獨立發布閘門。
+    status=case when v_snapshot->>'status'='archived' then 'archived' else 'preview' end,
     show_on_homepage=coalesce((v_snapshot->>'show_on_homepage')::boolean,false),
     sort_order=coalesce((v_snapshot->>'sort_order')::integer,0),
     seo_title=nullif(left(coalesce(v_snapshot->>'seo_title',''),180),''),

@@ -2,7 +2,7 @@
 
 - 日期：2026-09-14
 - 依據：[AI SEO／AEO／GEO 文章優化系統規格](../specs/2026-09-14-ai-seo-aeo-geo-editor-design.md)
-- 狀態：待 Adam 確認實作計畫
+- 狀態：Adam 已於 2026-09-15 確認，實作中
 - 實作模型：gpt-5.6-sol，推理強度 high
 - 變更範圍：Advisory 新官網的「觀點」後台與文章前台
 - 部署原則：只建立 Preview；不得合併 main、不得修改正式 DNS
