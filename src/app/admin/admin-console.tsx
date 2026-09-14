@@ -12,7 +12,7 @@ type EditorItem = Item & {
   excerpt?: string | null; author?: string | null; seo_title?: string | null; seo_description?: string | null;
 };
 
-export function AdminConsole({ configured }: { configured: boolean }) {
+export function AdminConsole({ configured, writeConfigured }: { configured: boolean; writeConfigured: boolean }) {
   const [client] = useState(() => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     // 密碼及登入憑證不存入 localStorage/sessionStorage；重新整理須重新登入。
     auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false },
@@ -27,7 +27,7 @@ export function AdminConsole({ configured }: { configured: boolean }) {
   const [items, setItems] = useState<Item[]>([]);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
-  const [writable, setWritable] = useState(false);
+  const [writable, setWritable] = useState(writeConfigured);
   const [editing, setEditing] = useState<EditorItem | null>(null);
   const [original, setOriginal] = useState<EditorItem | null>(null);
   const [imageSize, setImageSize] = useState("");
