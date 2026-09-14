@@ -15,6 +15,18 @@ type EditorItem = Item & {
   excerpt?: string | null; author?: string | null; seo_title?: string | null; seo_description?: string | null;
 };
 
+const SAVE_TIMEOUT_MS = 30_000;
+
+async function saveRequest(input: RequestInfo | URL, init: RequestInit) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), SAVE_TIMEOUT_MS);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 export function AdminConsole({ configured, writeConfigured }: { configured: boolean; writeConfigured: boolean }) {
   const [client] = useState(() => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     // 密碼及登入憑證不存入 localStorage/sessionStorage；重新整理須重新登入。
@@ -81,7 +93,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
     setBusy(true); setMessage("");
     try {
       const { data } = await client.auth.getSession();
-      const response = await fetch("/api/cms", {
+      const response = await saveRequest("/api/cms", {
         method: "PATCH", cache: "no-store",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
         body: JSON.stringify({ collection, id: editing.id, expected_updated_at: original.updated_at, changes }),
@@ -91,7 +103,12 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       setEditing(result.item); setOriginal(result.item);
       setItems((current) => current.map((item) => item.id === result.item.id ? { ...item, ...result.item } : item));
       setMessage("已安全儲存，修改前版本已保留。");
-    } catch { setMessage("儲存失敗，未變更任何資料。"); }
+    } catch (error) {
+      const timedOut = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
+      setMessage(timedOut
+        ? "儲存等待超過 30 秒，已停止等待；畫面內容仍保留。請稍候再返回列表確認，避免立刻重複儲存。"
+        : "儲存失敗，畫面內容仍保留，未確認任何資料變更。");
+    }
     finally { setBusy(false); }
   }
 

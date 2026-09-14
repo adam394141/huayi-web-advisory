@@ -2,6 +2,7 @@ import { verifyAdmin } from "@/lib/admin-auth";
 import { parseCollection } from "@/lib/admin-policy";
 import { parseCmsUpdate } from "@/lib/cms-update";
 import { cleanContent } from "@/lib/content-safety";
+import { mapCmsSaveError } from "@/lib/cms-save-error";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
@@ -48,41 +49,66 @@ export async function GET(request: Request) {
 // 寫入尚未完成交易、稽核及 RLS 驗收，明確拒絕；不可返回假的儲存成功。
 export async function POST() { return reply({ error: "安全寫入尚未啟用。" }, 503); }
 export async function PATCH(request: Request) {
+  const requestId = crypto.randomUUID();
   try {
     const auth = await verifyAdmin(request);
-    if (auth.status !== 200) return reply({ error: "請以獲授權的管理員帳號完成雙重驗證。" }, auth.status);
-    if (process.env.CMS_WRITE_ENABLED !== "true") return reply({ error: "安全寫入尚未啟用。" }, 503);
+    if (auth.status !== 200) return reply({ error: "請以獲授權的管理員帳號完成雙重驗證。", request_id: requestId }, auth.status);
+    if (process.env.CMS_WRITE_ENABLED !== "true") return reply({ error: "安全寫入尚未啟用。", request_id: requestId }, 503);
     const declaredLength = Number(request.headers.get("content-length") || "0");
-    if (declaredLength > 260_000) return reply({ error: "送出的內容過大。" }, 413);
+    if (declaredLength > 260_000) return reply({ error: "送出的內容過大。", request_id: requestId }, 413);
     const raw = await request.text();
-    if (raw.length > 260_000) return reply({ error: "送出的內容過大。" }, 413);
+    if (raw.length > 260_000) return reply({ error: "送出的內容過大。", request_id: requestId }, 413);
     let json: unknown;
-    try { json = JSON.parse(raw); } catch { return reply({ error: "資料格式不正確。" }, 400); }
+    try { json = JSON.parse(raw); } catch { return reply({ error: "資料格式不正確。", request_id: requestId }, 400); }
     const update = parseCmsUpdate(json);
-    if (!update) return reply({ error: "欄位內容或格式不正確。" }, 400);
+    if (!update) return reply({ error: "欄位內容或格式不正確。", request_id: requestId }, 400);
+    console.info("[cms-save] validated", {
+      requestId,
+      collection: update.collection,
+      itemId: update.id,
+      changeKeys: Object.keys(update.changes).sort(),
+    });
+    console.info("[cms-save] rpc-start", { requestId });
     const { data, error } = await auth.client.rpc("cms_update_content", {
       p_collection: update.collection,
       p_id: update.id,
       p_expected_updated_at: update.expectedUpdatedAt,
       p_changes: update.changes,
-    });
+    }).abortSignal(AbortSignal.timeout(15_000));
     if (error) {
-      if (error.code === "40001") return reply({ error: "這筆內容已被更新，請重新載入後再修改。" }, 409);
-      if (error.code === "23505") return reply({ error: "網址代稱已被其他內容使用。" }, 409);
-      return reply({ error: "儲存失敗，未變更任何資料。" }, 503);
+      const mapped = mapCmsSaveError(error);
+      console.error("[cms-save] rpc-error", { requestId, code: error.code || "aborted", kind: mapped.kind });
+      return reply({ error: mapped.message, request_id: requestId }, mapped.status);
     }
+    console.info("[cms-save] rpc-complete", { requestId });
     const result = data as { old_slug?: string } | null;
+    console.info("[cms-save] reread-start", { requestId });
     const { data: saved, error: readError } = await auth.client.from(update.collection)
-      .select(detailFields(update.collection)).eq("id", update.id).single();
-    if (readError || !saved) return reply({ error: "內容已儲存，但重新讀取失敗；請重新載入列表。" }, 503);
+      .select(detailFields(update.collection)).eq("id", update.id)
+      .abortSignal(AbortSignal.timeout(8_000)).single();
+    if (readError || !saved) {
+      console.error("[cms-save] reread-error", { requestId, code: readError?.code || "empty" });
+      return reply({ error: "內容已儲存，但重新讀取失敗；請重新載入列表。", request_id: requestId }, 503);
+    }
+    console.info("[cms-save] reread-complete", { requestId });
     const savedDetail = saved as unknown as Record<string, unknown>;
     const savedContent = typeof savedDetail.content === "string" ? cleanContent(savedDetail.content) : savedDetail.content;
     const savedItem = { ...savedDetail, content: savedContent } as unknown as { slug: string } & Record<string, unknown>;
-    revalidatePath(update.collection === "works" ? "/works" : "/blog");
-    revalidatePath("/");
-    if (result?.old_slug) revalidatePath(`/${update.collection === "works" ? "works" : "blog"}/${result.old_slug}`);
-    if (savedItem.slug) revalidatePath(`/${update.collection === "works" ? "works" : "blog"}/${savedItem.slug}`);
-    return reply({ item: savedItem });
-  } catch { return reply({ error: "服務暫時無法使用，請稍後重試。" }, 503); }
+    try {
+      revalidatePath(update.collection === "works" ? "/works" : "/blog");
+      revalidatePath("/");
+      if (result?.old_slug) revalidatePath(`/${update.collection === "works" ? "works" : "blog"}/${result.old_slug}`);
+      if (savedItem.slug) revalidatePath(`/${update.collection === "works" ? "works" : "blog"}/${savedItem.slug}`);
+    } catch (error) {
+      // 資料已經成功寫入；快取更新失敗不應誤報成儲存失敗。
+      console.warn("[cms-save] revalidate-error", { requestId, error: error instanceof Error ? error.name : "unknown" });
+    }
+    console.info("[cms-save] complete", { requestId });
+    return reply({ item: savedItem, request_id: requestId });
+  } catch (error) {
+    const timedOut = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
+    console.error("[cms-save] unexpected", { requestId, error: error instanceof Error ? error.name : "unknown" });
+    return reply({ error: timedOut ? "儲存逾時，未完成的內容仍保留在畫面上，請稍候再試。" : "服務暫時無法使用，請稍後重試。", request_id: requestId }, timedOut ? 504 : 503);
+  }
 }
 export async function DELETE() { return reply({ error: "安全寫入尚未啟用。" }, 503); }

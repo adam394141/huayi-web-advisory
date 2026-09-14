@@ -1,7 +1,6 @@
 -- 華翼 CMS：限定 Adam + aal2 的原子內容更新。
 -- 不授予資料表 UPDATE；僅允許呼叫這個明列欄位的函式。
 begin;
-set local lock_timeout = '3s';
 
 create or replace function public.cms_update_content(
   p_collection text,
@@ -12,6 +11,8 @@ create or replace function public.cms_update_content(
 language plpgsql
 security definer
 set search_path = public, pg_temp
+set lock_timeout = '3s'
+set statement_timeout = '12s'
 as $$
 declare
   v_allowed text[];

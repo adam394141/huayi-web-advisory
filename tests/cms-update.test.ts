@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { parseCmsUpdate } from "../src/lib/cms-update";
+import { mapCmsSaveError } from "../src/lib/cms-save-error";
 
 const base = { collection: "works", id: "11111111-1111-4111-8111-111111111111", expected_updated_at: "2026-09-14T00:00:00Z" };
 
@@ -24,4 +25,15 @@ test("拒絕錯誤狀態、網址、版本與超量內容", () => {
   assert.equal(parseCmsUpdate({ ...base, changes: { cover_image: "https://evil.example/x.jpg" } }), null);
   assert.equal(parseCmsUpdate({ ...base, expected_updated_at: "bad", changes: { title: "作品" } }), null);
   assert.equal(parseCmsUpdate({ ...base, changes: { content: "x".repeat(200_001) } }), null);
+});
+
+test("儲存錯誤可區分鎖定、逾時、衝突與未知錯誤", () => {
+  assert.deepEqual(mapCmsSaveError({ code: "55P03" }), {
+    message: "這筆內容正被另一個儲存操作占用，請稍候再試。", status: 423, kind: "locked",
+  });
+  assert.equal(mapCmsSaveError({ code: "57014" }).kind, "timeout");
+  assert.equal(mapCmsSaveError({ message: "AbortError: request aborted" }).kind, "timeout");
+  assert.equal(mapCmsSaveError({ code: "40001" }).kind, "conflict");
+  assert.equal(mapCmsSaveError({ code: "23505" }).kind, "duplicate");
+  assert.equal(mapCmsSaveError({ code: "XX000" }).kind, "unknown");
 });
