@@ -47,6 +47,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
   const [original, setOriginal] = useState<EditorItem | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [needsReload, setNeedsReload] = useState(false);
 
   useEffect(() => () => { client.auth.stopAutoRefresh(); }, [client]);
 
@@ -74,6 +75,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       const result = await response.json();
       if (!response.ok) { setMessage(result.error); return; }
       setEditing(result.item); setOriginal(result.item); setWritable(!!result.writable);
+      setNeedsReload(false);
     } catch { setMessage("無法開啟內容，未變更任何資料。"); }
     finally { setBusy(false); }
   }
@@ -81,6 +83,9 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
   async function save(event: FormEvent) {
     event.preventDefault();
     if (!editing || !original) return;
+    const submitter = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
+    const shouldOpenPreview = submitter?.value === "save-preview";
+    const requestedPreview = getAdminPreview(collection, editing.status, editing.slug);
     const common = ["title", "slug", "category", "content", "cover_image", "status", "show_on_homepage", "sort_order", "seo_title", "seo_description"] as const;
     const specific = collection === "works" ? ["description", "client", "design_rationale"] as const : ["excerpt", "author"] as const;
     const changes: Record<string, string | number | boolean | null> = {};
@@ -89,7 +94,25 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       const previous = original[key] ?? (key === "sort_order" ? 0 : key === "show_on_homepage" ? false : "");
       if (next !== previous) changes[key] = next;
     }
-    if (!Object.keys(changes).length) { setMessage("沒有需要儲存的變更。"); return; }
+    if (!Object.keys(changes).length) {
+      if (shouldOpenPreview && requestedPreview.href) {
+        window.open(requestedPreview.href, "_blank", "noopener,noreferrer");
+        setMessage("沒有需要儲存的變更，已在新分頁開啟前台頁面。");
+      } else {
+        setMessage("沒有需要儲存的變更。");
+      }
+      return;
+    }
+    let previewWindow: Window | null = null;
+    if (shouldOpenPreview && requestedPreview.href) {
+      // 必須在使用者點擊觸發的同步階段先開分頁，否則儲存完成後容易被瀏覽器阻擋。
+      previewWindow = window.open("about:blank", "_blank");
+      if (previewWindow) {
+        previewWindow.opener = null;
+        previewWindow.document.title = "正在更新前台預覽…";
+        previewWindow.document.body.textContent = "正在儲存並更新前台預覽，請稍候…";
+      }
+    }
     setBusy(true); setMessage("");
     try {
       const { data } = await client.auth.getSession();
@@ -99,11 +122,33 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         body: JSON.stringify({ collection, id: editing.id, expected_updated_at: original.updated_at, changes }),
       });
       const result = await response.json();
-      if (!response.ok) { setMessage(result.error); return; }
+      if (!response.ok) {
+        previewWindow?.close();
+        setNeedsReload(response.status === 409);
+        setMessage(result.error);
+        return;
+      }
       setEditing(result.item); setOriginal(result.item);
       setItems((current) => current.map((item) => item.id === result.item.id ? { ...item, ...result.item } : item));
-      setMessage("已安全儲存，修改前版本已保留。");
+      setNeedsReload(false);
+      if (shouldOpenPreview) {
+        const savedPreview = getAdminPreview(collection, result.item.status, result.item.slug);
+        if (previewWindow && savedPreview.href) {
+          const previewUrl = new URL(savedPreview.href, window.location.origin);
+          previewUrl.searchParams.set("cms_updated", Date.now().toString());
+          previewWindow.location.replace(previewUrl.toString());
+          setMessage("已安全儲存，並在新分頁開啟最新前台頁面。");
+        } else {
+          previewWindow?.close();
+          setMessage(previewWindow
+            ? "已安全儲存，但目前狀態無法開啟公開前台。"
+            : "已安全儲存；瀏覽器阻擋了新分頁，請使用上方的「開啟前台」按鈕。");
+        }
+      } else {
+        setMessage("已安全儲存，修改前版本已保留。可使用上方的「開啟前台」查看最新結果。");
+      }
     } catch (error) {
+      previewWindow?.close();
       const timedOut = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
       setMessage(timedOut
         ? "儲存等待超過 30 秒，已停止等待；畫面內容仍保留。請稍候再返回列表確認，避免立刻重複儲存。"
@@ -151,6 +196,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
   const field = "mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base";
   const button = "rounded-full bg-neutral-900 px-6 py-3 text-white disabled:opacity-40";
   const preview = original ? getAdminPreview(collection, original.status, original.slug) : { href: null, reason: "請先儲存內容後再預覽。" };
+  const nextPreview = editing ? getAdminPreview(collection, editing.status, editing.slug) : preview;
   return <section className="mx-auto max-w-5xl px-6 py-12">
     <Image src="/brand/huayi-logo.svg" alt="華翼品牌策略" width={150} height={60} className="mb-6 h-auto" />
     <h1 className="text-3xl font-semibold">內容管理</h1>
@@ -158,7 +204,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
     <div className="my-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
       {configured ? (writable ? "已開放文字、圖文區塊、圖片上傳、拖曳順序、狀態與排序值編輯；新增整筆內容與版本還原仍在製作。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
     </div>
-    {message && <p role="alert" className="my-4 text-red-700">{message}</p>}
+    {message && <div role="alert" className="my-4 flex flex-wrap items-center gap-3 text-red-700"><p>{message}</p>{needsReload && editing && <button type="button" className="rounded-full border border-red-700 px-4 py-2 text-sm" disabled={busy} onClick={() => edit(editing.id)}>載入資料庫最新版本</button>}</div>}
     {!signedIn ? <div className="max-w-md">
       {!factorId ? <form onSubmit={login} className="space-y-5">
         <label className="block">管理員 Email<input className={field} type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} disabled={!configured || busy} /></label>
@@ -173,7 +219,11 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       </form>}
       <p className="mt-5 text-sm text-neutral-600">不開放自行註冊。帳號或驗證器遺失時，由 Supabase 專案管理者確認身分後處理；不能跳過雙重驗證。</p>
     </div> : editing ? <form onSubmit={save} className="max-w-3xl space-y-5">
-      <div className="flex flex-wrap items-center gap-4"><button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); }}>← 返回列表</button><span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span></div>
+      <div className="flex flex-wrap items-center gap-4">
+        <button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); setNeedsReload(false); }}>← 返回列表</button>
+        {preview.href ? <a className="rounded-full border border-neutral-900 px-4 py-2 text-sm" href={preview.href} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{preview.reason}</span>}
+        <span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span>
+      </div>
       <label className="block">標題<input className={field} required maxLength={180} value={editing.title} onChange={(event) => setEditing({ ...editing, title: event.target.value })} /></label>
       <label className="block">網址代稱（英文小寫、數字、連字號）<input className={field} required maxLength={140} pattern="[a-z0-9]+(?:[-_][a-z0-9]+)*" value={editing.slug} onChange={(event) => setEditing({ ...editing, slug: event.target.value })} /></label>
       <div className="grid gap-5 sm:grid-cols-2">
@@ -195,8 +245,6 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         collection={collection}
         itemId={editing.id}
         accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""}
-        previewHref={preview.href}
-        previewUnavailableReason={preview.reason}
       />
       <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <div className="grid gap-5 sm:grid-cols-2">
@@ -204,7 +252,11 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
       </div>
       <details className="rounded-xl border border-neutral-200 p-4"><summary className="cursor-pointer">SEO 設定</summary><div className="mt-4 space-y-4"><label className="block">SEO 標題<input className={field} maxLength={180} value={editing.seo_title || ""} onChange={(event) => setEditing({ ...editing, seo_title: event.target.value })} /></label><label className="block">SEO 說明<textarea className={`${field} min-h-24`} maxLength={500} value={editing.seo_description || ""} onChange={(event) => setEditing({ ...editing, seo_description: event.target.value })} /></label></div></details>
-      <button className={button} disabled={busy || !writable}>{busy ? "儲存中…" : "儲存修改"}</button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button className={button} type="submit" value="save" disabled={busy || !writable}>{busy ? "儲存中…" : "儲存修改"}</button>
+        <button className="rounded-full border border-neutral-900 bg-white px-6 py-3 text-neutral-900 disabled:opacity-40" type="submit" value="save-preview" disabled={busy || !writable || !nextPreview.href}>儲存並開啟前台 ↗</button>
+        {!nextPreview.href && <span className="text-sm text-neutral-500">{nextPreview.reason}</span>}
+      </div>
     </form> : <>
       <div className="flex flex-wrap gap-4">
         <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>

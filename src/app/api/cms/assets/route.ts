@@ -51,25 +51,42 @@ export async function POST(request: Request) {
     const assetId = crypto.randomUUID();
     const originalPath = `cms/${auth.userId}/${table}/${id}/original/${assetId}.${image.extension}`;
     const optimizedPath = `cms/${auth.userId}/${table}/${id}/optimized/${assetId}.${optimized.extension}`;
-    const { error: originalError } = await auth.client.storage.from("published-assets").upload(originalPath, bytes, {
-      contentType: image.contentType, cacheControl: "31536000", upsert: false,
-    });
-    if (originalError) {
-      console.error("[cms-assets] original-upload-failed", { requestId, code: originalError.name });
-      return reply({ error: "原圖保存失敗，未修改頁面。" }, 503);
-    }
-    const { error: optimizedError } = await auth.client.storage.from("published-assets").upload(optimizedPath, optimized.bytes, {
-      contentType: optimized.contentType, cacheControl: "31536000", upsert: false,
-    });
-    if (optimizedError) {
-      console.error("[cms-assets] optimized-upload-failed", { requestId, code: optimizedError.name });
-      return reply({ error: "網站版圖片上傳失敗，未修改頁面。" }, 503);
+    const storage = auth.client.storage.from("published-assets");
+    const uploadStartedAt = performance.now();
+    // 原圖與網站版互不相依，並行保存可避免兩次網路等待時間相加。
+    const [originalUpload, optimizedUpload] = await Promise.all([
+      storage.upload(originalPath, bytes, {
+        contentType: image.contentType, cacheControl: "31536000", upsert: false,
+      }),
+      storage.upload(optimizedPath, optimized.bytes, {
+        contentType: optimized.contentType, cacheControl: "31536000", upsert: false,
+      }),
+    ]);
+    if (originalUpload.error || optimizedUpload.error) {
+      console.error("[cms-assets] upload-failed", {
+        requestId,
+        originalCode: originalUpload.error?.name || null,
+        optimizedCode: optimizedUpload.error?.name || null,
+      });
+      // 其中一份成功時清除孤立檔案，避免失敗重試累積無主檔案。
+      const orphanedPaths = [
+        !originalUpload.error && optimizedUpload.error ? originalPath : null,
+        originalUpload.error && !optimizedUpload.error ? optimizedPath : null,
+      ].filter((path): path is string => Boolean(path));
+      if (orphanedPaths.length) await storage.remove(orphanedPaths);
+      return reply({ error: "圖片保存失敗，未修改頁面。請稍後重試。" }, 503);
     }
 
-    const storage = auth.client.storage.from("published-assets");
     const { data: optimizedData } = storage.getPublicUrl(optimizedPath);
     const savedPercent = Math.round((1 - optimized.optimizedBytes / optimized.originalBytes) * 100);
-    console.info("[cms-assets] completed", { requestId, collection, usage, originalBytes: optimized.originalBytes, optimizedBytes: optimized.optimizedBytes });
+    console.info("[cms-assets] completed", {
+      requestId,
+      collection,
+      usage,
+      originalBytes: optimized.originalBytes,
+      optimizedBytes: optimized.optimizedBytes,
+      uploadMs: Math.round(performance.now() - uploadStartedAt),
+    });
     return reply({
       url: optimizedData.publicUrl,
       originalWidth: optimized.originalWidth,

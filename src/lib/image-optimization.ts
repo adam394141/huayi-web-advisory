@@ -44,7 +44,8 @@ export async function optimizeImageForWeb(input: Uint8Array, usage: ImageUsage):
     .webp({
       quality: metadata.format === "png" ? 86 : 82,
       alphaQuality: 90,
-      effort: 4,
+      // 後台上傳以互動速度優先；2 仍保有良好壓縮率，但比 effort 4 明顯縮短等待時間。
+      effort: 2,
       nearLossless: metadata.format === "png",
       smartSubsample: true,
     })

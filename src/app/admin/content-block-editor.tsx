@@ -57,9 +57,9 @@ function serialize(blocks: Block[]) {
     `<figure><img src="${escapeAttribute(block.src)}" alt="${escapeAttribute(block.alt)}"${block.width ? ` width="${block.width}"` : ""}${block.height ? ` height="${block.height}"` : ""}${block.originalWidth ? ` data-original-width="${block.originalWidth}"` : ""}${block.originalHeight ? ` data-original-height="${block.originalHeight}"` : ""}${block.originalBytes ? ` data-original-bytes="${block.originalBytes}"` : ""}${block.optimizedBytes ? ` data-optimized-bytes="${block.optimizedBytes}"` : ""}><figcaption>${escapeAttribute(block.caption)}</figcaption></figure>`).join("\n");
 }
 
-export function ContentBlockEditor({ value, onChange, collection, itemId, accessToken, previewHref, previewUnavailableReason }: {
+export function ContentBlockEditor({ value, onChange, collection, itemId, accessToken }: {
   value: string; onChange: (html: string) => void; collection: Collection; itemId: string;
-  accessToken: () => Promise<string>; previewHref: string | null; previewUnavailableReason: string | null;
+  accessToken: () => Promise<string>;
 }) {
   const [blocks, setBlocks] = useState<Block[]>([{ id: "initial", kind: "html", html: value || "<p>請輸入內文</p>" }]);
   const [selected, setSelected] = useState(0);
@@ -134,10 +134,7 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
 
   const small = "rounded-full border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-30";
   return <section className="space-y-4 rounded-2xl border border-neutral-200 p-4">
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div><h3 className="font-semibold">圖文內文編輯器</h3><p className="mt-1 text-sm text-neutral-600">點選區塊後新增內容；可直接拖曳，或用上下按鈕調整順序。</p></div>
-      {previewHref ? <a className="text-sm underline" href={previewHref} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="max-w-md rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{previewUnavailableReason}</span>}
-    </div>
+    <div><h3 className="font-semibold">圖文內文編輯器</h3><p className="mt-1 text-sm text-neutral-600">點選區塊後新增內容；可直接拖曳，或用上下按鈕調整順序。</p></div>
     <div className="flex flex-wrap gap-2"><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<p>請輸入文字</p>" })}>＋ 文字</button><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h2>請輸入標題</h2>" })}>＋ 標題</button></div>
     <div className="space-y-3">{blocks.map((block, index) => <div key={block.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); moveTo(Number(event.dataTransfer.getData("text/plain")), index); }} onClick={() => setSelected(index)} className={`rounded-2xl border p-3 ${selected === index ? "border-amber-500 bg-amber-50/40" : "border-neutral-200"}`}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><span draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", String(index))} className="cursor-grab text-xs text-neutral-500 active:cursor-grabbing">⠿ 拖曳・{block.kind === "image" ? "圖片" : "文字"}區塊 {index + 1}</span><div className="flex gap-2"><button type="button" className={small} disabled={index === 0} onClick={() => move(index, -1)}>上移</button><button type="button" className={small} disabled={index === blocks.length - 1} onClick={() => move(index, 1)}>下移</button><button type="button" className={small} onClick={() => remove(index)}>移除</button></div></div>
