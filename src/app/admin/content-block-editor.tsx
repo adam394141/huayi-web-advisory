@@ -57,9 +57,9 @@ function serialize(blocks: Block[]) {
     `<figure><img src="${escapeAttribute(block.src)}" alt="${escapeAttribute(block.alt)}"${block.width ? ` width="${block.width}"` : ""}${block.height ? ` height="${block.height}"` : ""}${block.originalWidth ? ` data-original-width="${block.originalWidth}"` : ""}${block.originalHeight ? ` data-original-height="${block.originalHeight}"` : ""}${block.originalBytes ? ` data-original-bytes="${block.originalBytes}"` : ""}${block.optimizedBytes ? ` data-optimized-bytes="${block.optimizedBytes}"` : ""}><figcaption>${escapeAttribute(block.caption)}</figcaption></figure>`).join("\n");
 }
 
-export function ContentBlockEditor({ value, onChange, collection, itemId, accessToken, previewHref }: {
+export function ContentBlockEditor({ value, onChange, collection, itemId, accessToken, previewHref, previewUnavailableReason }: {
   value: string; onChange: (html: string) => void; collection: Collection; itemId: string;
-  accessToken: () => Promise<string>; previewHref: string;
+  accessToken: () => Promise<string>; previewHref: string | null; previewUnavailableReason: string | null;
 }) {
   const [blocks, setBlocks] = useState<Block[]>([{ id: "initial", kind: "html", html: value || "<p>請輸入內文</p>" }]);
   const [selected, setSelected] = useState(0);
@@ -98,7 +98,9 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.files?.[0] || null; setFile(next); setMessage(""); setDimensions(null);
     if (!next) return;
-    if (!['image/jpeg','image/png','image/webp'].includes(next.type) || next.size > 4 * 1024 * 1024) {
+    const acceptedMime = ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(next.type);
+    const acceptedName = /\.(jpe?g|png|webp)$/i.test(next.name);
+    if ((!acceptedMime && !(next.type === "" && acceptedName)) || next.size > 4 * 1024 * 1024) {
       setMessage("僅接受 4 MB 以下的 JPG、PNG 或 WebP。"); setFile(null); return;
     }
     const url = URL.createObjectURL(next); const image = new Image();
@@ -107,9 +109,12 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
     image.src = url; setAlt(next.name.replace(/\.[^.]+$/, ""));
   }
   async function upload() {
-    if (!file || !dimensions) return; setUploading(true); setMessage("");
+    if (!file) { setMessage("請先選擇一張圖片。"); return; }
+    setUploading(true); setMessage("正在最佳化並上傳圖片，請勿關閉頁面…");
     try {
-      const token = await accessToken(); const form = new FormData();
+      const token = await accessToken();
+      if (!token) { setMessage("登入狀態已過期，請重新登入後再上傳。"); return; }
+      const form = new FormData();
       form.append("file", file); form.append("collection", collection); form.append("itemId", itemId); form.append("usage", "content");
       const response = await fetch("/api/cms/assets", { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: form });
       const result = await response.json();
@@ -123,7 +128,7 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
       setFile(null); setAlt(""); setCaption(""); setDimensions(null); if (fileInput.current) fileInput.current.value = "";
       const saving = result.savedPercent > 0 ? `縮小 ${result.savedPercent}%` : "已完成網站格式轉換";
       setMessage(`圖片已插入內文：${formatBytes(result.originalBytes)} → ${formatBytes(result.optimizedBytes)}（${saving}）。請記得按下頁面底部的「儲存修改」。`);
-    } catch { setMessage("圖片上傳失敗，未修改內文。請稍後重試。"); }
+    } catch { setMessage("圖片上傳失敗，未修改內文。請檢查網路後再試一次。"); }
     finally { setUploading(false); }
   }
 
@@ -131,7 +136,7 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
   return <section className="space-y-4 rounded-2xl border border-neutral-200 p-4">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div><h3 className="font-semibold">圖文內文編輯器</h3><p className="mt-1 text-sm text-neutral-600">點選區塊後新增內容；可直接拖曳，或用上下按鈕調整順序。</p></div>
-      <a className="text-sm underline" href={previewHref} target="_blank" rel="noreferrer">開啟前台預覽 ↗</a>
+      {previewHref ? <a className="text-sm underline" href={previewHref} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="max-w-md rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{previewUnavailableReason}</span>}
     </div>
     <div className="flex flex-wrap gap-2"><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<p>請輸入文字</p>" })}>＋ 文字</button><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h2>請輸入標題</h2>" })}>＋ 標題</button></div>
     <div className="space-y-3">{blocks.map((block, index) => <div key={block.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); moveTo(Number(event.dataTransfer.getData("text/plain")), index); }} onClick={() => setSelected(index)} className={`rounded-2xl border p-3 ${selected === index ? "border-amber-500 bg-amber-50/40" : "border-neutral-200"}`}>
@@ -141,6 +146,20 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
         <div className="space-y-3"><label className="block text-sm">替代文字<input className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" value={block.alt} onChange={(event) => { const next=[...blocks]; next[index]={...block,alt:event.target.value}; commit(next); }} /></label><label className="block text-sm">圖片說明<input className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" value={block.caption} onChange={(event) => { const next=[...blocks]; next[index]={...block,caption:event.target.value}; commit(next); }} /></label><p className="text-sm text-neutral-500">網站顯示：{block.width && block.height ? `${block.width} × ${block.height} px` : "尺寸未記錄"}{block.optimizedBytes ? `・${formatBytes(block.optimizedBytes)}` : ""}</p>{block.originalWidth && block.originalHeight && <p className="text-sm text-neutral-500">保留原圖：{block.originalWidth} × {block.originalHeight} px・{formatBytes(block.originalBytes)}</p>}<p className="text-sm text-neutral-500">{block.optimizedBytes ? "WebP・" : ""}原比例顯示・不裁切</p></div>
       </div>}
     </div>)}</div>
-    <div className="rounded-2xl bg-neutral-100 p-4"><h4 className="font-medium">上傳圖片並插入目前區塊下方</h4><p className="mt-1 text-sm text-neutral-600">系統會保留原圖，另產生最寬 1600 px 的 WebP 網站版；不放大、不裁切。</p><div className="mt-3 grid gap-3 md:grid-cols-2"><input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" onChange={chooseFile} /><input className="rounded-xl border border-neutral-300 px-3 py-2" placeholder="替代文字（描述圖片內容）" value={alt} onChange={(event) => setAlt(event.target.value)} /><input className="rounded-xl border border-neutral-300 px-3 py-2" placeholder="圖片說明（可留白）" value={caption} onChange={(event) => setCaption(event.target.value)} /><button type="button" className="rounded-full bg-neutral-900 px-5 py-2 text-white disabled:opacity-40" disabled={!file || !dimensions || uploading} onClick={upload}>{uploading ? "最佳化並上傳中…" : "最佳化、上傳並插入"}</button></div>{dimensions && <p className="mt-3 text-sm">原始檔：{dimensions.width} × {dimensions.height} px・{formatBytes(file?.size)}。{dimensions.width < 1600 ? "寬度低於內頁建議的 1600 px；可上傳，但放大可能模糊。" : "符合內頁建議寬度。"}</p>}{message && <p role="status" className="mt-3 text-sm text-amber-800">{message}</p>}</div>
+    <div className="rounded-2xl bg-neutral-100 p-4">
+      <h4 className="font-medium">新增內文圖片</h4>
+      <p className="mt-1 text-sm text-neutral-600">依序選擇圖片、填寫說明，再按上傳。系統會保留原圖，另產生最寬 1600 px 的 WebP 網站版；不放大、不裁切。</p>
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <label className="flex cursor-pointer items-center justify-center rounded-full border border-neutral-900 bg-white px-5 py-2 font-medium">
+          1. 選擇圖片
+          <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" onChange={chooseFile} />
+        </label>
+        <input className="rounded-xl border border-neutral-300 px-3 py-2" placeholder="2. 替代文字（描述圖片內容）" value={alt} onChange={(event) => setAlt(event.target.value)} />
+        <input className="rounded-xl border border-neutral-300 px-3 py-2" placeholder="圖片說明（可留白）" value={caption} onChange={(event) => setCaption(event.target.value)} />
+        <button type="button" className="rounded-full bg-neutral-900 px-5 py-2 text-white disabled:opacity-40" disabled={!file || uploading} onClick={upload}>{uploading ? "正在最佳化並上傳…" : "3. 上傳並插入文章"}</button>
+      </div>
+      {file && <p className="mt-3 text-sm">已選擇：{file.name}・{formatBytes(file.size)}{dimensions ? `・${dimensions.width} × ${dimensions.height} px。${dimensions.width < 1600 ? "寬度低於內頁建議的 1600 px；可上傳，但放大可能模糊。" : "符合內頁建議寬度。"}` : "・正在讀取圖片尺寸…"}</p>}
+      {message && <p role="status" aria-live="polite" className={`mt-3 rounded-xl px-3 py-2 text-sm ${uploading ? "bg-blue-50 text-blue-900" : "bg-amber-50 text-amber-900"}`}>{message}</p>}
+    </div>
   </section>;
 }

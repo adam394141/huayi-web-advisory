@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ContentBlockEditor } from "./content-block-editor";
 import { CoverImageUploader } from "./cover-image-uploader";
+import { getAdminPreview } from "@/lib/admin-preview";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
 type EditorItem = Item & {
@@ -132,6 +133,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
 
   const field = "mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base";
   const button = "rounded-full bg-neutral-900 px-6 py-3 text-white disabled:opacity-40";
+  const preview = original ? getAdminPreview(collection, original.status, original.slug) : { href: null, reason: "請先儲存內容後再預覽。" };
   return <section className="mx-auto max-w-5xl px-6 py-12">
     <Image src="/brand/huayi-logo.svg" alt="華翼品牌策略" width={150} height={60} className="mb-6 h-auto" />
     <h1 className="text-3xl font-semibold">內容管理</h1>
@@ -169,7 +171,16 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         <label className="block">作者<input className={field} maxLength={180} value={editing.author || ""} onChange={(event) => setEditing({ ...editing, author: event.target.value })} /></label>
         <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
       </>}
-      <ContentBlockEditor key={`${collection}:${editing.id}`} value={editing.content || ""} onChange={(content) => setEditing((current) => current ? { ...current, content } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} previewHref={`/${collection === "works" ? "works" : "blog"}/${editing.slug}`} />
+      <ContentBlockEditor
+        key={`${collection}:${editing.id}`}
+        value={editing.content || ""}
+        onChange={(content) => setEditing((current) => current ? { ...current, content } : current)}
+        collection={collection}
+        itemId={editing.id}
+        accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""}
+        previewHref={preview.href}
+        previewUnavailableReason={preview.reason}
+      />
       <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">排序值<input className={field} type="number" min={-100000} max={100000} value={editing.sort_order ?? 0} onChange={(event) => setEditing({ ...editing, sort_order: Number(event.target.value) })} /></label>

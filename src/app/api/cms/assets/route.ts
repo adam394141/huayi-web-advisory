@@ -10,6 +10,7 @@ function reply(body: unknown, status = 200) {
 }
 
 export async function POST(request: Request) {
+  const requestId = crypto.randomUUID();
   try {
     const auth = await verifyAdmin(request);
     if (auth.status !== 200) return reply({ error: "請以獲授權的管理員帳號完成雙重驗證。" }, auth.status);
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     const bytes = new Uint8Array(await file.arrayBuffer());
     const image = detectAcceptedImage(bytes, file.type, file.size);
     if (!image) return reply({ error: "僅接受 4 MB 以下的 JPG、PNG 或 WebP 圖片。" }, 400);
+    console.info("[cms-assets] accepted", { requestId, collection, usage, bytes: file.size });
 
     let optimized: Awaited<ReturnType<typeof optimizeImageForWeb>>;
     try {
@@ -34,13 +36,17 @@ export async function POST(request: Request) {
       if (error instanceof Error && error.message === "ANIMATED_IMAGE_UNSUPPORTED") {
         return reply({ error: "目前只接受靜態圖片，不接受動畫 WebP。" }, 400);
       }
+      console.warn("[cms-assets] optimization-failed", { requestId, error: error instanceof Error ? error.message : "unknown" });
       return reply({ error: "圖片尺寸過大、內容損壞或無法最佳化。請更換圖片後重試。" }, 400);
     }
 
     const table = collection as "works" | "blog_posts";
     const id = itemId as string;
     const { data: record, error: recordError } = await auth.client.from(table).select("id").eq("id", id).maybeSingle();
-    if (recordError || !record) return reply({ error: "找不到要加入圖片的內容。" }, 404);
+    if (recordError || !record) {
+      console.warn("[cms-assets] record-not-found", { requestId, collection });
+      return reply({ error: "找不到要加入圖片的內容。" }, 404);
+    }
 
     const assetId = crypto.randomUUID();
     const originalPath = `cms/${auth.userId}/${table}/${id}/original/${assetId}.${image.extension}`;
@@ -48,15 +54,22 @@ export async function POST(request: Request) {
     const { error: originalError } = await auth.client.storage.from("published-assets").upload(originalPath, bytes, {
       contentType: image.contentType, cacheControl: "31536000", upsert: false,
     });
-    if (originalError) return reply({ error: "原圖保存失敗，未修改頁面。" }, 503);
+    if (originalError) {
+      console.error("[cms-assets] original-upload-failed", { requestId, code: originalError.name });
+      return reply({ error: "原圖保存失敗，未修改頁面。" }, 503);
+    }
     const { error: optimizedError } = await auth.client.storage.from("published-assets").upload(optimizedPath, optimized.bytes, {
       contentType: optimized.contentType, cacheControl: "31536000", upsert: false,
     });
-    if (optimizedError) return reply({ error: "網站版圖片上傳失敗，未修改頁面。" }, 503);
+    if (optimizedError) {
+      console.error("[cms-assets] optimized-upload-failed", { requestId, code: optimizedError.name });
+      return reply({ error: "網站版圖片上傳失敗，未修改頁面。" }, 503);
+    }
 
     const storage = auth.client.storage.from("published-assets");
     const { data: optimizedData } = storage.getPublicUrl(optimizedPath);
     const savedPercent = Math.round((1 - optimized.optimizedBytes / optimized.originalBytes) * 100);
+    console.info("[cms-assets] completed", { requestId, collection, usage, originalBytes: optimized.originalBytes, optimizedBytes: optimized.optimizedBytes });
     return reply({
       url: optimizedData.publicUrl,
       originalWidth: optimized.originalWidth,
@@ -69,5 +82,8 @@ export async function POST(request: Request) {
       format: "WebP",
       cropPolicy: "contain",
     });
-  } catch { return reply({ error: "圖片上傳服務暫時無法使用。" }, 503); }
+  } catch (error) {
+    console.error("[cms-assets] unexpected", { requestId, error: error instanceof Error ? error.message : "unknown" });
+    return reply({ error: "圖片上傳服務暫時無法使用。" }, 503);
+  }
 }

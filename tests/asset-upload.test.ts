@@ -7,6 +7,8 @@ test("只接受真實簽章與相符 MIME 的 JPG、PNG、WebP", () => {
   assert.deepEqual(detectAcceptedImage(new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a,0,0,0,0]), "image/png", 12), { extension: "png", contentType: "image/png" });
   assert.deepEqual(detectAcceptedImage(new Uint8Array([82,73,70,70,0,0,0,0,87,69,66,80]), "image/webp", 12), { extension: "webp", contentType: "image/webp" });
   assert.equal(detectAcceptedImage(new Uint8Array([0xff,0xd8,0xff,0,0,0,0,0,0,0,0,0]), "text/html", 12), null);
+  assert.deepEqual(detectAcceptedImage(new Uint8Array([0xff,0xd8,0xff,0,0,0,0,0,0,0,0,0]), "", 12), { extension: "jpg", contentType: "image/jpeg" });
+  assert.deepEqual(detectAcceptedImage(new Uint8Array([0xff,0xd8,0xff,0,0,0,0,0,0,0,0,0]), "image/jpg", 12), { extension: "jpg", contentType: "image/jpeg" });
 });
 
 test("拒絕超量、空檔及錯誤內容識別", () => {
