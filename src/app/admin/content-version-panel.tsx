@@ -1,0 +1,12 @@
+"use client";
+
+import { useState } from "react";
+
+type Version = { id: string; revision: number; reason: string; created_at: string; summary: { title?: string; slug?: string; status?: string } };
+
+export function ContentVersionPanel({ articleId, updatedAt, accessToken, onRestored }: { articleId:string; updatedAt:string; accessToken:()=>Promise<string>; onRestored:(item:Record<string,unknown>)=>void }) {
+  const [versions,setVersions]=useState<Version[]>([]); const [loaded,setLoaded]=useState(false); const [busy,setBusy]=useState(false); const [message,setMessage]=useState("");
+  async function load(){setBusy(true);setMessage("");try{const token=await accessToken();const response=await fetch(`/api/cms/versions?article_id=${encodeURIComponent(articleId)}`,{headers:{Authorization:`Bearer ${token}`},cache:"no-store"});const data=await response.json();if(!response.ok){setMessage(data.error||"無法讀取版本。");return;}setVersions(data.versions||[]);setLoaded(true);}catch{setMessage("版本紀錄連線失敗。");}finally{setBusy(false);}}
+  async function restore(version:Version){if(!window.confirm(`確定還原到版本 ${version.revision}？目前內容會先保存成另一個版本。`))return;setBusy(true);setMessage("");try{const token=await accessToken();const response=await fetch(`/api/cms/versions/${version.id}/restore`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`},body:JSON.stringify({expected_updated_at:updatedAt})});const data=await response.json();if(!response.ok){setMessage(data.error||"無法還原版本。");return;}onRestored(data.item);setMessage("版本已還原，還原前內容也已保留。");setLoaded(false);setVersions([]);}catch{setMessage("還原連線失敗，文章沒有被修改。");}finally{setBusy(false);}}
+  return <details className="rounded-xl border border-neutral-200 p-4" onToggle={(event)=>{if(event.currentTarget.open&&!loaded&&!busy)void load();}}><summary className="cursor-pointer">版本紀錄與還原</summary>{message&&<p className="mt-3 text-sm">{message}</p>}{busy&&<p className="mt-3 text-sm text-neutral-500">讀取中…</p>}{!busy&&loaded&&<ul className="mt-3 divide-y">{versions.map((version)=><li key={version.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div><p className="text-sm font-medium">版本 {version.revision}・{version.summary.title||"未命名"}</p><p className="text-xs text-neutral-500">{new Date(version.created_at).toLocaleString("zh-TW")}・{version.reason}</p></div><button type="button" className="underline" onClick={()=>restore(version)}>還原</button></li>)}{versions.length===0&&<li className="py-3 text-sm text-neutral-500">尚無可還原版本。</li>}</ul>}</details>;
+}

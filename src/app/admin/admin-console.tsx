@@ -7,12 +7,15 @@ import Link from "next/link";
 import { ContentBlockEditor } from "./content-block-editor";
 import { CoverImageUploader } from "./cover-image-uploader";
 import { getAdminPreview } from "@/lib/admin-preview";
+import { AiOptimizationPanel } from "./ai-optimization-panel";
+import { ContentVersionPanel } from "./content-version-panel";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
 type EditorItem = Item & {
   slug: string; content: string | null; show_on_homepage: boolean | null; sort_order: number | null;
   description?: string | null; client?: string | null; design_rationale?: string | null;
   excerpt?: string | null; author?: string | null; seo_title?: string | null; seo_description?: string | null;
+  tags?: string[]; faq?: Array<{ question: string; answer: string }>; ai_summary?: string | null;
 };
 
 const SAVE_TIMEOUT_MS = 30_000;
@@ -27,7 +30,7 @@ async function saveRequest(input: RequestInfo | URL, init: RequestInit) {
   }
 }
 
-export function AdminConsole({ configured, writeConfigured }: { configured: boolean; writeConfigured: boolean }) {
+export function AdminConsole({ configured, writeConfigured, aiConfigured }: { configured: boolean; writeConfigured: boolean; aiConfigured: boolean }) {
   const [client] = useState(() => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     // 密碼及登入憑證不存入 localStorage/sessionStorage；重新整理須重新登入。
     auth: { persistSession: false, autoRefreshToken: true, detectSessionInUrl: false },
@@ -77,6 +80,50 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       setEditing(result.item); setOriginal(result.item); setWritable(!!result.writable);
       setNeedsReload(false);
     } catch { setMessage("無法開啟內容，未變更任何資料。"); }
+    finally { setBusy(false); }
+  }
+
+  async function createArticle() {
+    setBusy(true); setMessage("");
+    try {
+      const { data } = await client.auth.getSession();
+      const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+      const response = await fetch("/api/cms", {
+        method: "POST", cache: "no-store",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
+        body: JSON.stringify({ collection: "blog_posts", title: "未命名觀點", slug: `draft-${stamp}`, category: "品牌觀點", author: "華翼品牌策略" }),
+      });
+      const result = await response.json();
+      if (!response.ok) { setMessage(result.error); return; }
+      setCollection("blog_posts"); setEditing(result.item); setOriginal(result.item); setNeedsReload(false);
+      setItems((current) => [result.item, ...current]); setTotal((current) => current + 1);
+      setMessage("已建立草稿，請先修改標題與英文網址代稱。");
+    } catch { setMessage("無法新增草稿，既有內容沒有被修改。"); }
+    finally { setBusy(false); }
+  }
+
+  function acceptServerItem(item: Record<string, unknown>) {
+    const next = item as EditorItem;
+    setEditing(next); setOriginal(next); setNeedsReload(false);
+    setItems((current) => current.map((entry) => entry.id === next.id ? { ...entry, ...next } : entry));
+  }
+
+  async function publishArticle() {
+    if (!editing || !original || collection !== "blog_posts") return;
+    if (JSON.stringify(editing) !== JSON.stringify(original)) { setMessage("請先儲存目前修改，再執行發布檢查。"); return; }
+    if (!window.confirm("確定要通過發布檢查並公開這篇文章？")) return;
+    setBusy(true); setMessage("");
+    try {
+      const { data } = await client.auth.getSession();
+      const response = await fetch(`/api/cms/publish/${editing.id}`, {
+        method: "POST", cache: "no-store",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
+        body: JSON.stringify({ expected_updated_at: original.updated_at }),
+      });
+      const result = await response.json();
+      if (!response.ok) { setNeedsReload(response.status === 409); setMessage(result.error); return; }
+      acceptServerItem(result.item); setMessage("文章已通過檢查並發布。可使用上方按鈕開啟前台。");
+    } catch { setMessage("發布連線失敗，文章仍維持原狀態。"); }
     finally { setBusy(false); }
   }
 
@@ -202,7 +249,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
     <h1 className="text-3xl font-semibold">內容管理</h1>
     <p className="mt-3 text-neutral-600">作品與觀點分開管理；講師頁與 ADS 不在此操作。</p>
     <div className="my-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
-      {configured ? (writable ? "已開放文字、圖文區塊、圖片上傳、拖曳順序、狀態與排序值編輯；新增整筆內容與版本還原仍在製作。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
+      {configured ? (writable ? "已開放作品編輯、觀點新增、圖片上傳、AI 審核、版本還原與人工發布檢查。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
     </div>
     {message && <div role="alert" className="my-4 flex flex-wrap items-center gap-3 text-red-700"><p>{message}</p>{needsReload && editing && <button type="button" className="rounded-full border border-red-700 px-4 py-2 text-sm" disabled={busy} onClick={() => edit(editing.id)}>載入資料庫最新版本</button>}</div>}
     {!signedIn ? <div className="max-w-md">
@@ -228,7 +275,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       <label className="block">網址代稱（英文小寫、數字、連字號）<input className={field} required maxLength={140} pattern="[a-z0-9]+(?:[-_][a-z0-9]+)*" value={editing.slug} onChange={(event) => setEditing({ ...editing, slug: event.target.value })} /></label>
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">分類<input className={field} required maxLength={80} value={editing.category} onChange={(event) => setEditing({ ...editing, category: event.target.value })} /></label>
-        <label className="block">狀態<select className={field} value={editing.status} onChange={(event) => setEditing({ ...editing, status: event.target.value })}><option value="draft">草稿</option><option value="preview">預覽</option><option value="approved">已核准</option><option value="published">已發布</option><option value="archived">封存</option></select></label>
+        <label className="block">狀態<select className={field} value={editing.status} onChange={(event) => setEditing({ ...editing, status: event.target.value })}><option value="draft">草稿</option><option value="preview">預覽</option><option value="approved">已核准</option>{editing.status === "published" && <option value="published">已發布</option>}<option value="archived">封存</option></select></label>
       </div>
       {collection === "works" ? <>
         <label className="block">客戶／專案名稱<input className={field} maxLength={180} value={editing.client || ""} onChange={(event) => setEditing({ ...editing, client: event.target.value })} /></label>
@@ -252,15 +299,19 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
       </div>
       <details className="rounded-xl border border-neutral-200 p-4"><summary className="cursor-pointer">SEO 設定</summary><div className="mt-4 space-y-4"><label className="block">SEO 標題<input className={field} maxLength={180} value={editing.seo_title || ""} onChange={(event) => setEditing({ ...editing, seo_title: event.target.value })} /></label><label className="block">SEO 說明<textarea className={`${field} min-h-24`} maxLength={500} value={editing.seo_description || ""} onChange={(event) => setEditing({ ...editing, seo_description: event.target.value })} /></label></div></details>
+      {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
+      {collection === "blog_posts" && <ContentVersionPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onRestored={acceptServerItem} />}
       <div className="flex flex-wrap items-center gap-3">
         <button className={button} type="submit" value="save" disabled={busy || !writable}>{busy ? "儲存中…" : "儲存修改"}</button>
         <button className="rounded-full border border-neutral-900 bg-white px-6 py-3 text-neutral-900 disabled:opacity-40" type="submit" value="save-preview" disabled={busy || !writable || !nextPreview.href}>儲存並開啟前台 ↗</button>
+        {collection === "blog_posts" && editing.status !== "published" && <button className="rounded-full border border-amber-500 bg-amber-50 px-6 py-3 text-neutral-900 disabled:opacity-40" type="button" disabled={busy || !writable} onClick={publishArticle}>檢查並發布</button>}
         {!nextPreview.href && <span className="text-sm text-neutral-500">{nextPreview.reason}</span>}
       </div>
     </form> : <>
       <div className="flex flex-wrap gap-4">
         <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>
         <button className={button} disabled={busy} onClick={() => load("blog_posts")}>觀點</button>
+        <button className="rounded-full border border-neutral-900 px-6 py-3 disabled:opacity-40" disabled={busy || !writable} onClick={createArticle}>＋ 新增觀點草稿</button>
         <button className="underline" disabled={busy} onClick={logout}>登出</button>
       </div>
       <h2 className="my-5 text-xl">{collection === "works" ? "作品" : "觀點"}・共 {total} 筆</h2>
