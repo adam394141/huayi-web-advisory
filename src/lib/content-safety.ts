@@ -1,5 +1,14 @@
 import sanitizeHtml from "sanitize-html";
 
+export function isTrustedImageSource(src: string): boolean {
+  if (src.startsWith("/") && !src.startsWith("//") && !src.includes("\\")) return true;
+  try {
+    const url = new URL(src);
+    return url.protocol === "https:" && !url.username && !url.password &&
+      ["huayi.tw", "rhkmzcyfzemlobznltyz.supabase.co"].includes(url.hostname);
+  } catch { return false; }
+}
+
 /** 僅在伺服器資料出口使用：保留圖文，移除腳本、事件、表單及嵌入頁面。 */
 export function cleanContent(html: string): string {
   return sanitizeHtml(html, {
@@ -13,12 +22,7 @@ export function cleanContent(html: string): string {
       if (frame.tag !== "img") return false;
       const src = frame.attribs.src;
       if (!src) return true;
-      if (src.startsWith("/") && !src.startsWith("//") && !src.includes("\\")) return false;
-      try {
-        const url = new URL(src);
-        return url.protocol !== "https:" || !!url.username || !!url.password ||
-          !["huayi.tw", "rhkmzcyfzemlobznltyz.supabase.co"].includes(url.hostname);
-      } catch { return true; }
+      return !isTrustedImageSource(src);
     },
   });
 }

@@ -6,6 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
+type EditorItem = Item & {
+  slug: string; content: string | null; show_on_homepage: boolean | null; sort_order: number | null;
+  description?: string | null; client?: string | null; design_rationale?: string | null;
+  excerpt?: string | null; author?: string | null; seo_title?: string | null; seo_description?: string | null;
+};
 
 export function AdminConsole({ configured }: { configured: boolean }) {
   const [client] = useState(() => createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
@@ -22,6 +27,10 @@ export function AdminConsole({ configured }: { configured: boolean }) {
   const [items, setItems] = useState<Item[]>([]);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
+  const [writable, setWritable] = useState(false);
+  const [editing, setEditing] = useState<EditorItem | null>(null);
+  const [original, setOriginal] = useState<EditorItem | null>(null);
+  const [imageSize, setImageSize] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -36,8 +45,51 @@ export function AdminConsole({ configured }: { configured: boolean }) {
       });
       const result = await response.json();
       if (!response.ok) { setItems([]); setTotal(0); setMessage(result.error); return; }
-      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setSignedIn(true);
+      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setSignedIn(true); setWritable(!!result.writable); setEditing(null); setOriginal(null);
     } catch { setMessage("連線失敗，未變更任何資料。"); }
+    finally { setBusy(false); }
+  }
+
+  async function edit(id: string) {
+    setBusy(true); setMessage(""); setImageSize("");
+    try {
+      const { data } = await client.auth.getSession();
+      const response = await fetch(`/api/cms?collection=${collection}&id=${encodeURIComponent(id)}`, {
+        headers: { Authorization: `Bearer ${data.session?.access_token || ""}` }, cache: "no-store",
+      });
+      const result = await response.json();
+      if (!response.ok) { setMessage(result.error); return; }
+      setEditing(result.item); setOriginal(result.item); setWritable(!!result.writable);
+    } catch { setMessage("無法開啟內容，未變更任何資料。"); }
+    finally { setBusy(false); }
+  }
+
+  async function save(event: FormEvent) {
+    event.preventDefault();
+    if (!editing || !original) return;
+    const common = ["title", "slug", "category", "content", "cover_image", "status", "show_on_homepage", "sort_order", "seo_title", "seo_description"] as const;
+    const specific = collection === "works" ? ["description", "client", "design_rationale"] as const : ["excerpt", "author"] as const;
+    const changes: Record<string, string | number | boolean | null> = {};
+    for (const key of [...common, ...specific]) {
+      const next = editing[key] ?? (key === "sort_order" ? 0 : key === "show_on_homepage" ? false : "");
+      const previous = original[key] ?? (key === "sort_order" ? 0 : key === "show_on_homepage" ? false : "");
+      if (next !== previous) changes[key] = next;
+    }
+    if (!Object.keys(changes).length) { setMessage("沒有需要儲存的變更。"); return; }
+    setBusy(true); setMessage("");
+    try {
+      const { data } = await client.auth.getSession();
+      const response = await fetch("/api/cms", {
+        method: "PATCH", cache: "no-store",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
+        body: JSON.stringify({ collection, id: editing.id, expected_updated_at: original.updated_at, changes }),
+      });
+      const result = await response.json();
+      if (!response.ok) { setMessage(result.error); return; }
+      setEditing(result.item); setOriginal(result.item);
+      setItems((current) => current.map((item) => item.id === result.item.id ? { ...item, ...result.item } : item));
+      setMessage("已安全儲存，修改前版本已保留。");
+    } catch { setMessage("儲存失敗，未變更任何資料。"); }
     finally { setBusy(false); }
   }
 
@@ -74,7 +126,7 @@ export function AdminConsole({ configured }: { configured: boolean }) {
   async function logout() {
     setBusy(true);
     try { await client.auth.signOut({ scope: "local" }); }
-    finally { setSignedIn(false); setFactorId(""); setQr(""); setPassword(""); setCode(""); setItems([]); setTotal(0); setMessage(""); setBusy(false); }
+    finally { setSignedIn(false); setFactorId(""); setQr(""); setPassword(""); setCode(""); setItems([]); setEditing(null); setOriginal(null); setTotal(0); setMessage(""); setBusy(false); }
   }
 
   const field = "mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base";
@@ -84,7 +136,7 @@ export function AdminConsole({ configured }: { configured: boolean }) {
     <h1 className="text-3xl font-semibold">內容管理</h1>
     <p className="mt-3 text-neutral-600">作品與觀點分開管理；講師頁與 ADS 不在此操作。</p>
     <div className="my-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
-      {configured ? "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。" : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
+      {configured ? (writable ? "已開放文字、狀態與排序值編輯；新增、圖片上傳、拖曳排序與還原仍在製作。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
     </div>
     {message && <p role="alert" className="my-4 text-red-700">{message}</p>}
     {!signedIn ? <div className="max-w-md">
@@ -100,14 +152,42 @@ export function AdminConsole({ configured }: { configured: boolean }) {
         <button type="button" className="ml-4 underline" disabled={busy} onClick={logout}>取消並登出</button>
       </form>}
       <p className="mt-5 text-sm text-neutral-600">不開放自行註冊。帳號或驗證器遺失時，由 Supabase 專案管理者確認身分後處理；不能跳過雙重驗證。</p>
-    </div> : <>
+    </div> : editing ? <form onSubmit={save} className="max-w-3xl space-y-5">
+      <div className="flex flex-wrap items-center gap-4"><button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); }}>← 返回列表</button><span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span></div>
+      <label className="block">標題<input className={field} required maxLength={180} value={editing.title} onChange={(event) => setEditing({ ...editing, title: event.target.value })} /></label>
+      <label className="block">網址代稱（英文小寫、數字、連字號）<input className={field} required maxLength={140} pattern="[a-z0-9]+(?:[-_][a-z0-9]+)*" value={editing.slug} onChange={(event) => setEditing({ ...editing, slug: event.target.value })} /></label>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block">分類<input className={field} required maxLength={80} value={editing.category} onChange={(event) => setEditing({ ...editing, category: event.target.value })} /></label>
+        <label className="block">狀態<select className={field} value={editing.status} onChange={(event) => setEditing({ ...editing, status: event.target.value })}><option value="draft">草稿</option><option value="preview">預覽</option><option value="approved">已核准</option><option value="published">已發布</option><option value="archived">封存</option></select></label>
+      </div>
+      {collection === "works" ? <>
+        <label className="block">客戶／專案名稱<input className={field} maxLength={180} value={editing.client || ""} onChange={(event) => setEditing({ ...editing, client: event.target.value })} /></label>
+        <label className="block">列表摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.description || ""} onChange={(event) => setEditing({ ...editing, description: event.target.value })} /></label>
+        <label className="block">設計說明<textarea className={`${field} min-h-36`} maxLength={20000} value={editing.design_rationale || ""} onChange={(event) => setEditing({ ...editing, design_rationale: event.target.value })} /></label>
+      </> : <>
+        <label className="block">作者<input className={field} maxLength={180} value={editing.author || ""} onChange={(event) => setEditing({ ...editing, author: event.target.value })} /></label>
+        <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
+      </>}
+      <label className="block">完整內文（支援安全 HTML）<textarea className={`${field} min-h-80 font-mono text-sm`} maxLength={200000} value={editing.content || ""} onChange={(event) => setEditing({ ...editing, content: event.target.value })} /></label>
+      <label className="block">封面圖片網址<input className={field} maxLength={2048} value={editing.cover_image || ""} onChange={(event) => { setEditing({ ...editing, cover_image: event.target.value }); setImageSize(""); }} /></label>
+      {editing.cover_image && <div><div className="overflow-hidden rounded-2xl bg-neutral-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={editing.cover_image} alt="封面預覽" className="max-h-80 w-full object-contain" onLoad={(event) => setImageSize(`${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px`)} onError={() => setImageSize("圖片無法載入，請確認網址")} />
+      </div><p className="mt-2 text-sm text-neutral-600">實際尺寸：{imageSize || "讀取中…"}；建議 1200 × 900 px，顯示時保留比例、不裁切。</p></div>}
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="block">排序值<input className={field} type="number" min={-100000} max={100000} value={editing.sort_order ?? 0} onChange={(event) => setEditing({ ...editing, sort_order: Number(event.target.value) })} /></label>
+        <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
+      </div>
+      <details className="rounded-xl border border-neutral-200 p-4"><summary className="cursor-pointer">SEO 設定</summary><div className="mt-4 space-y-4"><label className="block">SEO 標題<input className={field} maxLength={180} value={editing.seo_title || ""} onChange={(event) => setEditing({ ...editing, seo_title: event.target.value })} /></label><label className="block">SEO 說明<textarea className={`${field} min-h-24`} maxLength={500} value={editing.seo_description || ""} onChange={(event) => setEditing({ ...editing, seo_description: event.target.value })} /></label></div></details>
+      <button className={button} disabled={busy || !writable}>{busy ? "儲存中…" : "儲存修改"}</button>
+    </form> : <>
       <div className="flex flex-wrap gap-4">
         <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>
         <button className={button} disabled={busy} onClick={() => load("blog_posts")}>觀點</button>
         <button className="underline" disabled={busy} onClick={logout}>登出</button>
       </div>
       <h2 className="my-5 text-xl">{collection === "works" ? "作品" : "觀點"}・共 {total} 筆</h2>
-      <ul className="divide-y">{items.map(item => <li key={item.id} className="py-5"><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm">{item.category} · {item.status}</p></li>)}</ul>
+      <ul className="divide-y">{items.map(item => <li key={item.id} className="flex items-center justify-between gap-5 py-5"><div><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm">{item.category} · {item.status}</p></div><button className="shrink-0 underline" disabled={busy} onClick={() => edit(item.id)}>開啟編輯</button></li>)}</ul>
       {!items.length && <p className="py-6">目前沒有可讀取的內容。</p>}
       <div className="mt-5 flex gap-5"><button disabled={busy || page === 0} onClick={() => load(collection, page - 1)}>上一頁</button><span>第 {page + 1} 頁</span><button disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1)}>下一頁</button></div>
     </>}
