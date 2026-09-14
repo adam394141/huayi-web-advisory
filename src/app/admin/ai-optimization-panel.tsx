@@ -3,11 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type AiResult = {
+  fact_ledger: Array<{ claim: string; source_quote: string; status: "supported" | "needs_review" }>;
   article: { title: string; excerpt: string; content_html: string };
   seo: { title: string; description: string; focus_keyword: string; related_keywords: string[] };
   aeo: { direct_answer: string; faq: Array<{ question: string; answer: string }> };
   geo: { entities: Array<{ name: string; type: string }>; source_gaps: string[] };
   tags: string[];
+  internal_links: Array<{ path: string; anchor_text: string; reason: string }>;
+  image_alt_suggestions: Array<{ image_url: string; alt: string }>;
   human_review_notes: string[];
   blocking_issues: string[];
   deterministic_blockers: string[];
@@ -124,6 +127,8 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, accessTo
       {blockers.length > 0 && <div className="rounded-xl border border-red-300 bg-red-50 p-4"><h3 className="font-semibold text-red-800">必須確認的事實</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-red-800">{blockers.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul></div>}
       <div className="rounded-xl bg-white p-4"><h3 className="font-semibold">文章預覽</h3><h4 className="mt-3 text-lg font-semibold">{result.article.title}</h4><p className="mt-2 text-sm text-neutral-600">{result.article.excerpt}</p><div className="mt-3 max-h-72 overflow-auto border-t pt-3 text-sm leading-7" dangerouslySetInnerHTML={{ __html: result.article.content_html }} /></div>
       <div className="grid gap-4 sm:grid-cols-2"><div className="rounded-xl bg-white p-4"><h3 className="font-semibold">SEO</h3><p className="mt-2">{result.seo.title}</p><p className="mt-1 text-sm text-neutral-600">{result.seo.description}</p><p className="mt-2 text-xs">主題：{result.seo.focus_keyword}</p></div><div className="rounded-xl bg-white p-4"><h3 className="font-semibold">AEO／GEO</h3><p className="mt-2 text-sm">{result.aeo.direct_answer}</p><p className="mt-2 text-xs text-neutral-600">FAQ {result.aeo.faq.length} 題・實體 {result.geo.entities.length} 項・來源缺口 {result.geo.source_gaps.length} 項</p></div></div>
+      <details className="rounded-xl bg-white p-4"><summary className="cursor-pointer font-semibold">標籤、站內連結與圖片文字建議</summary><div className="mt-3 space-y-4 text-sm"><p><span className="font-medium">標籤：</span>{result.tags.join("、") || "無"}</p><div><p className="font-medium">站內連結</p><ul className="mt-1 list-disc space-y-1 pl-5">{result.internal_links.map((item,index)=><li key={`${item.path}-${index}`}><code>{item.path}</code>：{item.anchor_text}（{item.reason}）</li>)}{result.internal_links.length===0&&<li>無</li>}</ul></div><div><p className="font-medium">圖片替代文字</p><ul className="mt-1 list-disc space-y-1 pl-5">{result.image_alt_suggestions.map((item,index)=><li key={`${item.image_url}-${index}`}><span className="break-all">{item.image_url}</span>：{item.alt}</li>)}{result.image_alt_suggestions.length===0&&<li>無</li>}</ul></div></div></details>
+      <details className="rounded-xl bg-white p-4"><summary className="cursor-pointer font-semibold">事實來源核對表</summary><ul className="mt-3 space-y-3 text-sm">{result.fact_ledger.map((item,index)=><li key={`${item.claim}-${index}`}><p className="font-medium">{item.status === "supported" ? "已找到來源" : "需人工確認"}：{item.claim}</p><p className="mt-1 text-neutral-600">原始素材：{item.source_quote || "未提供"}</p></li>)}{result.fact_ledger.length===0&&<li>沒有可列出的事實。</li>}</ul></details>
       {(result.human_review_notes.length > 0 || result.geo.source_gaps.length > 0) && <details className="rounded-xl bg-white p-4"><summary className="cursor-pointer font-semibold">人工檢查備註</summary><ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{[...result.human_review_notes,...result.geo.source_gaps].map((item,index)=><li key={`${item}-${index}`}>{item}</li>)}</ul></details>}
       <fieldset className="rounded-xl bg-white p-4"><legend className="font-semibold">選擇要套用的項目</legend><div className="mt-3 grid gap-2 sm:grid-cols-2">{fieldOptions.map(([value,label]) => <label key={value} className="flex items-center gap-2"><input type="checkbox" checked={selected.includes(value)} onChange={(event) => setSelected((current) => event.target.checked ? [...new Set([...current,value])] : current.filter((item)=>item!==value))} />{label}</label>)}</div></fieldset>
       {blockers.length > 0 && <label className="flex items-start gap-2 rounded-xl border border-red-200 bg-white p-4 text-sm"><input className="mt-1" type="checkbox" checked={confirmedBlockers} onChange={(event)=>setConfirmedBlockers(event.target.checked)} /><span>我已逐項核對上述事實；確認後系統才允許套用與後續發布。</span></label>}

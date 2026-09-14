@@ -17,5 +17,6 @@ export function getPublishBlockers(article: PublishableArticle): string[] {
   if (seoDescriptionLength && (seoDescriptionLength < 20 || seoDescriptionLength > 180)) blockers.push("SEO 說明建議維持 20–180 個字元");
   const images = String(article.content || "").match(/<img\b[^>]*>/gi) || [];
   if (images.some((image) => !/\balt=(?:"[^"]+"|'[^']+')/i.test(image))) blockers.push("內文圖片仍有缺少替代文字的項目");
+  if (/<h1\b/i.test(String(article.content || ""))) blockers.push("完整正文不可再放 H1；頁面標題已是唯一 H1");
   return blockers;
 }

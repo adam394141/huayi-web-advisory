@@ -50,6 +50,8 @@ export interface BlogPost {
   cover_image?: string;
   author?: string;
   faq?: Array<{ question: string; answer: string }>;
+  tags?: string[];
+  ai_summary?: string;
   status: string;
   show_on_homepage?: boolean;
   seo_title?: string;
@@ -111,7 +113,7 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const supabase = getReadOnlyClient();
   const { data } = await supabase
     .from("blog_posts")
-    .select(`${POST_FIELDS},content,faq,seo_title,seo_description,og_image`)
+    .select(`${POST_FIELDS},content,faq,tags,ai_summary,seo_title,seo_description,og_image`)
     .eq("slug", slug)
     .eq("status", "published")
     .single();

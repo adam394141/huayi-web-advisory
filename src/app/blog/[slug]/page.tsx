@@ -25,6 +25,7 @@ export async function generateMetadata({
   return {
     title,
     description,
+    keywords: post.tags,
     alternates: { canonical },
     openGraph: {
       title,
@@ -67,6 +68,7 @@ export default async function BlogPostPage({
         { "@type": "ListItem", position: 3, name: post.title, item: `${site}/blog/${slug}` },
       ] },
       { "@type": "Article", headline: post.title, description: post.seo_description || post.excerpt || post.title,
+        ...(post.ai_summary ? { abstract: post.ai_summary } : {}),
         datePublished: post.published_at, dateModified: post.updated_at || post.published_at,
         author: { "@type": post.author && post.author !== "華翼品牌策略" ? "Person" : "Organization", name: post.author || "華翼品牌策略" },
         publisher: { "@id": `${site}/#organization` }, mainEntityOfPage: `${site}/blog/${slug}`,

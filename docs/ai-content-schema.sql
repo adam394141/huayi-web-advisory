@@ -61,6 +61,8 @@ create table if not exists public.content_redirects (
 
 create index if not exists content_ai_runs_content_created_idx on public.content_ai_runs(content_id, created_at desc);
 create index if not exists content_ai_runs_owner_status_idx on public.content_ai_runs(requested_by, status, created_at desc);
+create unique index if not exists content_ai_runs_one_active_idx on public.content_ai_runs(content_id, requested_by)
+where status in ('pending','running');
 create index if not exists content_versions_content_revision_idx on public.content_versions(content_id, revision desc);
 create index if not exists content_redirects_content_idx on public.content_redirects(content_id);
 
@@ -134,12 +136,11 @@ begin
   select * into v_post from public.blog_posts where id=p_content_id;
   if not found then raise exception 'CMS_NOT_FOUND' using errcode='P0002'; end if;
   if v_post.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='PT409'; end if;
-  if (select count(*) from public.content_ai_runs where requested_by=auth.uid() and created_at>now()-interval '1 hour') >= 5
-     or (select count(*) from public.content_ai_runs where requested_by=auth.uid() and created_at>now()-interval '1 day') >= 20 then
-    raise exception 'CMS_AI_RATE_LIMIT' using errcode='PT429';
-  end if;
+  update public.content_ai_runs set status='failed',error_code='STALE',error_message='任務逾時，可安全重試',completed_at=now()
+  where content_id=p_content_id and requested_by=auth.uid() and status in ('pending','running')
+    and created_at<=now()-interval '3 minutes';
   if exists(select 1 from public.content_ai_runs where content_id=p_content_id and requested_by=auth.uid()
-    and status in ('pending','running') and created_at>now()-interval '3 minutes') then
+    and status in ('pending','running')) then
     raise exception 'CMS_AI_ALREADY_RUNNING' using errcode='PT409';
   end if;
   select * into v_run from public.content_ai_runs
@@ -149,6 +150,10 @@ begin
   if found then
     return jsonb_build_object('id',v_run.id,'status',v_run.status,'created_at',v_run.created_at,'reused',true);
   end if;
+  if (select count(*) from public.content_ai_runs where requested_by=auth.uid() and created_at>now()-interval '1 hour') >= 5
+     or (select count(*) from public.content_ai_runs where requested_by=auth.uid() and created_at>now()-interval '1 day') >= 20 then
+    raise exception 'CMS_AI_RATE_LIMIT' using errcode='PT429';
+  end if;
   insert into public.content_ai_runs(content_type,content_id,requested_by,status,input_snapshot,prompt_version,model,input_hash)
   values ('article',p_content_id,auth.uid(),'pending',jsonb_build_object(
     'article',to_jsonb(v_post),
@@ -157,6 +162,8 @@ begin
   ),btrim(p_prompt_version),btrim(p_model),p_input_hash)
   returning * into v_run;
   return jsonb_build_object('id',v_run.id,'status',v_run.status,'created_at',v_run.created_at,'reused',false);
+exception when unique_violation then
+  raise exception 'CMS_AI_ALREADY_RUNNING' using errcode='PT409';
 end;
 $$;
 
