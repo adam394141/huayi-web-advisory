@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseCmsUpdate } from "../src/lib/cms-update";
+import { parseCmsCreate, parseCmsUpdate } from "../src/lib/cms-update";
 import { mapCmsSaveError } from "../src/lib/cms-save-error";
 
 const base = { collection: "works", id: "11111111-1111-4111-8111-111111111111", expected_updated_at: "2026-09-14T00:00:00Z" };
@@ -25,6 +25,14 @@ test("拒絕錯誤狀態、網址、版本與超量內容", () => {
   assert.equal(parseCmsUpdate({ ...base, changes: { cover_image: "https://evil.example/x.jpg" } }), null);
   assert.equal(parseCmsUpdate({ ...base, expected_updated_at: "bad", changes: { title: "作品" } }), null);
   assert.equal(parseCmsUpdate({ ...base, changes: { content: "x".repeat(200_001) } }), null);
+});
+
+test("只允許新增觀點草稿且網址必須安全", () => {
+  assert.deepEqual(parseCmsCreate({ collection:"blog_posts", title:"新文章", slug:"new-article", category:"品牌觀點", author:"華翼" }), {
+    collection:"blog_posts", title:"新文章", slug:"new-article", category:"品牌觀點", author:"華翼",
+  });
+  assert.equal(parseCmsCreate({ collection:"works", title:"作品", slug:"work", category:"設計" }), null);
+  assert.equal(parseCmsCreate({ collection:"blog_posts", title:"文章", slug:"中文", category:"觀點" }), null);
 });
 
 test("儲存錯誤可區分鎖定、逾時、衝突與未知錯誤", () => {

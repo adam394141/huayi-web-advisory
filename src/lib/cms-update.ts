@@ -24,6 +24,29 @@ export type ParsedCmsUpdate = {
   changes: CmsChanges;
 };
 
+export type ParsedCmsCreate = {
+  collection: "blog_posts";
+  title: string;
+  slug: string;
+  category: string;
+  author: string | null;
+};
+
+export function parseCmsCreate(value: unknown): ParsedCmsCreate | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const body = value as Record<string, unknown>;
+  if (body.collection !== "blog_posts") return null;
+  for (const key of ["title", "slug", "category"]) if (typeof body[key] !== "string" || !(body[key] as string).trim()) return null;
+  if (typeof body.author !== "string" && body.author != null) return null;
+  const title = (body.title as string).trim();
+  const slug = (body.slug as string).trim();
+  const category = (body.category as string).trim();
+  const author = typeof body.author === "string" ? body.author.trim() : "";
+  if (title.length > LIMITS.title || slug.length > LIMITS.slug || category.length > LIMITS.category || author.length > LIMITS.author) return null;
+  if (!SLUG.test(slug)) return null;
+  return { collection: "blog_posts", title, slug, category, author: author || null };
+}
+
 export function parseCmsUpdate(value: unknown): ParsedCmsUpdate | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const body = value as Record<string, unknown>;

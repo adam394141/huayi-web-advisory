@@ -82,6 +82,9 @@ begin
   select * into v_old_post from public.blog_posts where id = p_id for update;
   if not found then raise exception 'CMS_NOT_FOUND' using errcode='P0002'; end if;
   if v_old_post.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='PT409'; end if;
+  if p_changes->>'status'='published' and coalesce(v_old_post.status,'')<>'published' then
+    raise exception 'CMS_USE_PUBLISH_GATE' using errcode='22023';
+  end if;
   select coalesce(max(revision),0)+1 into v_revision from public.content_revisions where content_type='article' and content_id=p_id;
   insert into public.content_revisions(content_type,content_id,revision,payload,actor,reason)
   values ('article',p_id,v_revision,to_jsonb(v_old_post),auth.uid()::text,'before_update');
@@ -91,7 +94,10 @@ begin
     category=case when p_changes?'category' then btrim(p_changes->>'category') else category end,
     content=case when p_changes?'content' then p_changes->>'content' else content end,
     cover_image=case when p_changes?'cover_image' then nullif(p_changes->>'cover_image','') else cover_image end,
-    status=case when p_changes?'status' then p_changes->>'status' else status end,
+    status=case
+      when p_changes?'status' then p_changes->>'status'
+      when coalesce(v_old_post.status,'')='published' and p_changes ?| array['title','slug','category','content','cover_image','seo_title','seo_description','excerpt','author'] then 'preview'
+      else status end,
     show_on_homepage=case when p_changes?'show_on_homepage' then (p_changes->>'show_on_homepage')::boolean else show_on_homepage end,
     sort_order=case when p_changes?'sort_order' then (p_changes->>'sort_order')::integer else sort_order end,
     seo_title=case when p_changes?'seo_title' then nullif(p_changes->>'seo_title','') else seo_title end,

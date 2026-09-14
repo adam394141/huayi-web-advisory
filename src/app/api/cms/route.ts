@@ -1,6 +1,6 @@
 import { verifyAdmin } from "@/lib/admin-auth";
 import { parseCollection } from "@/lib/admin-policy";
-import { parseCmsUpdate } from "@/lib/cms-update";
+import { parseCmsCreate, parseCmsUpdate } from "@/lib/cms-update";
 import { cleanContent } from "@/lib/content-safety";
 import { mapCmsSaveError } from "@/lib/cms-save-error";
 import { revalidatePath } from "next/cache";
@@ -14,7 +14,7 @@ function reply(body: unknown, status = 200) {
 function detailFields(collection: "works" | "blog_posts") {
   return collection === "works"
     ? "id,title,slug,description,content,category,cover_image,status,sort_order,show_on_homepage,updated_at,client,design_rationale,seo_title,seo_description"
-    : "id,title,slug,excerpt,content,category,cover_image,status,sort_order,show_on_homepage,updated_at,author,seo_title,seo_description";
+    : "id,title,slug,excerpt,content,category,cover_image,status,sort_order,show_on_homepage,updated_at,author,seo_title,seo_description,tags,faq,ai_summary,og_image,published_at";
 }
 
 export async function GET(request: Request) {
@@ -46,8 +46,27 @@ export async function GET(request: Request) {
   } catch { return reply({ error: "服務暫時無法使用，請稍後重試。" }, 503); }
 }
 
-// 寫入尚未完成交易、稽核及 RLS 驗收，明確拒絕；不可返回假的儲存成功。
-export async function POST() { return reply({ error: "安全寫入尚未啟用。" }, 503); }
+export async function POST(request: Request) {
+  try {
+    const auth = await verifyAdmin(request);
+    if (auth.status !== 200) return reply({ error: "請以獲授權的管理員帳號完成雙重驗證。" }, auth.status);
+    if (process.env.CMS_WRITE_ENABLED !== "true") return reply({ error: "安全寫入尚未啟用。" }, 503);
+    let json: unknown;
+    try { json = await request.json(); } catch { return reply({ error: "資料格式不正確。" }, 400); }
+    const input = parseCmsCreate(json);
+    if (!input) return reply({ error: "目前只能新增欄位完整的觀點草稿。" }, 400);
+    const { data, error } = await auth.client.rpc("cms_create_blog_post", {
+      p_title: input.title, p_slug: input.slug, p_category: input.category, p_author: input.author,
+    });
+    if (error || !data) {
+      if (error?.code === "23505" || error?.message?.includes("DUPLICATE")) return reply({ error: "網址代稱已存在，請換一個英文網址。" }, 409);
+      return reply({ error: "無法新增草稿，既有內容沒有被修改。" }, 503);
+    }
+    const item = data as Record<string, unknown>;
+    if (typeof item.content === "string") item.content = cleanContent(item.content);
+    return reply({ item }, 201);
+  } catch { return reply({ error: "服務暫時無法使用，請稍後重試。" }, 503); }
+}
 export async function PATCH(request: Request) {
   const requestId = crypto.randomUUID();
   try {
@@ -62,6 +81,9 @@ export async function PATCH(request: Request) {
     try { json = JSON.parse(raw); } catch { return reply({ error: "資料格式不正確。", request_id: requestId }, 400); }
     const update = parseCmsUpdate(json);
     if (!update) return reply({ error: "欄位內容或格式不正確。", request_id: requestId }, 400);
+    if (update.collection === "blog_posts" && update.changes.status === "published") {
+      return reply({ error: "觀點文章請使用「檢查並發布」，不能略過發布檢查。", request_id: requestId }, 400);
+    }
     console.info("[cms-save] validated", {
       requestId,
       collection: update.collection,
