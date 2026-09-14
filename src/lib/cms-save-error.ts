@@ -11,7 +11,7 @@ export type CmsSaveError = {
 
 /** 將資料庫錯誤轉成不洩漏內部結構、但足以讓管理者處理的訊息。 */
 export function mapCmsSaveError(error: DatabaseError): CmsSaveError {
-  if (error.code === "40001") {
+  if (error.code === "PT409" || error.code === "40001") {
     return { message: "這筆內容已被更新，請重新載入後再修改。", status: 409, kind: "conflict" };
   }
   if (error.code === "23505") {

@@ -55,7 +55,8 @@ begin
   if p_collection = 'works' then
     select * into v_old_work from public.works where id = p_id for update;
     if not found then raise exception 'CMS_NOT_FOUND' using errcode='P0002'; end if;
-    if v_old_work.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='40001'; end if;
+    -- PT409 是 PostgREST 的明確 HTTP 409；不可使用可自動重試的 40001，否則會形成重試風暴。
+    if v_old_work.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='PT409'; end if;
     select coalesce(max(revision),0)+1 into v_revision from public.content_revisions where content_type='case' and content_id=p_id;
     insert into public.content_revisions(content_type,content_id,revision,payload,actor,reason)
     values ('case',p_id,v_revision,to_jsonb(v_old_work),auth.uid()::text,'before_update');
@@ -80,7 +81,7 @@ begin
 
   select * into v_old_post from public.blog_posts where id = p_id for update;
   if not found then raise exception 'CMS_NOT_FOUND' using errcode='P0002'; end if;
-  if v_old_post.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='40001'; end if;
+  if v_old_post.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='PT409'; end if;
   select coalesce(max(revision),0)+1 into v_revision from public.content_revisions where content_type='article' and content_id=p_id;
   insert into public.content_revisions(content_type,content_id,revision,payload,actor,reason)
   values ('article',p_id,v_revision,to_jsonb(v_old_post),auth.uid()::text,'before_update');

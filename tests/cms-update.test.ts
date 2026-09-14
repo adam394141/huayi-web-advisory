@@ -33,6 +33,7 @@ test("儲存錯誤可區分鎖定、逾時、衝突與未知錯誤", () => {
   });
   assert.equal(mapCmsSaveError({ code: "57014" }).kind, "timeout");
   assert.equal(mapCmsSaveError({ message: "AbortError: request aborted" }).kind, "timeout");
+  assert.equal(mapCmsSaveError({ code: "PT409", message: "CMS_CONFLICT" }).kind, "conflict");
   assert.equal(mapCmsSaveError({ code: "40001" }).kind, "conflict");
   assert.equal(mapCmsSaveError({ code: "23505" }).kind, "duplicate");
   assert.equal(mapCmsSaveError({ code: "XX000" }).kind, "unknown");
