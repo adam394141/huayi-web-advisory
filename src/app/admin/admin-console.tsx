@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
+import { ContentBlockEditor } from "./content-block-editor";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
 type EditorItem = Item & {
@@ -136,7 +137,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
     <h1 className="text-3xl font-semibold">內容管理</h1>
     <p className="mt-3 text-neutral-600">作品與觀點分開管理；講師頁與 ADS 不在此操作。</p>
     <div className="my-6 rounded-xl border border-amber-300 bg-amber-50 p-4">
-      {configured ? (writable ? "已開放文字、狀態與排序值編輯；新增、圖片上傳、拖曳排序與還原仍在製作。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
+      {configured ? (writable ? "已開放文字、圖文區塊、圖片上傳、拖曳順序、狀態與排序值編輯；新增整筆內容與版本還原仍在製作。" : "目前為安全唯讀階段，新增、發布、排序與還原尚未啟用。") : "後台建置中：管理員授權與資料庫權限尚未驗收，登入及寫入未開放。"}
     </div>
     {message && <p role="alert" className="my-4 text-red-700">{message}</p>}
     {!signedIn ? <div className="max-w-md">
@@ -168,7 +169,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         <label className="block">作者<input className={field} maxLength={180} value={editing.author || ""} onChange={(event) => setEditing({ ...editing, author: event.target.value })} /></label>
         <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
       </>}
-      <label className="block">完整內文（支援安全 HTML）<textarea className={`${field} min-h-80 font-mono text-sm`} maxLength={200000} value={editing.content || ""} onChange={(event) => setEditing({ ...editing, content: event.target.value })} /></label>
+      <ContentBlockEditor key={`${collection}:${editing.id}`} value={editing.content || ""} onChange={(content) => setEditing({ ...editing, content })} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} previewHref={`/${collection === "works" ? "works" : "blog"}/${editing.slug}`} />
       <label className="block">封面圖片網址<input className={field} maxLength={2048} value={editing.cover_image || ""} onChange={(event) => { setEditing({ ...editing, cover_image: event.target.value }); setImageSize(""); }} /></label>
       {editing.cover_image && <div><div className="overflow-hidden rounded-2xl bg-neutral-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -191,6 +192,6 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       {!items.length && <p className="py-6">目前沒有可讀取的內容。</p>}
       <div className="mt-5 flex gap-5"><button disabled={busy || page === 0} onClick={() => load(collection, page - 1)}>上一頁</button><span>第 {page + 1} 頁</span><button disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1)}>下一頁</button></div>
     </>}
-    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">上傳與實際尺寸檢查尚在製作中。低解析度原圖不能靠放大改善清晰度。</p></aside>
+    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">上傳時會顯示實際尺寸；接受 4 MB 以下的 JPG、PNG、WebP。低解析度原圖不能靠放大改善清晰度。</p></aside>
   </section>;
 }

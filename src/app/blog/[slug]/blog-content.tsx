@@ -93,7 +93,7 @@ export function BlogContent({ post }: { post: BlogPost }) {
 
         {post.content && (
           <div
-            className="mt-10 text-[15px] leading-[1.9] text-[var(--color-body)] [&_a]:text-[var(--color-gold-dark)] [&_a]:underline [&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--color-gold)] [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-[var(--color-subtle)] [&_h2]:mb-3 [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mb-2 [&_h3]:mt-8 [&_h3]:font-medium [&_h3]:text-[var(--color-fg)] [&_li]:mb-1 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
+            className="mt-10 text-[15px] leading-[1.9] text-[var(--color-body)] [&_a]:text-[var(--color-gold-dark)] [&_a]:underline [&_blockquote]:my-6 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--color-gold)] [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-[var(--color-subtle)] [&_figcaption]:mt-3 [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:text-[var(--color-subtle)] [&_figure]:my-8 [&_figure]:overflow-hidden [&_figure]:rounded-[var(--radius-image)] [&_figure_img]:h-auto [&_figure_img]:w-full [&_figure_img]:object-contain [&_h2]:mb-3 [&_h2]:mt-10 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mb-2 [&_h3]:mt-8 [&_h3]:font-medium [&_h3]:text-[var(--color-fg)] [&_li]:mb-1 [&_ol]:mb-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         )}

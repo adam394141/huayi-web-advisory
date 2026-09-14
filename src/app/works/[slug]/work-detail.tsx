@@ -53,13 +53,14 @@ export function WorkDetail({
             </p>
           )}
 
-          {work.content && (
-            <div
-              className="mt-8 text-[15px] leading-[1.9] text-[var(--color-body)] [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mb-2 [&_h3]:mt-6 [&_h3]:font-medium [&_h3]:text-[var(--color-fg)] [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
-              dangerouslySetInnerHTML={{ __html: work.content }}
-            />
-          )}
         </div>
+
+        {work.content && (
+          <div
+            className="mt-8 text-[15px] leading-[1.9] text-[var(--color-body)] [&_a]:underline [&_figcaption]:mx-auto [&_figcaption]:mt-3 [&_figcaption]:max-w-[800px] [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:text-[var(--color-subtle)] [&_figure]:my-10 [&_figure]:overflow-hidden [&_figure]:rounded-[var(--radius-image)] [&_figure_img]:h-auto [&_figure_img]:w-full [&_figure_img]:object-contain [&_h2]:mx-auto [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:max-w-[800px] [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mx-auto [&_h3]:mb-2 [&_h3]:mt-6 [&_h3]:max-w-[800px] [&_h3]:font-medium [&_h3]:text-[var(--color-fg)] [&_li]:mx-auto [&_li]:max-w-[760px] [&_p]:mx-auto [&_p]:mb-4 [&_p]:max-w-[800px] [&_ul]:mx-auto [&_ul]:mb-4 [&_ul]:max-w-[800px] [&_ul]:list-disc [&_ul]:pl-5"
+            dangerouslySetInnerHTML={{ __html: work.content }}
+          />
+        )}
 
         {galleryUrls.length > 0 && (
           <div className="mt-16 space-y-6">

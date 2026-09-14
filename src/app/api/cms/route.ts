@@ -1,6 +1,7 @@
 import { verifyAdmin } from "@/lib/admin-auth";
 import { parseCollection } from "@/lib/admin-policy";
 import { parseCmsUpdate } from "@/lib/cms-update";
+import { cleanContent } from "@/lib/content-safety";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,10 @@ export async function GET(request: Request) {
       const { data, error } = await auth.client.from(collection).select(detailFields(collection)).eq("id", id).maybeSingle();
       if (error) return reply({ error: "暫時無法讀取內容。" }, 503);
       if (!data) return reply({ error: "找不到這筆內容。" }, 404);
-      return reply({ item: data, writable: process.env.CMS_WRITE_ENABLED === "true" });
+      const detail = data as unknown as Record<string, unknown>;
+      const content = typeof detail.content === "string" ? cleanContent(detail.content) : detail.content;
+      const item = { ...detail, content };
+      return reply({ item, writable: process.env.CMS_WRITE_ENABLED === "true" });
     }
     const page = Number(search.get("page") || "0");
     if (!Number.isSafeInteger(page) || page < 0 || page > 1000) return reply({ error: "頁碼無效。" }, 400);
@@ -71,7 +75,9 @@ export async function PATCH(request: Request) {
     const { data: saved, error: readError } = await auth.client.from(update.collection)
       .select(detailFields(update.collection)).eq("id", update.id).single();
     if (readError || !saved) return reply({ error: "內容已儲存，但重新讀取失敗；請重新載入列表。" }, 503);
-    const savedItem = saved as unknown as { slug: string } & Record<string, unknown>;
+    const savedDetail = saved as unknown as Record<string, unknown>;
+    const savedContent = typeof savedDetail.content === "string" ? cleanContent(savedDetail.content) : savedDetail.content;
+    const savedItem = { ...savedDetail, content: savedContent } as unknown as { slug: string } & Record<string, unknown>;
     revalidatePath(update.collection === "works" ? "/works" : "/blog");
     revalidatePath("/");
     if (result?.old_slug) revalidatePath(`/${update.collection === "works" ? "works" : "blog"}/${result.old_slug}`);
