@@ -11,6 +11,7 @@ export function WorkCover({ src, title }: { src?: string; title: string }) {
           width={600}
           height={450}
           sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+          quality={82}
           className="block h-auto w-full rounded-[var(--radius-card)]"
         />
       ) : (

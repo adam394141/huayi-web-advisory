@@ -64,8 +64,9 @@ export function BlogContent({ post }: { post: BlogPost }) {
               alt={post.title}
               width={800}
               height={450}
+              sizes="(max-width: 832px) 100vw, 800px"
               className="w-full object-cover"
-              priority
+              preload
             />
           </motion.div>
         )}

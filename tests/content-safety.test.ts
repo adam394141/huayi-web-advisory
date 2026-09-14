@@ -8,6 +8,13 @@ test("圖文保留標題、段落、連結與可信原圖", () => {
   assert.match(result, /upload\/a.jpg/);
   assert.match(result, /<strong>顧問<\/strong>/);
 });
+test("保留後台產生的圖片最佳化資訊", () => {
+  const html = '<figure><img src="https://rhkmzcyfzemlobznltyz.supabase.co/storage/v1/object/public/published-assets/cms/a/optimized/x.webp" alt="作品" width="1600" height="900" data-original-width="2400" data-original-height="1350" data-original-bytes="2000000" data-optimized-bytes="320000"><figcaption>說明</figcaption></figure>';
+  const result = cleanContent(html);
+  assert.match(result, /data-original-width="2400"/);
+  assert.match(result, /data-optimized-bytes="320000"/);
+  assert.match(result, /loading="lazy"/);
+});
 test("移除腳本、事件、樣式及嵌入頁面", () => {
   const result = cleanContent('<script>alert(1)</script><p onclick="bad()" style="position:fixed">正常</p><iframe src="https://evil.example"></iframe><svg onload="bad()"></svg><form>test</form>');
   assert.doesNotMatch(result, /script|onclick|style=|iframe|svg|form|alert/);

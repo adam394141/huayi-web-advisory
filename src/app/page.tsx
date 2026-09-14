@@ -254,6 +254,7 @@ export default async function HomePage() {
                       alt={post.title}
                       width={600}
                       height={400}
+                      sizes="(max-width: 767px) 100vw, 33vw"
                       className="aspect-[3/2] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                     />
                   ) : (

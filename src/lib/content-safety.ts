@@ -13,11 +13,16 @@ export function isTrustedImageSource(src: string): boolean {
 export function cleanContent(html: string): string {
   return sanitizeHtml(html, {
     allowedTags: ["p", "br", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "s", "ul", "ol", "li", "blockquote", "a", "img", "figure", "figcaption", "hr", "table", "thead", "tbody", "tr", "th", "td", "div", "span"],
-    allowedAttributes: { a: ["href", "title"], img: ["src", "alt", "width", "height"], th: ["colspan", "rowspan"], td: ["colspan", "rowspan"] },
+    allowedAttributes: {
+      a: ["href", "title"],
+      img: ["src", "alt", "width", "height", "loading", "decoding", "data-original-width", "data-original-height", "data-original-bytes", "data-optimized-bytes"],
+      th: ["colspan", "rowspan"],
+      td: ["colspan", "rowspan"],
+    },
     allowedSchemes: ["https", "mailto", "tel"],
     allowedSchemesByTag: { img: ["https"] },
     allowProtocolRelative: false,
-    transformTags: { img: (_tag, attributes) => ({ tagName: "img", attribs: { ...attributes, loading: "lazy" } }) },
+    transformTags: { img: (_tag, attributes) => ({ tagName: "img", attribs: { ...attributes, loading: "lazy", decoding: "async" } }) },
     exclusiveFilter: (frame) => {
       if (frame.tag !== "img") return false;
       const src = frame.attribs.src;

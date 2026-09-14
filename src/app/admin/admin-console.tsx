@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { ContentBlockEditor } from "./content-block-editor";
+import { CoverImageUploader } from "./cover-image-uploader";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
 type EditorItem = Item & {
@@ -31,7 +32,6 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
   const [writable, setWritable] = useState(writeConfigured);
   const [editing, setEditing] = useState<EditorItem | null>(null);
   const [original, setOriginal] = useState<EditorItem | null>(null);
-  const [imageSize, setImageSize] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -52,7 +52,7 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
   }
 
   async function edit(id: string) {
-    setBusy(true); setMessage(""); setImageSize("");
+    setBusy(true); setMessage("");
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms?collection=${collection}&id=${encodeURIComponent(id)}`, {
@@ -169,12 +169,8 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
         <label className="block">作者<input className={field} maxLength={180} value={editing.author || ""} onChange={(event) => setEditing({ ...editing, author: event.target.value })} /></label>
         <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
       </>}
-      <ContentBlockEditor key={`${collection}:${editing.id}`} value={editing.content || ""} onChange={(content) => setEditing({ ...editing, content })} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} previewHref={`/${collection === "works" ? "works" : "blog"}/${editing.slug}`} />
-      <label className="block">封面圖片網址<input className={field} maxLength={2048} value={editing.cover_image || ""} onChange={(event) => { setEditing({ ...editing, cover_image: event.target.value }); setImageSize(""); }} /></label>
-      {editing.cover_image && <div><div className="overflow-hidden rounded-2xl bg-neutral-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={editing.cover_image} alt="封面預覽" className="max-h-80 w-full object-contain" onLoad={(event) => setImageSize(`${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px`)} onError={() => setImageSize("圖片無法載入，請確認網址")} />
-      </div><p className="mt-2 text-sm text-neutral-600">實際尺寸：{imageSize || "讀取中…"}；建議 1200 × 900 px，顯示時保留比例、不裁切。</p></div>}
+      <ContentBlockEditor key={`${collection}:${editing.id}`} value={editing.content || ""} onChange={(content) => setEditing((current) => current ? { ...current, content } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} previewHref={`/${collection === "works" ? "works" : "blog"}/${editing.slug}`} />
+      <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">排序值<input className={field} type="number" min={-100000} max={100000} value={editing.sort_order ?? 0} onChange={(event) => setEditing({ ...editing, sort_order: Number(event.target.value) })} /></label>
         <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
@@ -192,6 +188,6 @@ export function AdminConsole({ configured, writeConfigured }: { configured: bool
       {!items.length && <p className="py-6">目前沒有可讀取的內容。</p>}
       <div className="mt-5 flex gap-5"><button disabled={busy || page === 0} onClick={() => load(collection, page - 1)}>上一頁</button><span>第 {page + 1} 頁</span><button disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1)}>下一頁</button></div>
     </>}
-    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">上傳時會顯示實際尺寸；接受 4 MB 以下的 JPG、PNG、WebP。低解析度原圖不能靠放大改善清晰度。</p></aside>
+    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">接受 4 MB 以下的 JPG、PNG、WebP。上傳後自動保留原圖、移除照片定位等非必要資訊，並產生 WebP 網站版。低解析度原圖不會被放大。</p></aside>
   </section>;
 }

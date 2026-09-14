@@ -32,8 +32,10 @@ export function WorkDetail({
               alt={work.title}
               width={1280}
               height={800}
+              sizes="(max-width: 1312px) 100vw, 1280px"
+              quality={82}
               className="w-full object-contain"
-              priority
+              preload
             />
           </div>
         )}
@@ -103,6 +105,8 @@ function GalleryImage({ url, alt }: { url: string; alt: string }) {
         alt={alt}
         width={1280}
         height={800}
+        sizes="(max-width: 1312px) 100vw, 1280px"
+        quality={82}
         className="w-full object-contain"
         onError={() => setError(true)}
       />
