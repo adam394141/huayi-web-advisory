@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
+import Link from "next/link";
 
 type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
 
@@ -91,6 +92,7 @@ export function AdminConsole({ configured }: { configured: boolean }) {
         <label className="block">管理員 Email<input className={field} type="email" autoComplete="username" required value={email} onChange={e => setEmail(e.target.value)} disabled={!configured || busy} /></label>
         <label className="block">密碼<input className={field} type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} disabled={!configured || busy} /></label>
         <button className={button} disabled={!configured || busy}>登入並進行雙重驗證</button>
+        <p className="text-sm"><Link className="underline" href="/admin/forgot-password">忘記密碼？</Link></p>
       </form> : <form onSubmit={verify} className="space-y-5">
         {qr && <><p>請使用驗證器 App 掃描後輸入六位數驗證碼。請勿分享這個 QR Code。</p><Image unoptimized src={qr} alt="雙重驗證設定 QR Code" width={240} height={240} /></>}
         <label className="block">驗證碼<input className={field} inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required maxLength={6} value={code} onChange={e => setCode(e.target.value)} /></label>
