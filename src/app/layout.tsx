@@ -3,6 +3,7 @@ import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CookieNotice } from "@/components/cookie-notice";
+import { getCanonicalSiteUrl, isIndexableEnvironment } from "@/lib/site-url";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -20,6 +21,7 @@ const notoSerifTC = Noto_Serif_TC({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getCanonicalSiteUrl()),
   icons: { icon: "/brand/huayi-logo.svg" },
   title: "華翼品牌策略 HUAYI｜品牌顧問 × AI 導入",
   description:
@@ -32,6 +34,7 @@ export const metadata: Metadata = {
     locale: "zh_TW",
     type: "website",
   },
+  robots: isIndexableEnvironment() ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
