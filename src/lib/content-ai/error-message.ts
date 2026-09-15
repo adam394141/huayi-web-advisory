@@ -24,9 +24,16 @@ export function toSafeAiFailure(error: unknown): AiFailure {
     };
   }
 
+  if ((statusCode === 401 || statusCode === 403) && /api.?key|permission|unauth|forbidden/i.test(rawMessage)) {
+    return {
+      code: "AI_PROVIDER_AUTH_FAILED",
+      message: "AI 服務驗證失敗；文章原稿沒有被修改。請由專案管理者檢查伺服器端金鑰設定。",
+    };
+  }
+
   if (statusCode === 429) {
     return {
-      code: "AI_GATEWAY_RATE_LIMITED",
+      code: "AI_PROVIDER_RATE_LIMITED",
       message: "AI 目前請求較多；文章原稿沒有被修改，請稍後再安全重試。",
     };
   }

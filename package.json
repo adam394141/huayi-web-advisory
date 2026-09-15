@@ -10,6 +10,7 @@
     "test": "node --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.70",
     "@supabase/supabase-js": "^2.112.4",
     "ai": "^7.0.99",
     "clsx": "^2.1.1",

@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { after } from "next/server";
 import { verifyAdmin } from "@/lib/admin-auth";
 import { CONTENT_AI_PROMPT_VERSION } from "@/lib/content-ai/prompt";
-import { isContentAiConfigured } from "@/lib/content-ai/provider";
+import { getContentAiSettings, isContentAiConfigured } from "@/lib/content-ai/provider";
 import { isUuid, parseAiStartRequest } from "@/lib/content-ai/request";
 import { processContentAiRun } from "@/lib/content-ai/job-processor";
 
@@ -40,14 +40,15 @@ export async function POST(request: Request) {
   const input = parseAiStartRequest(json);
   if (!input) return reply({ error: "文章或素材格式不正確。" }, 400);
   const inputHash = createHash("sha256").update(`${input.articleId}\n${input.expectedUpdatedAt}\n${input.sourceMaterial}`).digest("hex");
-  const model = process.env.CONTENT_AI_MODEL!;
+  const settings = getContentAiSettings();
+  if (!settings) return reply({ error: "AI 優化設定不完整，文章仍可照常編輯。" }, 503);
   const { data, error } = await auth.client.rpc("cms_start_ai_run", {
     p_content_id: input.articleId,
     p_expected_updated_at: input.expectedUpdatedAt,
     p_source_material: input.sourceMaterial,
     p_input_hash: inputHash,
     p_prompt_version: CONTENT_AI_PROMPT_VERSION,
-    p_model: model,
+    p_model: settings.modelId,
   });
   if (error || !data) {
     const message = error?.message || "";

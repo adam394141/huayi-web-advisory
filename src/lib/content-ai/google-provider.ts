@@ -1,26 +1,26 @@
 import "server-only";
-import { gateway, generateText, Output } from "ai";
+import { createGoogle } from "@ai-sdk/google";
+import { generateText, Output } from "ai";
 import { contentAiOutputSchema } from "./schema";
-import { getContentAiSettings } from "./provider";
+import { getContentAiSettings, getGoogleApiKey } from "./provider";
 import type { ContentAiProvider } from "./provider";
 
-export const gatewayContentProvider: ContentAiProvider = {
+export const googleContentProvider: ContentAiProvider = {
   async generate({ system, prompt }) {
     const settings = getContentAiSettings();
-    if (!settings || settings.provider !== "gateway") throw new Error("CONTENT_AI_NOT_CONFIGURED");
+    const apiKey = getGoogleApiKey();
+    if (!settings || settings.provider !== "google" || !apiKey) {
+      throw new Error("CONTENT_AI_NOT_CONFIGURED");
+    }
 
+    const google = createGoogle({ apiKey });
     const result = await generateText({
-      model: gateway(settings.model),
+      model: google(settings.model),
       system,
       prompt,
       output: Output.object({ schema: contentAiOutputSchema }),
       abortSignal: AbortSignal.timeout(75_000),
       maxRetries: 0,
-      providerOptions: {
-        gateway: {
-          tags: ["site:huayi-advisory", "feature:content-seo"],
-        },
-      },
     });
 
     return {

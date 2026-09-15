@@ -5,6 +5,7 @@ import { renderArticleSections } from "../src/lib/content-ai/render-safe-html";
 import { buildDeterministicBlockers, extractFactSignals } from "../src/lib/content-ai/fact-guard";
 import { buildContentOptimizationPrompt } from "../src/lib/content-ai/prompt";
 import { toSafeAiFailure } from "../src/lib/content-ai/error-message";
+import { getContentAiSettings, isContentAiConfigured } from "../src/lib/content-ai/provider";
 
 const output = contentAiOutputSchema.parse({
   fact_ledger: [{ claim: "華翼提供品牌策略", source_quote: "華翼提供品牌策略", status: "supported" }],
@@ -56,4 +57,30 @@ test("AI 供應商錯誤只顯示安全且可操作的中文訊息", () => {
   const unknown = toSafeAiFailure(new Error("secret upstream response"));
   assert.equal(unknown.code, "AI_PROVIDER_FAILED");
   assert.doesNotMatch(unknown.message, /secret upstream response/);
+});
+
+test("Gemini 直連設定必須同時具備伺服器端金鑰與合法模型", () => {
+  const configured = {
+    CONTENT_AI_ENABLED: "true",
+    CONTENT_AI_PROVIDER: "google",
+    CONTENT_AI_MODEL: "gemini-2.5-flash",
+    GEMINI_API_KEY: "test-only-key",
+  };
+  assert.deepEqual(getContentAiSettings(configured), {
+    provider: "google",
+    model: "gemini-2.5-flash",
+    modelId: "google/gemini-2.5-flash",
+  });
+  assert.equal(isContentAiConfigured(configured), true);
+  assert.equal(isContentAiConfigured({ ...configured, GEMINI_API_KEY: undefined }), false);
+  assert.equal(isContentAiConfigured({ ...configured, CONTENT_AI_MODEL: "openai/gpt-5.6-sol" }), false);
+});
+
+test("未指定供應商時，有 Gemini 金鑰就優先使用 Google", () => {
+  assert.equal(getContentAiSettings({
+    CONTENT_AI_ENABLED: "true",
+    CONTENT_AI_MODEL: "gemini-2.5-flash",
+    GEMINI_API_KEY: "test-only-key",
+    VERCEL: "1",
+  })?.provider, "google");
 });

@@ -4,7 +4,7 @@
 
 - 僅套用於 Advisory 新官網及 `blog_posts`。
 - 本輪只部署 Preview，不合併 `main`，不調整 Cloudflare 或正式 DNS。
-- AI 模型透過 Vercel AI Gateway 的短效 OIDC 驗證；Vercel 部署不保存 OpenAI 長效金鑰。
+- AI 模型預設直接呼叫 Gemini；金鑰只保存在 Vercel Sensitive 環境變數，不進入 Git、前端或資料庫。
 - 正式啟用前，Preview 必須維持 `noindex`。
 
 ## 一次性資料庫安裝順序
@@ -24,12 +24,14 @@
 
 - `CMS_WRITE_ENABLED=true`
 - `CONTENT_AI_ENABLED=true`
-- `CONTENT_AI_MODEL=openai/gpt-5.6-sol`：已向 AI Gateway 查證可用且支援結構化輸出的實作模型 ID；Astra 僅保留策略發想
+- `CONTENT_AI_PROVIDER=google`
+- `GEMINI_API_KEY`：只設為 Vercel Sensitive；不得使用 `NEXT_PUBLIC_` 前綴
+- `CONTENT_AI_MODEL=gemini-2.5-flash`：內容整理與結構化輸出的實作模型；Astra 僅保留策略發想
 - `CONTENT_AI_PROMPT_VERSION=2026-09-15-v1`
 - `SITE_CANONICAL_URL=https://huayi.tw`
 - `SITE_ALLOW_INDEXING=false`
 
-公開 Supabase 變數沿用既有專案設定。Vercel 會自動提供並輪替 `VERCEL_OIDC_TOKEN`，不得手動複製到 Git、Supabase 或前端。只有非 Vercel 的本機環境才可選用伺服器端 `AI_GATEWAY_API_KEY`。不得新增 service-role key 到前端或 `NEXT_PUBLIC_*`。
+公開 Supabase 變數沿用既有專案設定。若 Gemini 暫時不可用，可將 `CONTENT_AI_PROVIDER` 與 `CONTENT_AI_MODEL` 切回 Gateway 相容值作為備援；Gateway 使用 Vercel 自動提供的 OIDC。不得把 Gemini、Gateway 或 service-role 金鑰加入前端或任何 `NEXT_PUBLIC_*` 變數。
 
 ## Preview 驗收流程
 
