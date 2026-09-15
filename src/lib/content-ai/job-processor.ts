@@ -4,7 +4,7 @@ import { buildContentOptimizationPrompt } from "./prompt";
 import { buildDeterministicBlockers } from "./fact-guard";
 import { renderArticleSections } from "./render-safe-html";
 import { getConfiguredContentAiProvider } from "./configured-provider";
-import { toSafeAiFailure } from "./error-message";
+import { getSafeAiDiagnostic, toSafeAiFailure } from "./error-message";
 import type { StoredAiResult } from "./schema";
 
 type RunSnapshot = {
@@ -48,6 +48,6 @@ export async function processContentAiRun(client: SupabaseClient, runId: string)
       p_error_code: failure.code,
       p_error_message: failure.message,
     });
-    console.error("[content-ai] job failed", { runId, code: failure.code });
+    console.error("[content-ai] job failed", { runId, code: failure.code, ...getSafeAiDiagnostic(error) });
   }
 }

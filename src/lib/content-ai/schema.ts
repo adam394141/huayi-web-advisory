@@ -53,6 +53,45 @@ export const contentAiOutputSchema = z.object({
   blocking_issues: z.array(text(500)).max(30),
 });
 
+// Gemini 結構化輸出只支援部分 JSON Schema，不接受 Zod 產生的 maxLength。
+// 對外請求使用相同結構但不傳字串長度限制；收到結果後仍以
+// contentAiOutputSchema 做完整長度與安全驗證。
+const googleText = z.string();
+export const googleContentAiOutputSchema = z.object({
+  fact_ledger: z.array(z.object({
+    claim: googleText,
+    source_quote: googleText,
+    status: z.enum(["supported", "needs_review"]),
+  })).max(80),
+  article: z.object({
+    title: googleText,
+    excerpt: googleText,
+    sections: z.array(z.object({
+      heading: googleText,
+      paragraphs: z.array(googleText).min(1).max(12),
+    })).min(1).max(30),
+  }),
+  seo: z.object({
+    title: googleText,
+    description: googleText,
+    focus_keyword: googleText,
+    related_keywords: z.array(googleText).max(8),
+  }),
+  aeo: z.object({
+    direct_answer: googleText,
+    faq: z.array(z.object({ question: googleText, answer: googleText })).max(8),
+  }),
+  geo: z.object({
+    entities: z.array(z.object({ name: googleText, type: googleText, source_quote: googleText })).max(30),
+    source_gaps: z.array(googleText).max(20),
+  }),
+  tags: z.array(googleText).max(8),
+  internal_links: z.array(z.object({ path: googleText, anchor_text: googleText, reason: googleText })).max(8),
+  image_alt_suggestions: z.array(z.object({ image_url: googleText, alt: googleText })).max(30),
+  human_review_notes: z.array(googleText).max(30),
+  blocking_issues: z.array(googleText).max(30),
+});
+
 export type ContentAiOutput = z.infer<typeof contentAiOutputSchema>;
 export type ArticleSection = z.infer<typeof articleSectionSchema>;
 

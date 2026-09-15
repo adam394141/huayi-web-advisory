@@ -1,7 +1,7 @@
 import "server-only";
 import { createGoogle } from "@ai-sdk/google";
 import { generateText, Output } from "ai";
-import { contentAiOutputSchema } from "./schema";
+import { contentAiOutputSchema, googleContentAiOutputSchema } from "./schema";
 import { getContentAiSettings, getGoogleApiKey } from "./provider";
 import type { ContentAiProvider } from "./provider";
 
@@ -18,13 +18,13 @@ export const googleContentProvider: ContentAiProvider = {
       model: google(settings.model),
       system,
       prompt,
-      output: Output.object({ schema: contentAiOutputSchema }),
+      output: Output.object({ schema: googleContentAiOutputSchema }),
       abortSignal: AbortSignal.timeout(75_000),
       maxRetries: 0,
     });
 
     return {
-      output: result.output,
+      output: contentAiOutputSchema.parse(result.output),
       model: settings.modelId,
       usage: {
         inputTokens: result.usage.inputTokens,

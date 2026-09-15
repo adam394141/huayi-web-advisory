@@ -38,6 +38,20 @@ export function toSafeAiFailure(error: unknown): AiFailure {
     };
   }
 
+  if (statusCode === 400 && /schema|maxLength|structured|invalid argument/i.test(rawMessage)) {
+    return {
+      code: "AI_PROVIDER_SCHEMA_REJECTED",
+      message: "AI 輸出格式暫時不相容；文章原稿沒有被修改。請由專案管理者更新格式後再重試。",
+    };
+  }
+
+  if (/No object generated|did not match schema|could not parse/i.test(rawMessage)) {
+    return {
+      code: "AI_OUTPUT_INVALID",
+      message: "AI 已回覆但內容格式未通過安全檢查；文章原稿沒有被修改，請安全重試。",
+    };
+  }
+
   if (/abort|timeout/i.test(rawMessage)) {
     return {
       code: "AI_TIMEOUT",
@@ -48,5 +62,14 @@ export function toSafeAiFailure(error: unknown): AiFailure {
   return {
     code: "AI_PROVIDER_FAILED",
     message: "AI 處理未完成，文章原稿沒有被修改。",
+  };
+}
+
+export function getSafeAiDiagnostic(error: unknown) {
+  const candidate = error as { name?: unknown; statusCode?: unknown; cause?: { name?: unknown; statusCode?: unknown } } | null;
+  return {
+    name: typeof candidate?.name === "string" ? candidate.name : "unknown",
+    statusCode: Number(candidate?.statusCode || candidate?.cause?.statusCode || 0) || null,
+    causeName: typeof candidate?.cause?.name === "string" ? candidate.cause.name : null,
   };
 }

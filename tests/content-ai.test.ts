@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { contentAiOutputSchema } from "../src/lib/content-ai/schema";
+import { contentAiOutputSchema, googleContentAiOutputSchema } from "../src/lib/content-ai/schema";
 import { renderArticleSections } from "../src/lib/content-ai/render-safe-html";
 import { buildDeterministicBlockers, extractFactSignals } from "../src/lib/content-ai/fact-guard";
 import { buildContentOptimizationPrompt } from "../src/lib/content-ai/prompt";
@@ -19,6 +19,13 @@ const output = contentAiOutputSchema.parse({
 test("固定 schema 拒絕額外或過長資料", () => {
   assert.equal(output.article.title, "品牌策略");
   assert.throws(() => contentAiOutputSchema.parse({ ...output, seo: { ...output.seo, title: "a".repeat(71) } }));
+});
+
+test("Gemini 請求格式不含不支援的字串長度限制，回站後仍完整檢查", () => {
+  const longOutput = structuredClone(output);
+  longOutput.seo.title = "a".repeat(71);
+  assert.doesNotThrow(() => googleContentAiOutputSchema.parse(longOutput));
+  assert.throws(() => contentAiOutputSchema.parse(longOutput));
 });
 
 test("AI 正文以伺服器產生安全 HTML", () => {
