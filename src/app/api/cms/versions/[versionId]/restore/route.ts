@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { verifyAdmin } from "@/lib/admin-auth";
 import { isUuid } from "@/lib/content-ai/request";
 import { cleanContent } from "@/lib/content-safety";
+import { parseCmsPublishRequest } from "@/lib/cms-update";
 
 export const dynamic = "force-dynamic";
 
@@ -16,9 +17,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ ver
   if (!isUuid(versionId)) return reply({ error: "版本編號無效。" }, 400);
   let body: unknown;
   try { body = await request.json(); } catch { return reply({ error: "資料格式不正確。" }, 400); }
-  const expected = (body as Record<string, unknown>)?.expected_updated_at;
-  if (typeof expected !== "string" || !Number.isFinite(Date.parse(expected))) return reply({ error: "文章版本無效。" }, 400);
-  const { data, error } = await auth.client.rpc("cms_restore_content_version", { p_version_id: versionId, p_expected_updated_at: new Date(expected).toISOString() });
+  const input = parseCmsPublishRequest(body);
+  if (!input) return reply({ error: "文章版本無效。" }, 400);
+  const { data, error } = await auth.client.rpc("cms_restore_content_version", { p_version_id: versionId, p_expected_updated_at: input.expectedUpdatedAt });
   if (error || !data) {
     if (error?.message?.includes("CONFLICT")) return reply({ error: "文章已有新版本，請重新載入後再還原。" }, 409);
     return reply({ error: "版本還原失敗，文章沒有被修改。" }, 503);

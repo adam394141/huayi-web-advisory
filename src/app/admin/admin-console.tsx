@@ -49,6 +49,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const [editing, setEditing] = useState<EditorItem | null>(null);
   const [original, setOriginal] = useState<EditorItem | null>(null);
   const [message, setMessage] = useState("");
+  const [publishNotice, setPublishNotice] = useState<{ kind: "success" | "error"; text: string; href?: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [needsReload, setNeedsReload] = useState(false);
 
@@ -139,7 +140,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
     if (!editing || !original || collection !== "blog_posts") return;
     if (JSON.stringify(editing) !== JSON.stringify(original)) { setMessage("請先儲存目前修改，再執行發布檢查。"); return; }
     if (!window.confirm("確定要通過發布檢查並公開這篇文章？")) return;
-    setBusy(true); setMessage("");
+    setBusy(true); setMessage(""); setPublishNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms/publish/${editing.id}`, {
@@ -148,9 +149,19 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         body: JSON.stringify({ expected_updated_at: original.updated_at }),
       });
       const result = await response.json();
-      if (!response.ok) { setNeedsReload(response.status === 409); setMessage(result.error); return; }
-      acceptServerItem(result.item); setMessage("文章已通過檢查並發布。可使用上方按鈕開啟前台。");
-    } catch { setMessage("發布連線失敗，文章仍維持原狀態。"); }
+      if (!response.ok) {
+        setNeedsReload(response.status === 409);
+        setPublishNotice({ kind: "error", text: result.error || "發布失敗，文章仍維持原狀態。" });
+        return;
+      }
+      acceptServerItem(result.item);
+      const publishedPreview = getAdminPreview("blog_posts", result.item.status, result.item.slug);
+      setPublishNotice({
+        kind: "success",
+        text: "文章已發布成功，前台可能需要數秒完成更新。",
+        href: publishedPreview.href || undefined,
+      });
+    } catch { setPublishNotice({ kind: "error", text: "發布連線失敗，文章仍維持原狀態。" }); }
     finally { setBusy(false); }
   }
 
@@ -334,6 +345,11 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         {collection === "blog_posts" && editing.status !== "published" && <button className="rounded-full border border-amber-500 bg-amber-50 px-6 py-3 text-neutral-900 disabled:opacity-40" type="button" disabled={busy || !writable} onClick={publishArticle}>檢查並發布</button>}
         {!nextPreview.href && <span className="text-sm text-neutral-500">{nextPreview.reason}</span>}
       </div>
+      {publishNotice && <div role="status" aria-live="polite" className={`rounded-xl border p-4 ${publishNotice.kind === "success" ? "border-green-300 bg-green-50 text-green-900" : "border-red-300 bg-red-50 text-red-800"}`}>
+        <strong>{publishNotice.kind === "success" ? "已發布" : "尚未發布"}</strong>
+        <p className="mt-1">{publishNotice.text}</p>
+        {publishNotice.href && <a className="mt-3 inline-block underline" href={publishNotice.href} target="_blank" rel="noreferrer">開啟已發布文章 ↗</a>}
+      </div>}
     </form> : <>
       <div className="flex flex-wrap gap-4">
         <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>

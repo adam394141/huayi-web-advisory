@@ -32,6 +32,14 @@ export type ParsedCmsCreate = {
   author: string | null;
 };
 
+export function parseCmsPublishRequest(value: unknown): { expectedUpdatedAt: string } | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const expectedUpdatedAt = (value as Record<string, unknown>).expected_updated_at;
+  if (typeof expectedUpdatedAt !== "string" || !Number.isFinite(Date.parse(expectedUpdatedAt))) return null;
+  // PostgreSQL timestamptz 可能包含微秒；不可經過 Date.toISOString()，否則會被截成毫秒。
+  return { expectedUpdatedAt };
+}
+
 export function parseCmsCreate(value: unknown): ParsedCmsCreate | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const body = value as Record<string, unknown>;

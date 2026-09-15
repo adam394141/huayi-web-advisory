@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseCmsCreate, parseCmsUpdate } from "../src/lib/cms-update";
+import { parseCmsCreate, parseCmsPublishRequest, parseCmsUpdate } from "../src/lib/cms-update";
 import { mapCmsSaveError } from "../src/lib/cms-save-error";
 
 const base = { collection: "works", id: "11111111-1111-4111-8111-111111111111", expected_updated_at: "2026-09-14T00:00:00Z" };
@@ -29,6 +29,12 @@ test("保留資料庫時間的微秒精度以避免誤判版本衝突", () => {
     changes: { title: "更新標題" },
   });
   assert.equal(parsed?.expectedUpdatedAt, expectedUpdatedAt);
+});
+
+test("發布請求保留資料庫時間的微秒精度", () => {
+  const expectedUpdatedAt = "2026-09-15T07:41:14.123456+00:00";
+  assert.equal(parseCmsPublishRequest({ expected_updated_at: expectedUpdatedAt })?.expectedUpdatedAt, expectedUpdatedAt);
+  assert.equal(parseCmsPublishRequest({ expected_updated_at: "無效時間" }), null);
 });
 
 test("拒絕錯誤狀態、網址、版本與超量內容", () => {
