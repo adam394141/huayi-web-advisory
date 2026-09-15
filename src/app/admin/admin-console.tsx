@@ -56,7 +56,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   useEffect(() => () => { client.auth.stopAutoRefresh(); }, [client]);
 
   async function load(nextCollection = collection, nextPage = 0) {
-    setBusy(true); setMessage("");
+    setBusy(true); setMessage(""); setPublishNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms?collection=${nextCollection}&page=${nextPage}`, {
@@ -70,7 +70,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   }
 
   async function edit(id: string) {
-    setBusy(true); setMessage("");
+    setBusy(true); setMessage(""); setPublishNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms?collection=${collection}&id=${encodeURIComponent(id)}`, {
@@ -85,7 +85,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   }
 
   async function createArticle() {
-    setBusy(true); setMessage("");
+    setBusy(true); setMessage(""); setPublishNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
@@ -305,7 +305,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       <p className="mt-5 text-sm text-neutral-600">不開放自行註冊。帳號或驗證器遺失時，由 Supabase 專案管理者確認身分後處理；不能跳過雙重驗證。</p>
     </div> : editing ? <form onSubmit={save} className="max-w-3xl space-y-5">
       <div className="flex flex-wrap items-center gap-4">
-        <button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); setNeedsReload(false); }}>← 返回列表</button>
+        <button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); setPublishNotice(null); setNeedsReload(false); }}>← 返回列表</button>
         {preview.href ? <a className="rounded-full border border-neutral-900 px-4 py-2 text-sm" href={preview.href} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{preview.reason}</span>}
         <span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span>
       </div>
