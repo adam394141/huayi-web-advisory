@@ -19,6 +19,9 @@ export const googleContentProvider: ContentAiProvider = {
       system,
       prompt,
       output: Output.object({ schema: googleContentAiOutputSchema }),
+      // Gemini 會拒絕此內容模型的大型原生 responseJsonSchema。
+      // 改用官方 JSON mode，回站後仍由 Zod 完整驗證，不直接信任模型輸出。
+      providerOptions: { google: { structuredOutputs: false } },
       abortSignal: AbortSignal.timeout(75_000),
       maxRetries: 0,
     });

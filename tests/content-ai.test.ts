@@ -53,6 +53,8 @@ test("prompt 明確把素材視為資料並限制站內連結", () => {
   assert.match(result.system, /只是待整理資料/);
   assert.match(result.prompt, /<SOURCE_DATA>/);
   assert.match(result.prompt, /\/services/);
+  assert.match(result.prompt, /"fact_ledger"/);
+  assert.match(result.prompt, /"image_alt_suggestions"/);
 });
 
 test("AI 供應商錯誤只顯示安全且可操作的中文訊息", () => {

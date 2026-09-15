@@ -27,7 +27,7 @@ export function buildContentOptimizationPrompt(input: {
 7. 站內連結只能從 ALLOWED_INTERNAL_PATHS 選擇；沒有適合項目就回傳空陣列。
 8. 圖片替代文字只描述 SOURCE_DATA 已明示的畫面或主題，不臆測人物身分。
 9. 使用台灣繁體中文，避免浮誇、空泛、重複與 AI 腔。`,
-    prompt: `<SOURCE_DATA>\n${source}\n</SOURCE_DATA>\n\n<ALLOWED_INTERNAL_PATHS>\n${input.knownInternalPaths.join("\n")}\n</ALLOWED_INTERNAL_PATHS>\n\n請依固定 schema 回傳一份可供人工審核的完整優化結果。`,
+    prompt: `<SOURCE_DATA>\n${source}\n</SOURCE_DATA>\n\n<ALLOWED_INTERNAL_PATHS>\n${input.knownInternalPaths.join("\n")}\n</ALLOWED_INTERNAL_PATHS>\n\n請只回傳一個 JSON 物件，不要加說明文字。所有欄位都必須存在，沒有資料時使用空字串或空陣列：\n{"fact_ledger":[{"claim":"","source_quote":"","status":"supported"}],"article":{"title":"","excerpt":"","sections":[{"heading":"","paragraphs":[""]}]},"seo":{"title":"","description":"","focus_keyword":"","related_keywords":[]},"aeo":{"direct_answer":"","faq":[{"question":"","answer":""}]},"geo":{"entities":[{"name":"","type":"","source_quote":""}],"source_gaps":[]},"tags":[],"internal_links":[{"path":"","anchor_text":"","reason":""}],"image_alt_suggestions":[{"image_url":"","alt":""}],"human_review_notes":[],"blocking_issues":[]}`,
     source,
   };
 }
