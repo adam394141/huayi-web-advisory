@@ -10,6 +10,12 @@ test("AI 任務只接受 UUID、有效版本與有限素材", () => {
   assert.equal(isUuid(id), true);
 });
 
+test("AI 任務保留資料庫時間的微秒精度", () => {
+  const expectedUpdatedAt = "2026-09-15T07:41:14.123456+00:00";
+  const parsed = parseAiStartRequest({ article_id:id, expected_updated_at:expectedUpdatedAt, source_material:"素材" });
+  assert.equal(parsed?.expectedUpdatedAt, expectedUpdatedAt);
+});
+
 test("套用結果只接受白名單欄位並去除重複", () => {
   const parsed = parseAiApplyRequest({ expected_updated_at:"2026-09-15T00:00:00Z", fields:["title","title","faq"], confirm_blockers:true });
   assert.deepEqual(parsed?.fields, ["title","faq"]);

@@ -20,6 +20,17 @@ test("作品與觀點欄位保持分離", () => {
   assert.equal(parseCmsUpdate({ ...base, collection: "blog_posts", changes: { client: "客戶" } }), null);
 });
 
+test("保留資料庫時間的微秒精度以避免誤判版本衝突", () => {
+  const expectedUpdatedAt = "2026-09-15T07:41:14.123456+00:00";
+  const parsed = parseCmsUpdate({
+    collection: "blog_posts",
+    id: "11111111-1111-4111-8111-111111111111",
+    expected_updated_at: expectedUpdatedAt,
+    changes: { title: "更新標題" },
+  });
+  assert.equal(parsed?.expectedUpdatedAt, expectedUpdatedAt);
+});
+
 test("拒絕錯誤狀態、網址、版本與超量內容", () => {
   assert.equal(parseCmsUpdate({ ...base, changes: { status: "deleted" } }), null);
   assert.equal(parseCmsUpdate({ ...base, changes: { cover_image: "https://evil.example/x.jpg" } }), null);

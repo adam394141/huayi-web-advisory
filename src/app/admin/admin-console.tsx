@@ -108,6 +108,33 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
     setItems((current) => current.map((entry) => entry.id === next.id ? { ...entry, ...next } : entry));
   }
 
+  async function prepareArticleForAi() {
+    if (!editing || !original || collection !== "blog_posts") throw new Error("目前文章尚未準備完成。");
+    const common = ["title", "slug", "category", "content", "cover_image", "status", "show_on_homepage", "sort_order", "seo_title", "seo_description"] as const;
+    const specific = ["excerpt", "author"] as const;
+    const changes: Record<string, string | number | boolean | null> = {};
+    for (const key of [...common, ...specific]) {
+      const next = editing[key] ?? (key === "sort_order" ? 0 : key === "show_on_homepage" ? false : "");
+      const previous = original[key] ?? (key === "sort_order" ? 0 : key === "show_on_homepage" ? false : "");
+      if (next !== previous) changes[key] = next;
+    }
+    if (!Object.keys(changes).length) return original.updated_at;
+    const { data } = await client.auth.getSession();
+    const response = await saveRequest("/api/cms", {
+      method: "PATCH", cache: "no-store",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
+      body: JSON.stringify({ collection, id: editing.id, expected_updated_at: original.updated_at, changes }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      setNeedsReload(response.status === 409);
+      throw new Error(result.error || "自動儲存失敗，AI 尚未開始。");
+    }
+    acceptServerItem(result.item);
+    setMessage("已自動儲存目前內容，AI 優化已接續開始。");
+    return result.item.updated_at as string;
+  }
+
   async function publishArticle() {
     if (!editing || !original || collection !== "blog_posts") return;
     if (JSON.stringify(editing) !== JSON.stringify(original)) { setMessage("請先儲存目前修改，再執行發布檢查。"); return; }
@@ -293,13 +320,13 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         itemId={editing.id}
         accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""}
       />
+      {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} hasUnsavedChanges={JSON.stringify(editing) !== JSON.stringify(original)} prepareArticle={prepareArticleForAi} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
       <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">排序值<input className={field} type="number" min={-100000} max={100000} value={editing.sort_order ?? 0} onChange={(event) => setEditing({ ...editing, sort_order: Number(event.target.value) })} /></label>
         <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
       </div>
       <details className="rounded-xl border border-neutral-200 p-4"><summary className="cursor-pointer">SEO 設定</summary><div className="mt-4 space-y-4"><label className="block">SEO 標題<input className={field} maxLength={180} value={editing.seo_title || ""} onChange={(event) => setEditing({ ...editing, seo_title: event.target.value })} /></label><label className="block">SEO 說明<textarea className={`${field} min-h-24`} maxLength={500} value={editing.seo_description || ""} onChange={(event) => setEditing({ ...editing, seo_description: event.target.value })} /></label></div></details>
-      {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} hasUnsavedChanges={JSON.stringify(editing) !== JSON.stringify(original)} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
       {collection === "blog_posts" && <ContentVersionPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onRestored={acceptServerItem} />}
       <div className="flex flex-wrap items-center gap-3">
         <button className={button} type="submit" value="save" disabled={busy || !writable}>{busy ? "儲存中…" : "儲存修改"}</button>

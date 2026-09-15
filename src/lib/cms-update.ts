@@ -81,5 +81,7 @@ export function parseCmsUpdate(value: unknown): ParsedCmsUpdate | null {
     if (key === "cover_image" && text && !isTrustedImageSource(text)) return null;
     changes[key] = key === "content" ? cleanContent(raw) : (text || null);
   }
-  return { collection, id: body.id, expectedUpdatedAt: new Date(body.expected_updated_at).toISOString(), changes };
+  // 保留 PostgreSQL 回傳的微秒精度。轉成 JavaScript Date 再序列化會只剩毫秒，
+  // 導致資料庫的樂觀鎖誤判為版本衝突。
+  return { collection, id: body.id, expectedUpdatedAt: body.expected_updated_at, changes };
 }

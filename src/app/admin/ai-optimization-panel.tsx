@@ -24,11 +24,12 @@ const fieldOptions = [
   ["faq", "常見問題"], ["ai_summary", "直接答案摘要"],
 ] as const;
 
-export function AiOptimizationPanel({ articleId, updatedAt, configured, hasUnsavedChanges, accessToken, onApplied }: {
+export function AiOptimizationPanel({ articleId, updatedAt, configured, hasUnsavedChanges, prepareArticle, accessToken, onApplied }: {
   articleId: string;
   updatedAt: string;
   configured: boolean;
   hasUnsavedChanges: boolean;
+  prepareArticle: () => Promise<string>;
   accessToken: () => Promise<string>;
   onApplied: (item: Record<string, unknown>) => void;
 }) {
@@ -76,21 +77,19 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, hasUnsav
   }, [job, accessToken]);
 
   async function start() {
-    if (hasUnsavedChanges) {
-      setMessage("請先按下頁面底部的「儲存修改」，再開始 AI 優化；AI 只會讀取已儲存的文章內容。");
-      return;
-    }
     setBusy(true); setMessage(""); pollCount.current = 0;
     try {
+      setMessage(hasUnsavedChanges ? "正在自動儲存目前內容，接著交給 AI 優化…" : "正在建立 AI 優化任務…");
+      const currentUpdatedAt = await prepareArticle();
       const token = await accessToken();
       const response = await fetch("/api/cms/ai-optimize", {
         method: "POST", cache: "no-store", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ article_id: articleId, expected_updated_at: updatedAt, source_material: source }),
+        body: JSON.stringify({ article_id: articleId, expected_updated_at: currentUpdatedAt, source_material: source }),
       });
       const data = await response.json();
       if (!response.ok) { setMessage(data.error || "無法開始 AI 優化。"); return; }
       setJob(data.job); setMessage("AI 正在整理文章。原稿不會被覆蓋。");
-    } catch { setMessage("無法開始 AI 優化，文章原稿沒有被修改。"); }
+    } catch (error) { setMessage(error instanceof Error ? error.message : "無法開始 AI 優化，文章原稿沒有被修改。"); }
     finally { setBusy(false); }
   }
 
@@ -125,7 +124,7 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, hasUnsav
 
   return <section className="rounded-2xl border border-amber-300 bg-amber-50/50 p-5">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-xl font-semibold">AI SEO／AEO／GEO 優化</h2><p className="mt-1 text-sm text-neutral-600">AI 可重新整理文章，但不能新增原始素材沒有的事實。</p></div><span className="rounded-full bg-white px-3 py-1 text-xs">人工審核後發布</span></div>
-    {!configured ? <p className="mt-4 rounded-xl bg-white p-3 text-sm text-amber-900">AI 尚未設定。一般文章編輯與儲存不受影響。</p> : <><label className="mt-5 block text-sm font-medium">補充真實素材（訪談筆記、資料、原文）<textarea className="mt-2 min-h-36 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base" maxLength={50_000} value={source} onChange={(event) => setSource(event.target.value)} placeholder="只放確定為真的內容；沒有補充資料也可以直接用目前文章。" /></label>{hasUnsavedChanges && <p className="mt-3 rounded-xl border border-amber-300 bg-white p-3 text-sm text-amber-900">文章尚有未儲存的修改。請先按頁面底部的「儲存修改」，AI 才會使用目前畫面中的內容。</p>}<button type="button" className="mt-4 rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || hasUnsavedChanges || !!(job && ["pending","running"].includes(job.status) && !job.stale)} onClick={start}>{busy ? "處理中…" : hasUnsavedChanges ? "請先儲存文章" : "開始 AI 優化"}</button></>}
+    {!configured ? <p className="mt-4 rounded-xl bg-white p-3 text-sm text-amber-900">AI 尚未設定。一般文章編輯與儲存不受影響。</p> : <><label className="mt-5 block text-sm font-medium">補充真實素材（訪談筆記、資料、原文）<textarea className="mt-2 min-h-36 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base" maxLength={50_000} value={source} onChange={(event) => setSource(event.target.value)} placeholder="只放確定為真的內容；沒有補充資料也可以直接用目前文章。" /></label>{hasUnsavedChanges && <p className="mt-3 rounded-xl border border-amber-300 bg-white p-3 text-sm text-amber-900">目前畫面有新內容；按下按鈕後會先自動儲存，再直接開始 AI 優化，不需要重新載入。</p>}<button type="button" className="mt-4 rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || !!(job && ["pending","running"].includes(job.status) && !job.stale)} onClick={start}>{busy ? "處理中…" : hasUnsavedChanges ? "儲存並開始 AI 優化" : "開始 AI 優化"}</button></>}
     {message && <p role="status" className="mt-4 text-sm text-neutral-700">{message}</p>}
     {job && <div className="mt-5 rounded-xl bg-white p-4"><p className="text-sm">任務狀態：{job.stale ? "已逾時" : job.status === "pending" ? "排隊中" : job.status === "running" ? "整理中" : job.status === "failed" ? "失敗" : "優化完成，尚未套用"}</p>{(job.stale || job.status === "failed") && <button type="button" className="mt-3 underline" disabled={busy} onClick={retry}>安全重試</button>}{job.error_message && <p className="mt-2 text-sm text-red-700">{job.error_message}</p>}</div>}
     {result && <div className="mt-5 space-y-5">

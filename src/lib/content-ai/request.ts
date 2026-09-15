@@ -6,7 +6,7 @@ export function parseAiStartRequest(value: unknown) {
   if (typeof body.article_id !== "string" || !UUID.test(body.article_id)) return null;
   if (typeof body.expected_updated_at !== "string" || !Number.isFinite(Date.parse(body.expected_updated_at))) return null;
   if (typeof body.source_material !== "string" || body.source_material.length > 50_000) return null;
-  return { articleId: body.article_id, expectedUpdatedAt: new Date(body.expected_updated_at).toISOString(), sourceMaterial: body.source_material };
+  return { articleId: body.article_id, expectedUpdatedAt: body.expected_updated_at, sourceMaterial: body.source_material };
 }
 
 export function parseAiApplyRequest(value: unknown) {
@@ -17,7 +17,7 @@ export function parseAiApplyRequest(value: unknown) {
   if (!Array.isArray(body.fields) || !body.fields.length || body.fields.length > allowed.size) return null;
   if (body.fields.some((field) => typeof field !== "string" || !allowed.has(field))) return null;
   if (body.confirm_blockers != null && typeof body.confirm_blockers !== "boolean") return null;
-  return { expectedUpdatedAt: new Date(body.expected_updated_at).toISOString(), fields: [...new Set(body.fields as string[])], confirmBlockers: body.confirm_blockers === true };
+  return { expectedUpdatedAt: body.expected_updated_at, fields: [...new Set(body.fields as string[])], confirmBlockers: body.confirm_blockers === true };
 }
 
 export function isUuid(value: string) { return UUID.test(value); }
