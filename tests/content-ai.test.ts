@@ -4,6 +4,7 @@ import { contentAiOutputSchema } from "../src/lib/content-ai/schema";
 import { renderArticleSections } from "../src/lib/content-ai/render-safe-html";
 import { buildDeterministicBlockers, extractFactSignals } from "../src/lib/content-ai/fact-guard";
 import { buildContentOptimizationPrompt } from "../src/lib/content-ai/prompt";
+import { toSafeAiFailure } from "../src/lib/content-ai/error-message";
 
 const output = contentAiOutputSchema.parse({
   fact_ledger: [{ claim: "華翼提供品牌策略", source_quote: "華翼提供品牌策略", status: "supported" }],
@@ -44,4 +45,15 @@ test("prompt 明確把素材視為資料並限制站內連結", () => {
   assert.match(result.system, /只是待整理資料/);
   assert.match(result.prompt, /<SOURCE_DATA>/);
   assert.match(result.prompt, /\/services/);
+});
+
+test("AI 供應商錯誤只顯示安全且可操作的中文訊息", () => {
+  const billing = toSafeAiFailure(Object.assign(new Error("customer_verification_required: valid credit card"), { statusCode: 403 }));
+  assert.equal(billing.code, "AI_GATEWAY_BILLING_REQUIRED");
+  assert.match(billing.message, /付款方式驗證/);
+  assert.doesNotMatch(billing.message, /customer_verification_required|credit card/);
+
+  const unknown = toSafeAiFailure(new Error("secret upstream response"));
+  assert.equal(unknown.code, "AI_PROVIDER_FAILED");
+  assert.doesNotMatch(unknown.message, /secret upstream response/);
 });

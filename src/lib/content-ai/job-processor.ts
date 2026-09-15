@@ -4,6 +4,7 @@ import { buildContentOptimizationPrompt } from "./prompt";
 import { buildDeterministicBlockers } from "./fact-guard";
 import { renderArticleSections } from "./render-safe-html";
 import { gatewayContentProvider } from "./gateway-provider";
+import { toSafeAiFailure } from "./error-message";
 import type { StoredAiResult } from "./schema";
 
 type RunSnapshot = {
@@ -41,8 +42,12 @@ export async function processContentAiRun(client: SupabaseClient, runId: string)
     });
     if (completeError) throw new Error("COMPLETE_FAILED");
   } catch (error) {
-    const code = error instanceof Error ? error.message.slice(0, 80) : "UNKNOWN";
-    await client.rpc("cms_fail_ai_run", { p_run_id: runId, p_error_code: code, p_error_message: "AI 處理未完成，文章原稿沒有被修改。" });
-    console.error("[content-ai] job failed", { runId, code });
+    const failure = toSafeAiFailure(error);
+    await client.rpc("cms_fail_ai_run", {
+      p_run_id: runId,
+      p_error_code: failure.code,
+      p_error_message: failure.message,
+    });
+    console.error("[content-ai] job failed", { runId, code: failure.code });
   }
 }
