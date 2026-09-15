@@ -54,10 +54,15 @@ export async function POST(request: Request) {
     let json: unknown;
     try { json = await request.json(); } catch { return reply({ error: "資料格式不正確。" }, 400); }
     const input = parseCmsCreate(json);
-    if (!input) return reply({ error: "目前只能新增欄位完整的觀點草稿。" }, 400);
-    const { data, error } = await auth.client.rpc("cms_create_blog_post", {
-      p_title: input.title, p_slug: input.slug, p_category: input.category, p_author: input.author,
-    });
+    if (!input) return reply({ error: "新增草稿的欄位或網址格式不正確。" }, 400);
+    const rpcRequest = input.collection === "works"
+      ? auth.client.rpc("cms_create_work", {
+        p_title: input.title, p_slug: input.slug, p_category: input.category, p_client: input.client,
+      })
+      : auth.client.rpc("cms_create_blog_post", {
+        p_title: input.title, p_slug: input.slug, p_category: input.category, p_author: input.author,
+      });
+    const { data, error } = await rpcRequest;
     if (error || !data) {
       if (error?.code === "23505" || error?.message?.includes("DUPLICATE")) return reply({ error: "網址代稱已存在，請換一個英文網址。" }, 409);
       return reply({ error: "無法新增草稿，既有內容沒有被修改。" }, 503);

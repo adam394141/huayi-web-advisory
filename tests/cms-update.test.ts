@@ -44,11 +44,14 @@ test("拒絕錯誤狀態、網址、版本與超量內容", () => {
   assert.equal(parseCmsUpdate({ ...base, changes: { content: "x".repeat(200_001) } }), null);
 });
 
-test("只允許新增觀點草稿且網址必須安全", () => {
+test("允許新增作品或觀點草稿，且欄位彼此分離、網址必須安全", () => {
   assert.deepEqual(parseCmsCreate({ collection:"blog_posts", title:"新文章", slug:"new-article", category:"品牌觀點", author:"華翼" }), {
     collection:"blog_posts", title:"新文章", slug:"new-article", category:"品牌觀點", author:"華翼",
   });
-  assert.equal(parseCmsCreate({ collection:"works", title:"作品", slug:"work", category:"設計" }), null);
+  assert.deepEqual(parseCmsCreate({ collection:"works", title:"作品", slug:"work", category:"設計專案", client:"客戶" }), {
+    collection:"works", title:"作品", slug:"work", category:"設計專案", client:"客戶",
+  });
+  assert.equal(parseCmsCreate({ collection:"works", title:"作品", slug:"work", category:"設計", client:"x".repeat(181) }), null);
   assert.equal(parseCmsCreate({ collection:"blog_posts", title:"文章", slug:"中文", category:"觀點" }), null);
 });
 

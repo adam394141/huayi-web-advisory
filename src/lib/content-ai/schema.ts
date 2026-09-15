@@ -3,8 +3,11 @@ import { z } from "zod";
 const text = (max: number) => z.string().trim().max(max);
 
 export const articleSectionSchema = z.object({
+  heading_level: z.union([z.literal(2), z.literal(3), z.literal(4)]).default(2),
   heading: text(180),
   paragraphs: z.array(text(4_000)).min(1).max(12),
+  bullet_points: z.array(text(1_000)).max(20).default([]),
+  numbered_steps: z.array(text(1_000)).max(20).default([]),
 });
 
 export const contentAiOutputSchema = z.object({
@@ -67,8 +70,11 @@ export const googleContentAiOutputSchema = z.object({
     title: googleText,
     excerpt: googleText,
     sections: z.array(z.object({
+      heading_level: z.union([z.literal(2), z.literal(3), z.literal(4)]).default(2),
       heading: googleText,
       paragraphs: z.array(googleText).min(1).max(12),
+      bullet_points: z.array(googleText).max(20).default([]),
+      numbered_steps: z.array(googleText).max(20).default([]),
     })).min(1).max(30),
   }),
   seo: z.object({

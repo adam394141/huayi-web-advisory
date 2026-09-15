@@ -120,6 +120,30 @@ exception when unique_violation then
 end;
 $$;
 
+create or replace function public.cms_create_work(
+  p_title text, p_slug text, p_category text, p_client text default null
+) returns jsonb
+language plpgsql security definer set search_path = public, pg_temp
+set lock_timeout = '3s' set statement_timeout = '12s' as $$
+declare v_work public.works%rowtype;
+begin
+  perform public.huayi_assert_cms_owner();
+  if nullif(btrim(p_title),'') is null or length(p_title)>180
+     or p_slug !~ '^[a-z0-9]+([-_][a-z0-9]+)*$' or length(p_slug)>140
+     or nullif(btrim(p_category),'') is null or length(p_category)>80
+     or length(coalesce(p_client,''))>180 then
+    raise exception 'CMS_INVALID_INPUT' using errcode='22023';
+  end if;
+  insert into public.works(title,slug,category,client,status,sort_order,show_on_homepage)
+  values (btrim(p_title),p_slug,btrim(p_category),nullif(btrim(p_client),''),'draft',
+    coalesce((select max(sort_order)+1 from public.works),0),false)
+  returning * into v_work;
+  return to_jsonb(v_work);
+exception when unique_violation then
+  raise exception 'CMS_DUPLICATE_SLUG' using errcode='23505';
+end;
+$$;
+
 create or replace function public.cms_start_ai_run(
   p_content_id uuid, p_expected_updated_at timestamptz, p_source_material text,
   p_input_hash text, p_prompt_version text, p_model text
@@ -358,6 +382,7 @@ create trigger huayi_blog_redirect after update of slug on public.blog_posts
 for each row execute function public.huayi_capture_blog_redirect();
 
 revoke all on function public.cms_create_blog_post(text,text,text,text) from public, anon;
+revoke all on function public.cms_create_work(text,text,text,text) from public, anon;
 revoke all on function public.cms_start_ai_run(uuid,timestamptz,text,text,text,text) from public, anon;
 revoke all on function public.cms_claim_ai_run(uuid) from public, anon;
 revoke all on function public.cms_complete_ai_run(uuid,jsonb,jsonb,text,integer,integer,integer) from public, anon;
@@ -367,6 +392,7 @@ revoke all on function public.cms_apply_ai_result(uuid,timestamptz,text[],boolea
 revoke all on function public.cms_publish_blog_post(uuid,timestamptz) from public, anon;
 revoke all on function public.cms_restore_content_version(uuid,timestamptz) from public, anon;
 grant execute on function public.cms_create_blog_post(text,text,text,text) to authenticated;
+grant execute on function public.cms_create_work(text,text,text,text) to authenticated;
 grant execute on function public.cms_start_ai_run(uuid,timestamptz,text,text,text,text) to authenticated;
 grant execute on function public.cms_claim_ai_run(uuid) to authenticated;
 grant execute on function public.cms_complete_ai_run(uuid,jsonb,jsonb,text,integer,integer,integer) to authenticated;

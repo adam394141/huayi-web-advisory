@@ -49,6 +49,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const [editing, setEditing] = useState<EditorItem | null>(null);
   const [original, setOriginal] = useState<EditorItem | null>(null);
   const [message, setMessage] = useState("");
+  const [saveNotice, setSaveNotice] = useState<{ kind: "pending" | "success" | "error" | "info"; text: string } | null>(null);
   const [publishNotice, setPublishNotice] = useState<{ kind: "success" | "error"; text: string; href?: string } | null>(null);
   const [busy, setBusy] = useState(false);
   const [needsReload, setNeedsReload] = useState(false);
@@ -56,7 +57,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   useEffect(() => () => { client.auth.stopAutoRefresh(); }, [client]);
 
   async function load(nextCollection = collection, nextPage = 0) {
-    setBusy(true); setMessage(""); setPublishNotice(null);
+    setBusy(true); setMessage(""); setPublishNotice(null); setSaveNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms?collection=${nextCollection}&page=${nextPage}`, {
@@ -70,7 +71,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   }
 
   async function edit(id: string) {
-    setBusy(true); setMessage(""); setPublishNotice(null);
+    setBusy(true); setMessage(""); setPublishNotice(null); setSaveNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const response = await fetch(`/api/cms?collection=${collection}&id=${encodeURIComponent(id)}`, {
@@ -84,21 +85,24 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
     finally { setBusy(false); }
   }
 
-  async function createArticle() {
-    setBusy(true); setMessage(""); setPublishNotice(null);
+  async function createContent() {
+    setBusy(true); setMessage(""); setPublishNotice(null); setSaveNotice(null);
     try {
       const { data } = await client.auth.getSession();
       const stamp = new Date().toISOString().replace(/\D/g, "").slice(0, 14);
+      const isWork = collection === "works";
       const response = await fetch("/api/cms", {
         method: "POST", cache: "no-store",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.session?.access_token || ""}` },
-        body: JSON.stringify({ collection: "blog_posts", title: "未命名觀點", slug: `draft-${stamp}`, category: "品牌觀點", author: "華翼品牌策略" }),
+        body: JSON.stringify(isWork
+          ? { collection: "works", title: "未命名作品", slug: `work-draft-${stamp}`, category: "設計專案", client: "" }
+          : { collection: "blog_posts", title: "未命名觀點", slug: `article-draft-${stamp}`, category: "品牌觀點", author: "華翼品牌策略" }),
       });
       const result = await response.json();
       if (!response.ok) { setMessage(result.error); return; }
-      setCollection("blog_posts"); setEditing(result.item); setOriginal(result.item); setNeedsReload(false);
+      setEditing(result.item); setOriginal(result.item); setNeedsReload(false);
       setItems((current) => [result.item, ...current]); setTotal((current) => current + 1);
-      setMessage("已建立草稿，請先修改標題與英文網址代稱。");
+      setMessage(`已建立${isWork ? "作品" : "觀點"}草稿，請先修改標題與英文網址代稱。`);
     } catch { setMessage("無法新增草稿，既有內容沒有被修改。"); }
     finally { setBusy(false); }
   }
@@ -182,9 +186,9 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
     if (!Object.keys(changes).length) {
       if (shouldOpenPreview && requestedPreview.href) {
         window.open(requestedPreview.href, "_blank", "noopener,noreferrer");
-        setMessage("沒有需要儲存的變更，已在新分頁開啟前台頁面。");
+        setSaveNotice({ kind: "info", text: "沒有需要儲存的變更，已在新分頁開啟前台頁面。" });
       } else {
-        setMessage("沒有需要儲存的變更。");
+        setSaveNotice({ kind: "info", text: "沒有需要儲存的變更。" });
       }
       return;
     }
@@ -198,7 +202,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         previewWindow.document.body.textContent = "正在儲存並更新前台預覽，請稍候…";
       }
     }
-    setBusy(true); setMessage("");
+    setBusy(true); setMessage(""); setSaveNotice({ kind: "pending", text: "正在安全儲存，請稍候…" });
     try {
       const { data } = await client.auth.getSession();
       const response = await saveRequest("/api/cms", {
@@ -210,7 +214,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       if (!response.ok) {
         previewWindow?.close();
         setNeedsReload(response.status === 409);
-        setMessage(result.error);
+        setSaveNotice({ kind: "error", text: result.error || "儲存失敗，畫面內容仍保留。" });
         return;
       }
       setEditing(result.item); setOriginal(result.item);
@@ -222,22 +226,22 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
           const previewUrl = new URL(savedPreview.href, window.location.origin);
           previewUrl.searchParams.set("cms_updated", Date.now().toString());
           previewWindow.location.replace(previewUrl.toString());
-          setMessage("已安全儲存，並在新分頁開啟最新前台頁面。");
+          setSaveNotice({ kind: "success", text: `已安全儲存（${new Date().toLocaleTimeString("zh-TW")}），並在新分頁開啟最新前台頁面。` });
         } else {
           previewWindow?.close();
-          setMessage(previewWindow
-            ? "已安全儲存，但目前狀態無法開啟公開前台。"
-            : "已安全儲存；瀏覽器阻擋了新分頁，請使用上方的「開啟前台」按鈕。");
+          setSaveNotice({ kind: "success", text: previewWindow
+            ? `已安全儲存（${new Date().toLocaleTimeString("zh-TW")}），但目前狀態無法開啟公開前台。`
+            : `已安全儲存（${new Date().toLocaleTimeString("zh-TW")}）；瀏覽器阻擋了新分頁，請使用上方的「開啟前台」按鈕。` });
         }
       } else {
-        setMessage("已安全儲存，修改前版本已保留。可使用上方的「開啟前台」查看最新結果。");
+        setSaveNotice({ kind: "success", text: `已安全儲存（${new Date().toLocaleTimeString("zh-TW")}），修改前版本已保留。` });
       }
     } catch (error) {
       previewWindow?.close();
       const timedOut = error instanceof Error && (error.name === "AbortError" || error.name === "TimeoutError");
-      setMessage(timedOut
+      setSaveNotice({ kind: "error", text: timedOut
         ? "儲存等待超過 30 秒，已停止等待；畫面內容仍保留。請稍候再返回列表確認，避免立刻重複儲存。"
-        : "儲存失敗，畫面內容仍保留，未確認任何資料變更。");
+        : "儲存失敗，畫面內容仍保留，未確認任何資料變更。" });
     }
     finally { setBusy(false); }
   }
@@ -303,9 +307,9 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         <button type="button" className="ml-4 underline" disabled={busy} onClick={logout}>取消並登出</button>
       </form>}
       <p className="mt-5 text-sm text-neutral-600">不開放自行註冊。帳號或驗證器遺失時，由 Supabase 專案管理者確認身分後處理；不能跳過雙重驗證。</p>
-    </div> : editing ? <form onSubmit={save} className="max-w-3xl space-y-5">
+    </div> : editing ? <form onSubmit={save} onInvalid={() => setSaveNotice({ kind: "error", text: "尚有必填欄位或網址格式不正確；系統已標示並移到第一個問題欄位。" })} className="max-w-3xl space-y-5">
       <div className="flex flex-wrap items-center gap-4">
-        <button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); setPublishNotice(null); setNeedsReload(false); }}>← 返回列表</button>
+        <button type="button" className="underline" disabled={busy} onClick={() => { setEditing(null); setOriginal(null); setMessage(""); setSaveNotice(null); setPublishNotice(null); setNeedsReload(false); }}>← 返回列表</button>
         {preview.href ? <a className="rounded-full border border-neutral-900 px-4 py-2 text-sm" href={preview.href} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{preview.reason}</span>}
         <span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span>
       </div>
@@ -345,6 +349,11 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         {collection === "blog_posts" && editing.status !== "published" && <button className="rounded-full border border-amber-500 bg-amber-50 px-6 py-3 text-neutral-900 disabled:opacity-40" type="button" disabled={busy || !writable} onClick={publishArticle}>檢查並發布</button>}
         {!nextPreview.href && <span className="text-sm text-neutral-500">{nextPreview.reason}</span>}
       </div>
+      {saveNotice && <div role="status" aria-live="polite" className={`rounded-xl border p-4 ${saveNotice.kind === "success" ? "border-green-300 bg-green-50 text-green-900" : saveNotice.kind === "error" ? "border-red-300 bg-red-50 text-red-800" : saveNotice.kind === "pending" ? "border-blue-300 bg-blue-50 text-blue-900" : "border-neutral-300 bg-neutral-50 text-neutral-800"}`}>
+        <strong>{saveNotice.kind === "success" ? "儲存完成" : saveNotice.kind === "error" ? "儲存未完成" : saveNotice.kind === "pending" ? "儲存中" : "儲存狀態"}</strong>
+        <p className="mt-1">{saveNotice.text}</p>
+        {saveNotice.kind === "error" && needsReload && <button type="button" className="mt-3 rounded-full border border-red-700 px-4 py-2 text-sm" disabled={busy} onClick={() => edit(editing.id)}>載入資料庫最新版本</button>}
+      </div>}
       {publishNotice && <div role="status" aria-live="polite" className={`rounded-xl border p-4 ${publishNotice.kind === "success" ? "border-green-300 bg-green-50 text-green-900" : "border-red-300 bg-red-50 text-red-800"}`}>
         <strong>{publishNotice.kind === "success" ? "已發布" : "尚未發布"}</strong>
         <p className="mt-1">{publishNotice.text}</p>
@@ -354,7 +363,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       <div className="flex flex-wrap gap-4">
         <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>
         <button className={button} disabled={busy} onClick={() => load("blog_posts")}>觀點</button>
-        <button className="rounded-full border border-neutral-900 px-6 py-3 disabled:opacity-40" disabled={busy || !writable} onClick={createArticle}>＋ 新增觀點草稿</button>
+        <button className="rounded-full border border-neutral-900 px-6 py-3 disabled:opacity-40" disabled={busy || !writable} onClick={createContent}>＋ 新增{collection === "works" ? "作品" : "觀點"}草稿</button>
         <button className="underline" disabled={busy} onClick={logout}>登出</button>
       </div>
       <h2 className="my-5 text-xl">{collection === "works" ? "作品" : "觀點"}・共 {total} 筆</h2>

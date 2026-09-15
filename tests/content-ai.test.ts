@@ -29,10 +29,23 @@ test("Gemini 請求格式不含不支援的字串長度限制，回站後仍完�
 });
 
 test("AI 正文以伺服器產生安全 HTML", () => {
-  const html = renderArticleSections([{ heading: "<script>alert(1)</script>", paragraphs: ["正常 <img src=x onerror=bad()> 文字"] }]);
+  const html = renderArticleSections([{ heading_level: 2, heading: "<script>alert(1)</script>", paragraphs: ["正常 <img src=x onerror=bad()> 文字"], bullet_points: [], numbered_steps: [] }]);
   assert.doesNotMatch(html, /<script|<img/);
   assert.match(html, /&lt;script&gt;/);
   assert.match(html, /&lt;img src=x onerror=bad\(\)&gt;/);
+});
+
+test("AI 可輸出安全的 H2 到 H4 與兩種清單", () => {
+  const html = renderArticleSections([{
+    heading_level: 3,
+    heading: "執行步驟",
+    paragraphs: ["依原始素材整理。"],
+    bullet_points: ["品牌定位"],
+    numbered_steps: ["盤點素材", "人工確認"],
+  }]);
+  assert.match(html, /<h3>執行步驟<\/h3>/);
+  assert.match(html, /<ul><li>品牌定位<\/li><\/ul>/);
+  assert.match(html, /<ol><li>盤點素材<\/li><li>人工確認<\/li><\/ol>/);
 });
 
 test("原始素材未出現的精確數字、日期、網址會被阻擋", () => {

@@ -70,6 +70,7 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  const editorRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const initialValue = useRef(value);
 
   useEffect(() => {
@@ -94,6 +95,29 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
     if (!window.confirm("確定從內文移除這個區塊？尚未按下整頁儲存前，可以重新載入復原。")) return;
     const next = blocks.filter((_, i) => i !== index); setSelected(Math.max(0, Math.min(index, next.length - 1)));
     commit(next.length ? next : [{ id: id(), kind: "html", html: "<p>請輸入內文</p>" }]);
+  }
+  function syncHtmlBlock(index: number) {
+    const block = blocks[index];
+    const editor = editorRefs.current[block?.id];
+    if (!editor || !block || block.kind !== "html") return;
+    const next = [...blocks];
+    next[index] = { ...block, html: editor.innerHTML };
+    commit(next);
+  }
+  function formatSelection(index: number, command: "bold" | "italic" | "createLink") {
+    const editor = editorRefs.current[blocks[index]?.id];
+    if (!editor) return;
+    editor.focus();
+    if (command === "createLink") {
+      const url = window.prompt("請輸入連結網址（https://、mailto:、tel: 或站內 / 路徑）");
+      if (!url) return;
+      if (!/^(https:\/\/|mailto:|tel:|\/)/i.test(url.trim())) {
+        setMessage("連結格式不安全，請使用 https://、mailto:、tel: 或站內 / 路徑。");
+        return;
+      }
+      document.execCommand(command, false, url.trim());
+    } else document.execCommand(command, false);
+    syncHtmlBlock(index);
   }
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
     const next = event.target.files?.[0] || null; setFile(next); setMessage(""); setDimensions(null);
@@ -134,11 +158,27 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
 
   const small = "rounded-full border border-neutral-300 px-3 py-1.5 text-sm disabled:opacity-30";
   return <section className="space-y-4 rounded-2xl border border-neutral-200 p-4">
-    <div><h3 className="font-semibold">圖文內文編輯器</h3><p className="mt-1 text-sm text-neutral-600">點選區塊後新增內容；可直接拖曳，或用上下按鈕調整順序。</p></div>
-    <div className="flex flex-wrap gap-2"><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<p>請輸入文字</p>" })}>＋ 文字</button><button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h2>請輸入標題</h2>" })}>＋ 標題</button></div>
+    <div><h3 className="font-semibold">圖文內文編輯器</h3><p className="mt-1 text-sm text-neutral-600">AI 可先自動排版；也可用下方工具補上標題、清單、引言、連結與表格。頁面主標題已是 H1，內文請從 H2 開始。</p></div>
+    <div className="flex flex-wrap gap-2">
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<p>請輸入文字</p>" })}>＋ 段落</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h2>請輸入大標題</h2>" })}>＋ H2 大標題</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h3>請輸入中標題</h3>" })}>＋ H3 中標題</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<h4>請輸入小標題</h4>" })}>＋ H4 小標題</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<ol><li>第一項</li><li>第二項</li></ol>" })}>＋ 數字清單</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<ul><li>第一項</li><li>第二項</li></ul>" })}>＋ 項目清單</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<blockquote><p>請輸入重點引言</p></blockquote>" })}>＋ 引言</button>
+      <button type="button" className={small} onClick={() => insert({ id: id(), kind: "html", html: "<table><thead><tr><th>欄位一</th><th>欄位二</th></tr></thead><tbody><tr><td>內容</td><td>內容</td></tr></tbody></table>" })}>＋ 簡易表格</button>
+    </div>
     <div className="space-y-3">{blocks.map((block, index) => <div key={block.id} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); moveTo(Number(event.dataTransfer.getData("text/plain")), index); }} onClick={() => setSelected(index)} className={`rounded-2xl border p-3 ${selected === index ? "border-amber-500 bg-amber-50/40" : "border-neutral-200"}`}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><span draggable onDragStart={(event) => event.dataTransfer.setData("text/plain", String(index))} className="cursor-grab text-xs text-neutral-500 active:cursor-grabbing">⠿ 拖曳・{block.kind === "image" ? "圖片" : "文字"}區塊 {index + 1}</span><div className="flex gap-2"><button type="button" className={small} disabled={index === 0} onClick={() => move(index, -1)}>上移</button><button type="button" className={small} disabled={index === blocks.length - 1} onClick={() => move(index, 1)}>下移</button><button type="button" className={small} onClick={() => remove(index)}>移除</button></div></div>
-      {block.kind === "html" ? <div className="min-h-20 rounded-xl bg-white p-4 leading-relaxed outline-none ring-amber-400 focus:ring-2 [&_h2]:text-2xl [&_h2]:font-semibold [&_p]:mb-3" contentEditable suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: block.html }} onPaste={(event) => { event.preventDefault(); document.execCommand("insertText", false, event.clipboardData.getData("text/plain")); }} onBlur={(event) => { const next = [...blocks]; next[index] = { ...block, html: event.currentTarget.innerHTML }; commit(next); }} /> : <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
+      {block.kind === "html" ? <div>
+        <div className="mb-2 flex flex-wrap gap-2" aria-label="文字格式工具列">
+          <button type="button" className={small} onMouseDown={(event) => { event.preventDefault(); formatSelection(index, "bold"); }}>粗體</button>
+          <button type="button" className={small} onMouseDown={(event) => { event.preventDefault(); formatSelection(index, "italic"); }}>斜體</button>
+          <button type="button" className={small} onMouseDown={(event) => { event.preventDefault(); formatSelection(index, "createLink"); }}>加入連結</button>
+        </div>
+        <div ref={(node) => { editorRefs.current[block.id] = node; }} className="min-h-20 rounded-xl bg-white p-4 leading-relaxed outline-none ring-amber-400 focus:ring-2 [&_blockquote]:my-4 [&_blockquote]:border-l-4 [&_blockquote]:border-amber-400 [&_blockquote]:pl-4 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-semibold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-semibold [&_h4]:mb-2 [&_h4]:font-semibold [&_li]:mb-1 [&_ol]:my-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mb-3 [&_table]:my-3 [&_table]:w-full [&_td]:border [&_td]:border-neutral-300 [&_td]:p-2 [&_th]:border [&_th]:border-neutral-300 [&_th]:bg-neutral-100 [&_th]:p-2 [&_ul]:my-3 [&_ul]:list-disc [&_ul]:pl-6" contentEditable suppressContentEditableWarning dangerouslySetInnerHTML={{ __html: block.html }} onPaste={(event) => { event.preventDefault(); document.execCommand("insertText", false, event.clipboardData.getData("text/plain")); }} onBlur={() => syncHtmlBlock(index)} />
+      </div> : <div className="grid gap-4 md:grid-cols-[1.4fr_1fr]">
         <div className="overflow-hidden rounded-xl bg-neutral-100"><NextImage unoptimized src={block.src} alt={block.alt} width={block.width || 1600} height={block.height || 1200} className="max-h-96 w-full object-contain" /></div>
         <div className="space-y-3"><label className="block text-sm">替代文字<input className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" value={block.alt} onChange={(event) => { const next=[...blocks]; next[index]={...block,alt:event.target.value}; commit(next); }} /></label><label className="block text-sm">圖片說明<input className="mt-1 w-full rounded-xl border border-neutral-300 px-3 py-2" value={block.caption} onChange={(event) => { const next=[...blocks]; next[index]={...block,caption:event.target.value}; commit(next); }} /></label><p className="text-sm text-neutral-500">網站顯示：{block.width && block.height ? `${block.width} × ${block.height} px` : "尺寸未記錄"}{block.optimizedBytes ? `・${formatBytes(block.optimizedBytes)}` : ""}</p>{block.originalWidth && block.originalHeight && <p className="text-sm text-neutral-500">保留原圖：{block.originalWidth} × {block.originalHeight} px・{formatBytes(block.originalBytes)}</p>}<p className="text-sm text-neutral-500">{block.optimizedBytes ? "WebP・" : ""}原比例顯示・不裁切</p></div>
       </div>}

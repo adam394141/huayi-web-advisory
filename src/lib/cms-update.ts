@@ -25,11 +25,12 @@ export type ParsedCmsUpdate = {
 };
 
 export type ParsedCmsCreate = {
-  collection: "blog_posts";
+  collection: CmsCollection;
   title: string;
   slug: string;
   category: string;
-  author: string | null;
+  author?: string | null;
+  client?: string | null;
 };
 
 export function parseCmsPublishRequest(value: unknown): { expectedUpdatedAt: string } | null {
@@ -43,16 +44,19 @@ export function parseCmsPublishRequest(value: unknown): { expectedUpdatedAt: str
 export function parseCmsCreate(value: unknown): ParsedCmsCreate | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const body = value as Record<string, unknown>;
-  if (body.collection !== "blog_posts") return null;
+  if (body.collection !== "works" && body.collection !== "blog_posts") return null;
   for (const key of ["title", "slug", "category"]) if (typeof body[key] !== "string" || !(body[key] as string).trim()) return null;
-  if (typeof body.author !== "string" && body.author != null) return null;
+  const optionalField = body.collection === "works" ? "client" : "author";
+  if (typeof body[optionalField] !== "string" && body[optionalField] != null) return null;
   const title = (body.title as string).trim();
   const slug = (body.slug as string).trim();
   const category = (body.category as string).trim();
-  const author = typeof body.author === "string" ? body.author.trim() : "";
-  if (title.length > LIMITS.title || slug.length > LIMITS.slug || category.length > LIMITS.category || author.length > LIMITS.author) return null;
+  const optionalValue = typeof body[optionalField] === "string" ? body[optionalField].trim() : "";
+  if (title.length > LIMITS.title || slug.length > LIMITS.slug || category.length > LIMITS.category || optionalValue.length > LIMITS[optionalField]) return null;
   if (!SLUG.test(slug)) return null;
-  return { collection: "blog_posts", title, slug, category, author: author || null };
+  return body.collection === "works"
+    ? { collection: "works", title, slug, category, client: optionalValue || null }
+    : { collection: "blog_posts", title, slug, category, author: optionalValue || null };
 }
 
 export function parseCmsUpdate(value: unknown): ParsedCmsUpdate | null {

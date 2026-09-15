@@ -21,7 +21,7 @@ export function findUnsupportedFactSignals(source: string, output: ContentAiOutp
   const outputText = [
     output.article.title,
     output.article.excerpt,
-    ...output.article.sections.flatMap((section) => [section.heading, ...section.paragraphs]),
+    ...output.article.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...section.bullet_points, ...section.numbered_steps]),
     output.seo.title,
     output.seo.description,
     output.aeo.direct_answer,
