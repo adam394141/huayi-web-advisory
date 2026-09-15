@@ -24,7 +24,7 @@
 
 - `CMS_WRITE_ENABLED=true`
 - `CONTENT_AI_ENABLED=true`
-- `CONTENT_AI_MODEL=openai/gpt-5.4`：已向 AI Gateway 查證可用且支援結構化輸出的模型 ID
+- `CONTENT_AI_MODEL=openai/gpt-5.6-sol`：已向 AI Gateway 查證可用且支援結構化輸出的實作模型 ID；Astra 僅保留策略發想
 - `CONTENT_AI_PROMPT_VERSION=2026-09-15-v1`
 - `SITE_CANONICAL_URL=https://huayi.tw`
 - `SITE_ALLOW_INDEXING=false`
