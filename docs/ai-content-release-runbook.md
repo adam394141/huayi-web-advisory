@@ -4,7 +4,7 @@
 
 - 僅套用於 Advisory 新官網及 `blog_posts`。
 - 本輪只部署 Preview，不合併 `main`，不調整 Cloudflare 或正式 DNS。
-- `OPENAI_API_KEY` 只放 Vercel 的加密環境變數，不寫入 Git、Supabase 或瀏覽器。
+- AI 模型透過 Vercel AI Gateway 的短效 OIDC 驗證；Vercel 部署不保存 OpenAI 長效金鑰。
 - 正式啟用前，Preview 必須維持 `noindex`。
 
 ## 一次性資料庫安裝順序
@@ -24,13 +24,12 @@
 
 - `CMS_WRITE_ENABLED=true`
 - `CONTENT_AI_ENABLED=true`
-- `OPENAI_API_KEY`：OpenAI 專案金鑰
-- `CONTENT_AI_MODEL`：經確認可用且支援結構化輸出的模型 ID
+- `CONTENT_AI_MODEL=openai/gpt-5.4`：已向 AI Gateway 查證可用且支援結構化輸出的模型 ID
 - `CONTENT_AI_PROMPT_VERSION=2026-09-15-v1`
 - `SITE_CANONICAL_URL=https://huayi.tw`
 - `SITE_ALLOW_INDEXING=false`
 
-公開 Supabase 變數沿用既有專案設定。不得新增 service-role key 到前端或 `NEXT_PUBLIC_*`。
+公開 Supabase 變數沿用既有專案設定。Vercel 會自動提供並輪替 `VERCEL_OIDC_TOKEN`，不得手動複製到 Git、Supabase 或前端。只有非 Vercel 的本機環境才可選用伺服器端 `AI_GATEWAY_API_KEY`。不得新增 service-role key 到前端或 `NEXT_PUBLIC_*`。
 
 ## Preview 驗收流程
 
@@ -51,7 +50,7 @@
 - 緊急停用所有後台寫入：將 `CMS_WRITE_ENABLED=false` 後重新部署。
 - 回復文章：從後台版本紀錄還原；還原後必須重新人工發布。
 - 程式回退：revert 對應功能 commit；不刪除新表與稽核紀錄。
-- API 或模型異常時不得把金鑰貼入錯誤訊息、GitHub issue 或 Notion。
+- API 或模型異常時不得把 OIDC token、Gateway key 或其他憑證貼入錯誤訊息、GitHub issue 或 Notion。
 
 ## 成本與效能觀察
 

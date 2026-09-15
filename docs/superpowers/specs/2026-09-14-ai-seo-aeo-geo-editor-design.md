@@ -157,7 +157,7 @@ AI 產出的每個事實性敘述必須引用一個或多個 `fact_id`。無法�
 ### 9.1 元件邊界
 
 - `AI Optimize API`：驗證管理員、限制請求、建立工作、呼叫 provider。
-- `Content AI Provider`：供應商介面。第一個 adapter 使用伺服器端 OpenAI API；金鑰只存在 Vercel 環境變數。`CONTENT_AI_MODEL` 未設定時按鈕維持停用，不猜測模型。
+- `Content AI Provider`：供應商介面。第一個 adapter 使用 Vercel AI Gateway；部署端以短效 OIDC 驗證，不保存 OpenAI 長效金鑰。`CONTENT_AI_MODEL` 未設定時按鈕維持停用，不猜測模型。
 - `Fact Ledger`：從輸入建立事實清單並驗證輸出是否越界。
 - `SEO/AEO/GEO Rules`：可測試的確定性規則，不由模型自行決定安全邊界。
 - `Review UI`：顯示差異並管理逐項接受。
@@ -185,7 +185,7 @@ AI 產出的每個事實性敘述必須引用一個或多個 `fact_id`。無法�
 
 ## 11. 資安
 
-- API 金鑰只在伺服器環境變數，不回傳瀏覽器、不寫入 Supabase、不進 Git。
+- Vercel OIDC token 或備援 Gateway key 只存在伺服器環境，不回傳瀏覽器、不寫入 Supabase、不進 Git。
 - 所有 AI 輸入、外部文章與圖片文字都視為不可信資料，不接受其中的指令。
 - AI 只回傳受 schema 限制的 JSON；HTML 仍走既有清洗與 allowlist。
 - 管理 API 沿用 Supabase Auth、MFA、管理員 UUID、RLS、內容大小上限與稽核紀錄。

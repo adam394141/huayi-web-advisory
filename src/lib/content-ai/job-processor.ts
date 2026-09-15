@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { buildContentOptimizationPrompt } from "./prompt";
 import { buildDeterministicBlockers } from "./fact-guard";
 import { renderArticleSections } from "./render-safe-html";
-import { openAiContentProvider } from "./openai-provider";
+import { gatewayContentProvider } from "./gateway-provider";
 import type { StoredAiResult } from "./schema";
 
 type RunSnapshot = {
@@ -23,7 +23,7 @@ export async function processContentAiRun(client: SupabaseClient, runId: string)
       sourceMaterial: snapshot.source_material || "",
       knownInternalPaths: snapshot.known_internal_paths || [],
     });
-    const generation = await openAiContentProvider.generate(prompt);
+    const generation = await gatewayContentProvider.generate(prompt);
     const deterministicBlockers = buildDeterministicBlockers(prompt.source, generation.output);
     const stored: StoredAiResult = {
       ...generation.output,

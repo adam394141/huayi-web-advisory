@@ -146,10 +146,10 @@ AI 任務以資料庫留下狀態與輸入／輸出快照。API 先回傳任務�
 
 **目標：模型可以改寫，但輸出必須可解析、可檢查、不可直接發布。**
 
-1. 新增 server-only provider adapter，第一個 provider 使用 OpenAI。
+1. 新增 server-only provider adapter，第一個 provider 透過 Vercel AI Gateway 使用 OpenAI 模型，部署端採短效 OIDC。
 2. 使用環境變數：
    - `CONTENT_AI_ENABLED`
-   - `OPENAI_API_KEY`
+   - `AI_GATEWAY_API_KEY`（僅非 Vercel 本機環境的選用備援）
    - `CONTENT_AI_MODEL`
    - `CONTENT_AI_PROMPT_VERSION`
 3. 未設定或停用時，後台顯示「AI 優化尚未啟用」，按鈕不可操作；不得 fallback 到瀏覽器金鑰或固定金鑰。
@@ -172,7 +172,7 @@ AI 任務以資料庫留下狀態與輸入／輸出快照。API 先回傳任務�
 **涉及檔案**
 
 - 新增 `src/lib/content-ai/provider.ts`
-- 新增 `src/lib/content-ai/openai-provider.ts`
+- 新增 `src/lib/content-ai/gateway-provider.ts`
 - 新增 `src/lib/content-ai/schema.ts`
 - 新增 `src/lib/content-ai/prompt.ts`
 - 新增 `src/lib/content-ai/fact-guard.ts`

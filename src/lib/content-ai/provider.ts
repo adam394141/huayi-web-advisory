@@ -10,5 +10,10 @@ export interface ContentAiProvider {
   generate(input: { system: string; prompt: string }): Promise<ContentAiGeneration>;
 }
 export function isContentAiConfigured() {
-  return process.env.CONTENT_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY && !!process.env.CONTENT_AI_MODEL;
+  const hasGatewayAuth =
+    !!process.env.AI_GATEWAY_API_KEY ||
+    !!process.env.VERCEL_OIDC_TOKEN ||
+    process.env.VERCEL === "1";
+
+  return process.env.CONTENT_AI_ENABLED === "true" && hasGatewayAuth && !!process.env.CONTENT_AI_MODEL;
 }
