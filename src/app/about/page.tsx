@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { ImagePlaceholder } from "@/components/image-placeholder";
 
 export const metadata: Metadata = {
   title: "關於華翼｜華翼品牌策略",
   description:
-    "華翼品牌形象設計，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
+    "華翼品牌策略，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
 };
 
 const METHOD_STEPS = [
@@ -56,7 +57,7 @@ export default function AboutPage() {
       {/* Page Header */}
       <Section className="pb-0 pt-20 md:pt-28">
         <ScrollReveal>
-          <p className="text-[10px] tracking-[0.4em] text-[var(--color-gold-dark)]">
+          <p className="text-[12px] tracking-[0.4em] text-[var(--color-gold-dark)]">
             ABOUT
           </p>
           <h1 className="mt-4 font-serif text-[2rem] font-semibold text-[var(--color-fg)] md:text-[3rem]">
@@ -76,9 +77,9 @@ export default function AboutPage() {
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
-            <div className="space-y-5 text-[14px] leading-[1.9] text-[var(--color-body)]">
+            <div className="space-y-5 text-[16px] leading-[1.9] text-[var(--color-body)]">
               <p>
-                華翼品牌形象設計立足台灣，以品牌策略顧問的角色，服務中小企業與二代接班人。
+                華翼品牌策略立足台灣，以品牌策略顧問的角色，服務中小企業與二代接班人。
               </p>
               <p>
                 我們相信，品牌不只是一個 Logo
@@ -97,7 +98,7 @@ export default function AboutPage() {
       {/* Method */}
       <Section className="bg-[var(--color-surface)]">
         <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">
             METHODOLOGY
           </p>
           <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
@@ -114,7 +115,7 @@ export default function AboutPage() {
                 <h3 className="mt-3 font-serif text-[1.2rem] font-semibold text-[var(--color-fg)]">
                   {s.title}
                 </h3>
-                <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-body)]">
+                <p className="mt-3 text-[16px] leading-relaxed text-[var(--color-body)]">
                   {s.desc}
                 </p>
               </div>
@@ -126,13 +127,13 @@ export default function AboutPage() {
       {/* Integrated Capabilities */}
       <Section>
         <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">
             CAPABILITIES
           </p>
           <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
             整合能力
           </h2>
-          <p className="mt-4 max-w-[560px] text-[14px] leading-relaxed text-[var(--color-body)]">
+          <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
             品牌策略、AI
             技術、行銷成長與品牌設計——四個面向不是獨立服務，而是根據企業需求靈活組合的整合能力。
           </p>
@@ -144,7 +145,7 @@ export default function AboutPage() {
                 <h3 className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
                   {c.title}
                 </h3>
-                <p className="mt-2 text-[14px] text-[var(--color-body)]">
+                <p className="mt-2 text-[16px] text-[var(--color-body)]">
                   {c.desc}
                 </p>
               </div>
@@ -156,7 +157,7 @@ export default function AboutPage() {
       {/* Team */}
       <Section className="bg-[var(--color-surface)]">
         <ScrollReveal>
-          <p className="text-[10px] tracking-[0.3em] text-[var(--color-subtle)]">
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">
             TEAM
           </p>
           <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
@@ -166,15 +167,11 @@ export default function AboutPage() {
         <div className="mt-10 grid max-w-[720px] gap-10 md:grid-cols-2">
           {TEAM.map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
-              <div className="flex aspect-[3/4] items-center justify-center rounded-[var(--radius-card)] bg-[var(--color-warm-white)]">
-                <span className="text-[13px] text-[var(--color-subtle)]">
-                  Placeholder — 待替換真實照片
-                </span>
-              </div>
+              <ImagePlaceholder src={member.name === "Adam" ? "/home/adam.jpg" : null} alt={member.name + " 品牌顧問"} aspect="3/4" />
               <h3 className="mt-5 text-[18px] font-medium text-[var(--color-fg)]">
                 {member.name}
               </h3>
-              <p className="mt-1 text-[14px] text-[var(--color-body)]">
+              <p className="mt-1 text-[16px] text-[var(--color-body)]">
                 {member.title}
               </p>
             </ScrollReveal>

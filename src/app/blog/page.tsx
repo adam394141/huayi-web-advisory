@@ -25,7 +25,7 @@ export default async function BlogPage() {
     <>
       <section className="px-[var(--space-page-x)] pb-0 pt-20 md:pt-28">
         <div className="mx-auto max-w-[1280px]">
-          <p className="text-[10px] tracking-[0.4em] text-[var(--color-subtle)]">
+          <p className="text-[12px] tracking-[0.4em] text-[var(--color-subtle)]">
             BLOG
           </p>
           <h1 className="mt-4 font-serif text-[2rem] font-semibold leading-tight text-[var(--color-fg)] md:text-[3rem]">
@@ -55,6 +55,7 @@ export default async function BlogPage() {
                         alt={post.title}
                         width={600}
                         height={338}
+                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
                         className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       />
                     ) : (
@@ -63,19 +64,19 @@ export default async function BlogPage() {
                   </div>
 
                   <div className="mt-5">
-                    <span className="inline-block rounded-full bg-[var(--color-surface)] px-3 py-1 text-[10px] tracking-wider text-[var(--color-body)]">
+                    <span className="inline-block rounded-full bg-[var(--color-surface)] px-3 py-1 text-[12px] tracking-wider text-[var(--color-body)]">
                       {post.category}
                     </span>
                     <h3 className="mt-3 font-serif text-[17px] font-medium leading-snug text-[var(--color-fg)] transition-colors group-hover:text-[var(--color-gold-dark)]">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-[var(--color-body)]">
+                      <p className="mt-2 line-clamp-2 text-[15px] leading-relaxed text-[var(--color-body)]">
                         {post.excerpt}
                       </p>
                     )}
                     {post.published_at && (
-                      <p className="mt-3 text-[11px] text-[var(--color-subtle)]">
+                      <p className="mt-3 text-[12px] text-[var(--color-subtle)]">
                         {formatDate(post.published_at)}
                       </p>
                     )}

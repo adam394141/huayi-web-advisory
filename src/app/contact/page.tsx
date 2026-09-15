@@ -26,7 +26,7 @@ export default function ContactPage() {
       {/* Page Header */}
       <Section className="pb-0 pt-20 md:pt-28">
         <ScrollReveal>
-          <p className="text-[10px] tracking-[0.4em] text-[var(--color-gold-dark)]">
+          <p className="text-[12px] tracking-[0.4em] text-[var(--color-gold-dark)]">
             CONTACT
           </p>
           <h1 className="mt-4 font-serif text-[2rem] font-semibold text-[var(--color-fg)] md:text-[3rem]">
@@ -48,12 +48,12 @@ export default function ContactPage() {
                   <h2 className="mt-6 font-serif text-[1.4rem] font-semibold text-[var(--color-fg)]">
                     表單送出測試成功！
                   </h2>
-                  <p className="mt-3 text-[14px] text-[var(--color-body)]">
+                  <p className="mt-3 text-[16px] text-[var(--color-body)]">
                     （Preview 模式）正式版將會寄送通知。
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="mt-6 text-[13px] text-[var(--color-gold-dark)] underline underline-offset-4"
+                    className="mt-6 text-[15px] text-[var(--color-gold-dark)] underline underline-offset-4"
                   >
                     重新填寫
                   </button>
@@ -64,7 +64,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="name"
-                    className="mb-2 block text-[13px] font-medium text-[var(--color-fg)]"
+                    className="mb-2 block text-[15px] font-medium text-[var(--color-fg)]"
                   >
                     姓名
                   </label>
@@ -73,7 +73,7 @@ export default function ContactPage() {
                     name="name"
                     type="text"
                     required
-                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[14px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
+                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[16px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
                     placeholder="您的姓名"
                   />
                 </div>
@@ -81,7 +81,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="mb-2 block text-[13px] font-medium text-[var(--color-fg)]"
+                    className="mb-2 block text-[15px] font-medium text-[var(--color-fg)]"
                   >
                     Email
                   </label>
@@ -90,7 +90,7 @@ export default function ContactPage() {
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[14px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
+                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[16px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -98,7 +98,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="company"
-                    className="mb-2 block text-[13px] font-medium text-[var(--color-fg)]"
+                    className="mb-2 block text-[15px] font-medium text-[var(--color-fg)]"
                   >
                     公司名稱
                   </label>
@@ -106,7 +106,7 @@ export default function ContactPage() {
                     id="company"
                     name="company"
                     type="text"
-                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[14px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
+                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[16px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
                     placeholder="公司或品牌名稱"
                   />
                 </div>
@@ -114,7 +114,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="type"
-                    className="mb-2 block text-[13px] font-medium text-[var(--color-fg)]"
+                    className="mb-2 block text-[15px] font-medium text-[var(--color-fg)]"
                   >
                     諮詢類型
                   </label>
@@ -122,7 +122,7 @@ export default function ContactPage() {
                     id="type"
                     name="type"
                     required
-                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[14px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
+                    className="w-full rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[16px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
                     defaultValue=""
                   >
                     <option value="" disabled>
@@ -139,7 +139,7 @@ export default function ContactPage() {
                 <div>
                   <label
                     htmlFor="message"
-                    className="mb-2 block text-[13px] font-medium text-[var(--color-fg)]"
+                    className="mb-2 block text-[15px] font-medium text-[var(--color-fg)]"
                   >
                     訊息內容
                   </label>
@@ -148,14 +148,14 @@ export default function ContactPage() {
                     name="message"
                     required
                     rows={5}
-                    className="w-full resize-none rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[14px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
+                    className="w-full resize-none rounded-[var(--radius-input)] border border-[var(--color-faint)]/50 bg-white px-4 py-3 text-[16px] text-[var(--color-fg)] outline-none transition-colors focus:border-[var(--color-gold)] focus:ring-2 focus:ring-[var(--color-gold)]/20"
                     placeholder="請簡述您的需求..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[13px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
+                  className="rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[15px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
                 >
                   送出
                 </button>
@@ -171,14 +171,14 @@ export default function ContactPage() {
                   className="h-5 w-5 text-[var(--color-gold-dark)]"
                   strokeWidth={1.5}
                 />
-                <p className="mt-3 text-[11px] tracking-[0.15em] text-[var(--color-subtle)]">
+                <p className="mt-3 text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
                   EMAIL
                 </p>
                 <a
-                  href="mailto:hy24687418@gmail.com"
-                  className="mt-1 block text-[14px] text-[var(--color-fg)] transition-colors hover:text-[var(--color-gold-dark)]"
+                  href="mailto:888@huayi.tw"
+                  className="mt-1 block text-[16px] text-[var(--color-fg)] transition-colors hover:text-[var(--color-gold-dark)]"
                 >
-                  hy24687418@gmail.com
+                  888@huayi.tw
                 </a>
               </div>
 
@@ -187,10 +187,10 @@ export default function ContactPage() {
                   className="h-5 w-5 text-[var(--color-gold-dark)]"
                   strokeWidth={1.5}
                 />
-                <p className="mt-3 text-[11px] tracking-[0.15em] text-[var(--color-subtle)]">
+                <p className="mt-3 text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
                   回覆時間
                 </p>
-                <p className="mt-1 text-[14px] text-[var(--color-body)]">
+                <p className="mt-1 text-[16px] text-[var(--color-body)]">
                   通常在 1-2 個工作天內回覆
                 </p>
               </div>

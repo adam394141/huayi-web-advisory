@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 interface ImagePlaceholderProps {
@@ -11,6 +11,7 @@ interface ImagePlaceholderProps {
   className?: string;
   contain?: boolean;
   priority?: boolean;
+  caption?: string;
 }
 
 export function ImagePlaceholder({
@@ -21,9 +22,30 @@ export function ImagePlaceholder({
   className = "",
   contain = false,
   priority = false,
+  caption,
 }: ImagePlaceholderProps) {
-  const [error, setError] = useState(false);
-  const isPlaceholder = !src || error;
+  const [failedSource, setFailedSource] = useState<string | null>(null);
+  const [originalSource, setOriginalSource] = useState<string | null>(null);
+  const loaded = useRef(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    loaded.current = false;
+    if (!src || !imageRef.current) return;
+    let timeout: ReturnType<typeof setTimeout>;
+    // 最佳化端點逾時時回退原圖；保留原始素材，不讓圖片永遠停在空框。
+    const start = () => {
+      timeout = setTimeout(() => {
+        if (!loaded.current && !imageRef.current?.naturalWidth) setOriginalSource(src);
+      }, 5000);
+    };
+    if (!("IntersectionObserver" in window)) { start(); return () => clearTimeout(timeout); }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { start(); observer.disconnect(); }
+    }, { rootMargin: "300px" });
+    observer.observe(imageRef.current);
+    return () => { clearTimeout(timeout); observer.disconnect(); };
+  }, [src]);
+  const isPlaceholder = !src || src === failedSource;
 
   if (isPlaceholder) {
     return (
@@ -32,17 +54,19 @@ export function ImagePlaceholder({
         style={{
           aspectRatio: aspect,
           borderRadius: rounded,
-          background: "linear-gradient(135deg, #F2F0EB 0%, #E8E4DC 50%, #F2F0EB 100%)",
+          background: "var(--color-surface-alt)",
         }}
         role="img"
         aria-label={alt}
       >
         <div className="text-center px-4">
-          <div className="mx-auto mb-2 h-8 w-8 rounded-full border-2 border-[var(--color-faint)] opacity-40" />
-          <p className="text-[11px] tracking-wider text-[var(--color-subtle)] opacity-60">
-            Placeholder
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-[var(--color-gold-dark)] font-serif text-3xl text-[var(--color-body)]" aria-hidden="true">
+            {alt.includes("Rosie") ? "R" : "HUAYI"}
+          </div>
+          <p className="text-[14px] tracking-wider text-[var(--color-body)]">
+            {src ? "圖片暫時無法載入" : "正式肖像待補"}
           </p>
-          <p className="mt-1 max-w-[200px] text-[10px] leading-relaxed text-[var(--color-faint)]">
+          <p className="mt-2 max-w-[240px] text-[13px] leading-relaxed text-[var(--color-body)]">
             {alt}
           </p>
         </div>
@@ -52,18 +76,25 @@ export function ImagePlaceholder({
 
   return (
     <div
-      className={`relative overflow-hidden ${className}`}
+      className={`image-frame relative overflow-hidden ${className}`}
       style={{ aspectRatio: aspect, borderRadius: rounded }}
     >
       <Image
+        ref={imageRef}
         src={src}
         alt={alt}
         fill
         className={contain ? "object-contain" : "object-cover"}
-        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 640px"
+        sizes={priority ? "(max-width: 1280px) 100vw, 1280px" : "(max-width: 768px) 100vw, (max-width: 1280px) 75vw, 1280px"}
         priority={priority}
-        onError={() => setError(true)}
+        unoptimized={originalSource === src}
+        onLoad={() => { loaded.current = true; }}
+        onError={() => {
+          if (originalSource !== src) setOriginalSource(src);
+          else setFailedSource(src);
+        }}
       />
+      {caption && <span className="image-caption">{caption}</span>}
     </div>
   );
 }

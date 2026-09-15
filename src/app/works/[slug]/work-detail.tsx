@@ -20,7 +20,7 @@ export function WorkDetail({
       <div className="mx-auto max-w-[1280px]">
         <Link
           href="/works"
-          className="mb-10 inline-block text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+          className="mb-10 inline-block text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
         >
           ← 返回作品列表
         </Link>
@@ -32,14 +32,16 @@ export function WorkDetail({
               alt={work.title}
               width={1280}
               height={800}
+              sizes="(max-width: 1312px) 100vw, 1280px"
+              quality={82}
               className="w-full object-contain"
-              priority
+              preload
             />
           </div>
         )}
 
         <div className="mx-auto mt-12 max-w-[800px]">
-          <span className="inline-block rounded-full bg-[var(--color-surface)] px-4 py-1.5 text-[11px] tracking-wider text-[var(--color-body)]">
+          <span className="inline-block rounded-full bg-[var(--color-surface)] px-4 py-1.5 text-[12px] tracking-wider text-[var(--color-body)]">
             {work.category}
           </span>
 
@@ -53,13 +55,14 @@ export function WorkDetail({
             </p>
           )}
 
-          {work.content && (
-            <div
-              className="mt-8 text-[15px] leading-[1.9] text-[var(--color-body)] [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:font-serif [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mb-2 [&_h3]:mt-6 [&_h3]:font-medium [&_h3]:text-[var(--color-fg)] [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-5"
-              dangerouslySetInnerHTML={{ __html: work.content }}
-            />
-          )}
         </div>
+
+        {work.content && (
+          <div
+            className="mt-8 text-[15px] leading-[1.9] text-[var(--color-body)] [&_a]:underline [&_blockquote]:mx-auto [&_blockquote]:my-6 [&_blockquote]:max-w-[800px] [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--color-gold)] [&_blockquote]:pl-5 [&_figcaption]:mx-auto [&_figcaption]:mt-3 [&_figcaption]:max-w-[800px] [&_figcaption]:text-center [&_figcaption]:text-sm [&_figcaption]:text-[var(--color-subtle)] [&_figure]:my-10 [&_figure]:overflow-hidden [&_figure]:rounded-[var(--radius-image)] [&_figure_img]:h-auto [&_figure_img]:w-full [&_figure_img]:object-contain [&_h2]:mx-auto [&_h2]:mb-4 [&_h2]:mt-10 [&_h2]:max-w-[800px] [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-[var(--color-fg)] [&_h3]:mx-auto [&_h3]:mb-3 [&_h3]:mt-8 [&_h3]:max-w-[800px] [&_h3]:font-serif [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:text-[var(--color-fg)] [&_h4]:mx-auto [&_h4]:mb-2 [&_h4]:mt-6 [&_h4]:max-w-[800px] [&_h4]:font-semibold [&_h4]:text-[var(--color-fg)] [&_li]:mx-auto [&_li]:max-w-[760px] [&_ol]:mx-auto [&_ol]:mb-4 [&_ol]:max-w-[800px] [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:mx-auto [&_p]:mb-4 [&_p]:max-w-[800px] [&_table]:mx-auto [&_table]:my-7 [&_table]:block [&_table]:w-full [&_table]:max-w-[800px] [&_table]:overflow-x-auto [&_td]:border [&_td]:border-[var(--color-surface-alt)] [&_td]:p-3 [&_th]:border [&_th]:border-[var(--color-surface-alt)] [&_th]:bg-[var(--color-surface)] [&_th]:p-3 [&_th]:text-left [&_ul]:mx-auto [&_ul]:mb-4 [&_ul]:max-w-[800px] [&_ul]:list-disc [&_ul]:pl-6"
+            dangerouslySetInnerHTML={{ __html: work.content }}
+          />
+        )}
 
         {galleryUrls.length > 0 && (
           <div className="mt-16 space-y-6">
@@ -74,7 +77,7 @@ export function WorkDetail({
         <div className="mx-auto mt-16 max-w-[800px] border-t border-[var(--color-surface-alt)] pt-10">
           <Link
             href="/works"
-            className="text-[13px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
+            className="text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
           >
             ← 返回作品列表
           </Link>
@@ -89,7 +92,7 @@ function GalleryImage({ url, alt }: { url: string; alt: string }) {
 
   if (error) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[13px] text-[var(--color-subtle)]">
+      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[15px] text-[var(--color-subtle)]">
         圖片載入失敗
       </div>
     );
@@ -102,6 +105,8 @@ function GalleryImage({ url, alt }: { url: string; alt: string }) {
         alt={alt}
         width={1280}
         height={800}
+        sizes="(max-width: 1312px) 100vw, 1280px"
+        quality={82}
         className="w-full object-contain"
         onError={() => setError(true)}
       />
