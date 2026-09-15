@@ -24,10 +24,11 @@ const fieldOptions = [
   ["faq", "常見問題"], ["ai_summary", "直接答案摘要"],
 ] as const;
 
-export function AiOptimizationPanel({ articleId, updatedAt, configured, accessToken, onApplied }: {
+export function AiOptimizationPanel({ articleId, updatedAt, configured, hasUnsavedChanges, accessToken, onApplied }: {
   articleId: string;
   updatedAt: string;
   configured: boolean;
+  hasUnsavedChanges: boolean;
   accessToken: () => Promise<string>;
   onApplied: (item: Record<string, unknown>) => void;
 }) {
@@ -75,6 +76,10 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, accessTo
   }, [job, accessToken]);
 
   async function start() {
+    if (hasUnsavedChanges) {
+      setMessage("請先按下頁面底部的「儲存修改」，再開始 AI 優化；AI 只會讀取已儲存的文章內容。");
+      return;
+    }
     setBusy(true); setMessage(""); pollCount.current = 0;
     try {
       const token = await accessToken();
@@ -120,9 +125,9 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, accessTo
 
   return <section className="rounded-2xl border border-amber-300 bg-amber-50/50 p-5">
     <div className="flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-xl font-semibold">AI SEO／AEO／GEO 優化</h2><p className="mt-1 text-sm text-neutral-600">AI 可重新整理文章，但不能新增原始素材沒有的事實。</p></div><span className="rounded-full bg-white px-3 py-1 text-xs">人工審核後發布</span></div>
-    {!configured ? <p className="mt-4 rounded-xl bg-white p-3 text-sm text-amber-900">AI 尚未設定。一般文章編輯與儲存不受影響。</p> : <><label className="mt-5 block text-sm font-medium">補充真實素材（訪談筆記、資料、原文）<textarea className="mt-2 min-h-36 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base" maxLength={50_000} value={source} onChange={(event) => setSource(event.target.value)} placeholder="只放確定為真的內容；沒有補充資料也可以直接用目前文章。" /></label><button type="button" className="mt-4 rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || !!(job && ["pending","running"].includes(job.status) && !job.stale)} onClick={start}>{busy ? "處理中…" : "開始 AI 優化"}</button></>}
+    {!configured ? <p className="mt-4 rounded-xl bg-white p-3 text-sm text-amber-900">AI 尚未設定。一般文章編輯與儲存不受影響。</p> : <><label className="mt-5 block text-sm font-medium">補充真實素材（訪談筆記、資料、原文）<textarea className="mt-2 min-h-36 w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base" maxLength={50_000} value={source} onChange={(event) => setSource(event.target.value)} placeholder="只放確定為真的內容；沒有補充資料也可以直接用目前文章。" /></label>{hasUnsavedChanges && <p className="mt-3 rounded-xl border border-amber-300 bg-white p-3 text-sm text-amber-900">文章尚有未儲存的修改。請先按頁面底部的「儲存修改」，AI 才會使用目前畫面中的內容。</p>}<button type="button" className="mt-4 rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || hasUnsavedChanges || !!(job && ["pending","running"].includes(job.status) && !job.stale)} onClick={start}>{busy ? "處理中…" : hasUnsavedChanges ? "請先儲存文章" : "開始 AI 優化"}</button></>}
     {message && <p role="status" className="mt-4 text-sm text-neutral-700">{message}</p>}
-    {job && <div className="mt-5 rounded-xl bg-white p-4"><p className="text-sm">任務狀態：{job.stale ? "已逾時" : job.status === "pending" ? "排隊中" : job.status === "running" ? "整理中" : job.status === "failed" ? "失敗" : "等待審核"}</p>{(job.stale || job.status === "failed") && <button type="button" className="mt-3 underline" disabled={busy} onClick={retry}>安全重試</button>}{job.error_message && <p className="mt-2 text-sm text-red-700">{job.error_message}</p>}</div>}
+    {job && <div className="mt-5 rounded-xl bg-white p-4"><p className="text-sm">任務狀態：{job.stale ? "已逾時" : job.status === "pending" ? "排隊中" : job.status === "running" ? "整理中" : job.status === "failed" ? "失敗" : "優化完成，尚未套用"}</p>{(job.stale || job.status === "failed") && <button type="button" className="mt-3 underline" disabled={busy} onClick={retry}>安全重試</button>}{job.error_message && <p className="mt-2 text-sm text-red-700">{job.error_message}</p>}</div>}
     {result && <div className="mt-5 space-y-5">
       {blockers.length > 0 && <div className="rounded-xl border border-red-300 bg-red-50 p-4"><h3 className="font-semibold text-red-800">必須確認的事實</h3><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-red-800">{blockers.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul></div>}
       <div className="rounded-xl bg-white p-4"><h3 className="font-semibold">文章預覽</h3><h4 className="mt-3 text-lg font-semibold">{result.article.title}</h4><p className="mt-2 text-sm text-neutral-600">{result.article.excerpt}</p><div className="mt-3 max-h-72 overflow-auto border-t pt-3 text-sm leading-7" dangerouslySetInnerHTML={{ __html: result.article.content_html }} /></div>
@@ -132,7 +137,8 @@ export function AiOptimizationPanel({ articleId, updatedAt, configured, accessTo
       {(result.human_review_notes.length > 0 || result.geo.source_gaps.length > 0) && <details className="rounded-xl bg-white p-4"><summary className="cursor-pointer font-semibold">人工檢查備註</summary><ul className="mt-3 list-disc space-y-1 pl-5 text-sm">{[...result.human_review_notes,...result.geo.source_gaps].map((item,index)=><li key={`${item}-${index}`}>{item}</li>)}</ul></details>}
       <fieldset className="rounded-xl bg-white p-4"><legend className="font-semibold">選擇要套用的項目</legend><div className="mt-3 grid gap-2 sm:grid-cols-2">{fieldOptions.map(([value,label]) => <label key={value} className="flex items-center gap-2"><input type="checkbox" checked={selected.includes(value)} onChange={(event) => setSelected((current) => event.target.checked ? [...new Set([...current,value])] : current.filter((item)=>item!==value))} />{label}</label>)}</div></fieldset>
       {blockers.length > 0 && <label className="flex items-start gap-2 rounded-xl border border-red-200 bg-white p-4 text-sm"><input className="mt-1" type="checkbox" checked={confirmedBlockers} onChange={(event)=>setConfirmedBlockers(event.target.checked)} /><span>我已逐項核對上述事實；確認後系統才允許套用與後續發布。</span></label>}
-      <button type="button" className="rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || !selected.length || (blockers.length > 0 && !confirmedBlockers)} onClick={apply}>套用選取項目為草稿</button>
+      <p className="text-sm text-neutral-700">上方是 AI 建議預覽；按下方按鈕後，內容才會真正寫回文章草稿，仍不會直接公開。</p>
+      <button type="button" className="rounded-full bg-neutral-900 px-5 py-2.5 text-white disabled:opacity-40" disabled={busy || !selected.length || (blockers.length > 0 && !confirmedBlockers)} onClick={apply}>確認並套用選取項目為草稿</button>
     </div>}
   </section>;
 }
