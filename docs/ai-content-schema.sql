@@ -265,7 +265,7 @@ begin
     tags=case when 'tags'=any(p_fields) then array(select jsonb_array_elements_text(v_run.output_snapshot->'tags') limit 8) else tags end,
     faq=case when 'faq'=any(p_fields) then v_run.output_snapshot#>'{aeo,faq}' else faq end,
     ai_summary=case when 'ai_summary'=any(p_fields) then nullif(left(v_run.output_snapshot#>>'{aeo,direct_answer}',1000),'') else ai_summary end,
-    reviewed_at=now(),reviewed_by=auth.uid()
+    status='preview',is_published=false,reviewed_at=now(),reviewed_by=auth.uid()
   where id=v_old.id returning * into v_new;
   if p_confirm_blockers then
     update public.content_ai_runs set reviewed_at=now(),reviewed_by=auth.uid() where id=v_run.id;
@@ -283,6 +283,7 @@ begin
   select * into v_old from public.blog_posts where id=p_id for update;
   if not found then raise exception 'CMS_NOT_FOUND' using errcode='P0002'; end if;
   if v_old.updated_at is distinct from p_expected_updated_at then raise exception 'CMS_CONFLICT' using errcode='PT409'; end if;
+  if v_old.status='archived' then raise exception 'CMS_PUBLISH_ARCHIVED' using errcode='22023'; end if;
   if nullif(btrim(v_old.title),'') is null or nullif(btrim(v_old.slug),'') is null or nullif(btrim(v_old.excerpt),'') is null
      or nullif(btrim(v_old.content),'') is null or nullif(btrim(v_old.cover_image),'') is null
      or nullif(btrim(v_old.seo_title),'') is null or nullif(btrim(v_old.seo_description),'') is null then
@@ -296,7 +297,7 @@ begin
   select coalesce(max(revision),0)+1 into v_revision from public.content_versions where content_type='article' and content_id=p_id;
   insert into public.content_versions(content_type,content_id,revision,snapshot,actor,reason)
   values ('article',p_id,v_revision,to_jsonb(v_old),auth.uid(),'before_publish');
-  update public.blog_posts set status='published',published_at=coalesce(published_at,now()),reviewed_at=now(),reviewed_by=auth.uid()
+  update public.blog_posts set status='published',is_published=true,published_at=coalesce(published_at,now()),reviewed_at=now(),reviewed_by=auth.uid()
   where id=p_id returning * into v_new;
   return to_jsonb(v_new);
 end;
@@ -326,7 +327,7 @@ begin
     category=left(coalesce(v_snapshot->>'category',category),80),cover_image=nullif(v_snapshot->>'cover_image',''),
     author=nullif(left(coalesce(v_snapshot->>'author',''),180),''),
     -- 還原只能回到待檢視狀態；不得藉版本還原繞過獨立發布閘門。
-    status=case when v_snapshot->>'status'='archived' then 'archived' else 'preview' end,
+    status=case when v_snapshot->>'status'='archived' then 'archived' else 'preview' end,is_published=false,
     show_on_homepage=coalesce((v_snapshot->>'show_on_homepage')::boolean,false),
     sort_order=coalesce((v_snapshot->>'sort_order')::integer,0),
     seo_title=nullif(left(coalesce(v_snapshot->>'seo_title',''),180),''),

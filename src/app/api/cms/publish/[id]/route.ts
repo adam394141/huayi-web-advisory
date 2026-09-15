@@ -30,6 +30,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const message = error?.message || "";
     if (message.includes("CONFLICT")) return reply({ error: "文章已有新版本，請重新載入後再發布。" }, 409);
     if (message.includes("INCOMPLETE")) return reply({ error: "發布前請補齊標題、網址、摘要、正文、封面及 SEO 設定。" }, 400);
+    if (message.includes("ARCHIVED")) return reply({ error: "封存文章請先恢復為草稿，再重新檢查後發布。" }, 400);
     if (message.includes("AI_BLOCKERS")) return reply({ error: "AI 檢查仍有待確認的事實，暫時不能發布。" }, 400);
     return reply({ error: "發布失敗，文章仍維持原狀態。" }, 503);
   }

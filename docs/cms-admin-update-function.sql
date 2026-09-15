@@ -95,9 +95,13 @@ begin
     content=case when p_changes?'content' then p_changes->>'content' else content end,
     cover_image=case when p_changes?'cover_image' then nullif(p_changes->>'cover_image','') else cover_image end,
     status=case
-      when p_changes?'status' then p_changes->>'status'
       when coalesce(v_old_post.status,'')='published' and p_changes ?| array['title','slug','category','content','cover_image','seo_title','seo_description','excerpt','author'] then 'preview'
+      when p_changes?'status' then p_changes->>'status'
       else status end,
+    is_published=case
+      when coalesce(v_old_post.status,'')='published' and p_changes ?| array['title','slug','category','content','cover_image','seo_title','seo_description','excerpt','author'] then false
+      when p_changes?'status' then p_changes->>'status'='published'
+      else is_published end,
     show_on_homepage=case when p_changes?'show_on_homepage' then (p_changes->>'show_on_homepage')::boolean else show_on_homepage end,
     sort_order=case when p_changes?'sort_order' then (p_changes->>'sort_order')::integer else sort_order end,
     seo_title=case when p_changes?'seo_title' then nullif(p_changes->>'seo_title','') else seo_title end,
