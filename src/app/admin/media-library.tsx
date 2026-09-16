@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { FormEvent, useCallback, useEffect, useState } from "react";
 
 type MediaItem = {
@@ -76,7 +75,11 @@ export function MediaLibrary({ accessToken }: { accessToken: () => Promise<strin
     {message && <div role="alert" className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-amber-950"><strong>媒體庫尚未完成連線</strong><p className="mt-2">{message}</p></div>}
     {copyNotice && <p role="status" aria-live="polite" className="mt-5 rounded-xl bg-green-50 px-4 py-3 text-sm text-green-900">{copyNotice}</p>}
     <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{items.map((item) => <li key={item.path} className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
-      <div className="relative aspect-[4/3] bg-neutral-100"><Image src={item.url} alt="" fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-contain" onLoad={(event) => setDimensions((current) => ({ ...current, [item.path]: `${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px` }))} /></div>
+      <div className="relative aspect-[4/3] bg-neutral-100">
+        {/* 媒體庫需讀取 WebP 實際像素；Next Image 的縮圖 naturalWidth 會誤報轉換後尺寸。 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={item.url} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-contain" onLoad={(event) => setDimensions((current) => ({ ...current, [item.path]: `${event.currentTarget.naturalWidth} × ${event.currentTarget.naturalHeight} px` }))} />
+      </div>
       <div className="p-4"><div className="flex flex-wrap gap-2">{usageLabels(item).map((label) => <span key={label} className={`rounded-full border px-2.5 py-1 text-xs ${label === "未找到引用" ? "border-amber-300 bg-amber-50 text-amber-900" : "border-green-300 bg-green-50 text-green-800"}`}>{label}</span>)}</div>
         <h3 className="mt-3 font-semibold leading-snug">{item.item_title}</h3><p className="mt-1 text-sm text-neutral-600">{item.collection === "works" ? "作品" : "觀點"}</p>
         <p className="mt-3 text-xs leading-relaxed text-neutral-500">{dimensions[item.path] || "正在讀取像素…"}・{formatBytes(item.bytes)}<br />上傳：{new Date(item.created_at).toLocaleString("zh-TW")}</p><p className="mt-2 truncate text-xs text-neutral-400" title={item.file_name}>{item.file_name}</p>
