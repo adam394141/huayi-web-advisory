@@ -6,6 +6,8 @@ import { TableKit } from "@tiptap/extension-table";
 import { EditorContent, useEditor, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import type { MediaSelection } from "@/lib/media-selection";
+import { MediaPicker } from "./media-picker";
 
 type Collection = "works" | "blog_posts";
 type UploadMode = "insert" | "replace";
@@ -112,6 +114,7 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
   const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const uploadMode = useRef<UploadMode>("insert");
   const insertPosition = useRef(1);
@@ -185,6 +188,14 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
     insertPosition.current = editor.state.selection.to;
     setMessage("");
     fileInput.current?.click();
+  }
+
+  function chooseFromLibrary(mode: UploadMode) {
+    if (!editor) return;
+    uploadMode.current = mode;
+    insertPosition.current = mode === "replace" ? editor.state.selection.from : editor.state.selection.to;
+    setMessage("");
+    setPickerOpen(true);
   }
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -272,6 +283,28 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
     editor.commands.updateAttributes("cmsImage", attributes);
   }
 
+  function selectExisting(selection: MediaSelection) {
+    if (!editor) return;
+    const attrs: ImageAttributes = {
+      src: selection.url,
+      alt: selection.alt,
+      caption: "",
+      width: selection.width,
+      height: selection.height,
+      optimizedBytes: selection.bytes,
+    };
+    if (uploadMode.current === "replace") {
+      const position = Math.max(0, Math.min(insertPosition.current, Math.max(0, editor.state.doc.content.size - 1)));
+      editor.chain().focus().setNodeSelection(position).updateAttributes("cmsImage", attrs).run();
+    } else {
+      const position = Math.max(1, Math.min(insertPosition.current, editor.state.doc.content.size));
+      editor.chain().focus().insertContentAt(position, [{ type: "cmsImage", attrs }, { type: "paragraph" }]).run();
+    }
+    setImageAttrs(attrs);
+    setPickerOpen(false);
+    setMessage(`已從媒體庫${uploadMode.current === "replace" ? "替換" : "插入"}圖片${selection.width && selection.height ? `（${selection.width} × ${selection.height} px）` : ""}，請記得儲存整頁。`);
+  }
+
   if (!editor) return <div className="rounded-2xl border border-neutral-200 p-6 text-neutral-500">正在載入圖文編輯器…</div>;
 
   const button = (label: string, action: () => void, active = false, disabled = false) => <button
@@ -298,7 +331,8 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
       {button("引言", () => editor.chain().toggleBlockquote().run(), editor.isActive("blockquote"))}
       {button("連結", editLink, editor.isActive("link"))}
       {button("插入表格", () => editor.chain().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run())}
-      {button("插入圖片", () => chooseImage("insert"))}
+      {button("從媒體庫插圖", () => chooseFromLibrary("insert"))}
+      {button("上傳新圖片", () => chooseImage("insert"))}
       {button("復原", () => editor.chain().undo().run(), false, !editor.can().undo())}
       {button("重做", () => editor.chain().redo().run(), false, !editor.can().redo())}
     </div>
@@ -311,12 +345,13 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
     </div>}
     <EditorContent editor={editor} className="[&_.ProseMirror_blockquote]:my-5 [&_.ProseMirror_blockquote]:border-l-4 [&_.ProseMirror_blockquote]:border-amber-400 [&_.ProseMirror_blockquote]:pl-4 [&_.ProseMirror_figure]:my-7 [&_.ProseMirror_figure]:cursor-pointer [&_.ProseMirror_figure]:overflow-hidden [&_.ProseMirror_figure]:rounded-2xl [&_.ProseMirror_figure]:bg-neutral-100 [&_.ProseMirror_figure.ProseMirror-selectednode]:ring-2 [&_.ProseMirror_figure.ProseMirror-selectednode]:ring-amber-500 [&_.ProseMirror_figcaption]:px-4 [&_.ProseMirror_figcaption]:py-3 [&_.ProseMirror_figcaption]:text-center [&_.ProseMirror_figcaption]:text-sm [&_.ProseMirror_figcaption]:text-neutral-600 [&_.ProseMirror_h2]:mb-4 [&_.ProseMirror_h2]:mt-8 [&_.ProseMirror_h2]:text-3xl [&_.ProseMirror_h2]:font-semibold [&_.ProseMirror_h3]:mb-3 [&_.ProseMirror_h3]:mt-7 [&_.ProseMirror_h3]:text-2xl [&_.ProseMirror_h3]:font-semibold [&_.ProseMirror_h4]:mb-2 [&_.ProseMirror_h4]:mt-6 [&_.ProseMirror_h4]:text-xl [&_.ProseMirror_h4]:font-semibold [&_.ProseMirror_img]:h-auto [&_.ProseMirror_img]:w-full [&_.ProseMirror_img]:object-contain [&_.ProseMirror_li]:my-1 [&_.ProseMirror_ol]:my-4 [&_.ProseMirror_ol]:list-decimal [&_.ProseMirror_ol]:pl-7 [&_.ProseMirror_p]:mb-4 [&_.ProseMirror_table]:my-5 [&_.ProseMirror_table]:w-full [&_.ProseMirror_td]:border [&_.ProseMirror_td]:border-neutral-300 [&_.ProseMirror_td]:p-2 [&_.ProseMirror_th]:border [&_.ProseMirror_th]:border-neutral-300 [&_.ProseMirror_th]:bg-neutral-100 [&_.ProseMirror_th]:p-2 [&_.ProseMirror_ul]:my-4 [&_.ProseMirror_ul]:list-disc [&_.ProseMirror_ul]:pl-7" />
     {imageAttrs && <div className="border-t border-neutral-200 bg-amber-50 p-4 md:p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3"><div><h4 className="font-medium">已選取內文圖片</h4><p className="text-sm text-neutral-600">可直接修改說明、替換圖片或刪除。</p></div><div className="flex gap-2"><button type="button" className="rounded-full border border-neutral-900 bg-white px-4 py-2 text-sm" onClick={() => chooseImage("replace")}>替換圖片</button><button type="button" className="rounded-full bg-red-700 px-4 py-2 text-sm text-white" onClick={() => { if (window.confirm("確定從文章移除這張圖片？")) editor.chain().focus().deleteSelection().run(); }}>刪除圖片</button></div></div>
+      <div className="flex flex-wrap items-center justify-between gap-3"><div><h4 className="font-medium">已選取內文圖片</h4><p className="text-sm text-neutral-600">可直接修改說明、替換圖片或刪除。</p></div><div className="flex flex-wrap gap-2"><button type="button" className="rounded-full border border-neutral-900 bg-white px-4 py-2 text-sm" onClick={() => chooseFromLibrary("replace")}>從媒體庫替換</button><button type="button" className="rounded-full border border-neutral-900 bg-white px-4 py-2 text-sm" onClick={() => chooseImage("replace")}>上傳新圖片替換</button><button type="button" className="rounded-full bg-red-700 px-4 py-2 text-sm text-white" onClick={() => { if (window.confirm("確定從文章移除這張圖片？")) editor.chain().focus().deleteSelection().run(); }}>刪除圖片</button></div></div>
       <div className="mt-4 grid gap-3 md:grid-cols-2"><label className="text-sm">替代文字（描述圖片內容）<input className="mt-1 w-full rounded-xl border border-neutral-300 bg-white px-3 py-2" value={imageAttrs.alt || ""} onChange={(event) => updateImage({ alt: event.target.value })} /></label><label className="text-sm">圖片說明（可留白）<input className="mt-1 w-full rounded-xl border border-neutral-300 bg-white px-3 py-2" value={imageAttrs.caption || ""} onChange={(event) => updateImage({ caption: event.target.value })} /></label></div>
       <p className="mt-3 text-sm text-neutral-600">網站顯示：{imageAttrs.width && imageAttrs.height ? `${imageAttrs.width} × ${imageAttrs.height} px` : "尺寸未記錄"}・{formatBytes(imageAttrs.optimizedBytes)}；保留原圖比例、不裁切。</p>
     </div>}
     <input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" onChange={chooseFile} />
     {file && <div className="border-t border-neutral-200 bg-white p-4 md:p-5"><p className="text-sm">已選擇：{file.name}・{formatBytes(file.size)}{dimensions ? `・${dimensions.width} × ${dimensions.height} px` : "・正在讀取圖片尺寸…"}</p><div className="mt-3 flex flex-wrap gap-3"><button type="button" className="rounded-full bg-neutral-900 px-5 py-2 text-white disabled:opacity-40" disabled={uploading} onClick={upload}>{uploading ? "正在最佳化並上傳…" : uploadMode.current === "replace" ? "上傳並替換圖片" : "上傳並插入游標位置"}</button><button type="button" className="rounded-full border border-neutral-300 px-5 py-2" disabled={uploading} onClick={() => { setFile(null); setDimensions(null); if (fileInput.current) fileInput.current.value = ""; }}>取消</button></div></div>}
     {message && <p role="status" aria-live="polite" className="border-t border-neutral-200 bg-blue-50 px-5 py-3 text-sm text-blue-900">{message}</p>}
+    <MediaPicker open={pickerOpen} title={uploadMode.current === "replace" ? "從媒體庫替換圖片" : "從媒體庫插入圖片"} accessToken={accessToken} onClose={() => setPickerOpen(false)} onSelect={selectExisting} />
   </section>;
 }

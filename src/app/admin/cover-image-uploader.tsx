@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
+import type { MediaSelection } from "@/lib/media-selection";
+import { MediaPicker } from "./media-picker";
 
 type Collection = "works" | "blog_posts";
 type Dimensions = { width: number; height: number };
@@ -23,6 +25,7 @@ export function CoverImageUploader({ value, onChange, collection, itemId, access
   const [displayDimensions, setDisplayDimensions] = useState<Dimensions | null>(null);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -67,6 +70,13 @@ export function CoverImageUploader({ value, onChange, collection, itemId, access
     finally { setUploading(false); }
   }
 
+  function selectExisting(selection: MediaSelection) {
+    onChange(selection.url);
+    setDisplayDimensions(selection.width && selection.height ? { width: selection.width, height: selection.height } : null);
+    setMessage(`已從媒體庫選擇圖片${selection.width && selection.height ? `（${selection.width} × ${selection.height} px）` : ""}。請記得儲存整頁。`);
+    setPickerOpen(false);
+  }
+
   return <section className="space-y-3 rounded-2xl border border-neutral-200 p-4">
     <div><h3 className="font-semibold">封面圖片</h3><p className="mt-1 text-sm text-neutral-600">建議 1200 × 900 px。系統只保存最寬 1200 px 的 WebP 網站版；不放大、不裁切。設計原稿或攝影原檔請自行保留。</p></div>
     <label className="block">目前封面圖片網址<input className={fieldClass} maxLength={2048} value={value} onChange={(event) => { onChange(event.target.value); setDisplayDimensions(null); setMessage(""); }} /></label>
@@ -75,11 +85,12 @@ export function CoverImageUploader({ value, onChange, collection, itemId, access
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={value} alt="封面預覽" className="max-h-80 w-full object-contain" onLoad={(event) => setDisplayDimensions({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })} onError={() => { setDisplayDimensions(null); setMessage("圖片無法載入，請確認網址。"); }} />
     </div><p className="mt-2 text-sm text-neutral-600">網站顯示尺寸：{displayDimensions ? `${displayDimensions.width} × ${displayDimensions.height} px` : "讀取中…"}；保留比例、不裁切。</p></div>}
-    <div className="rounded-xl bg-neutral-100 p-4"><label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-neutral-900 bg-white px-5 py-2 font-medium">1. 選擇新封面<input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" onChange={chooseFile} /></label>
+    <div className="rounded-xl bg-neutral-100 p-4"><div className="flex flex-wrap gap-3"><button type="button" className="rounded-full bg-neutral-900 px-5 py-2 font-medium text-white" onClick={() => { setMessage(""); setPickerOpen(true); }}>從媒體庫選擇</button><label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-neutral-900 bg-white px-5 py-2 font-medium">上傳新封面<input ref={fileInput} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" onChange={chooseFile} /></label></div>
       {file && <p className="mt-2 text-sm text-neutral-600">已選擇：{file.name}・{formatBytes(file.size)}{sourceDimensions ? `・${sourceDimensions.width} × ${sourceDimensions.height} px` : "・正在讀取圖片尺寸…"}</p>}
       {sourceDimensions && <p className="mt-2 text-sm text-neutral-600">原始檔：{sourceDimensions.width} × {sourceDimensions.height} px・{formatBytes(file?.size)}。{sourceDimensions.width < 1200 ? "寬度低於建議值，上傳後不會放大。" : "符合封面建議寬度。"}</p>}
       <button type="button" className="mt-3 rounded-full bg-neutral-900 px-5 py-2 text-white disabled:opacity-40" disabled={!file || uploading} onClick={upload}>{uploading ? "正在最佳化並上傳…" : "2. 上傳並設為封面"}</button>
     </div>
     {message && <p role="status" aria-live="polite" className={`rounded-xl px-3 py-2 text-sm ${uploading ? "bg-blue-50 text-blue-900" : "bg-amber-50 text-amber-900"}`}>{message}</p>}
+    <MediaPicker open={pickerOpen} title="從媒體庫選擇封面" accessToken={accessToken} onClose={() => setPickerOpen(false)} onSelect={selectExisting} />
   </section>;
 }
