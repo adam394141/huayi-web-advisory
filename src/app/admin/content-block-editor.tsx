@@ -71,14 +71,27 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
   const [uploading, setUploading] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
   const editorRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const initialValue = useRef(value);
+  const lastEmittedValue = useRef<string | null>(null);
 
   useEffect(() => {
-    const task = window.setTimeout(() => setBlocks(parseContent(initialValue.current)), 0);
+    // 自己編輯造成的 value 更新不重建區塊，避免游標跳動；AI 套用或版本還原則立即同步。
+    if (lastEmittedValue.current === value) {
+      lastEmittedValue.current = null;
+      return;
+    }
+    const task = window.setTimeout(() => {
+      setBlocks(parseContent(value));
+      setSelected(0);
+    }, 0);
     return () => window.clearTimeout(task);
-  }, []);
+  }, [itemId, value]);
 
-  function commit(next: Block[]) { setBlocks(next); onChange(serialize(next)); }
+  function commit(next: Block[]) {
+    const html = serialize(next);
+    setBlocks(next);
+    lastEmittedValue.current = html;
+    onChange(html);
+  }
   function insert(block: Block) {
     const next = [...blocks]; const index = Math.min(selected + 1, next.length);
     next.splice(index, 0, block); setSelected(index); commit(next);
@@ -185,7 +198,9 @@ export function ContentBlockEditor({ value, onChange, collection, itemId, access
     </div>)}</div>
     <div className="rounded-2xl bg-neutral-100 p-4">
       <h4 className="font-medium">新增內文圖片</h4>
-      <p className="mt-1 text-sm text-neutral-600">依序選擇圖片、填寫說明，再按上傳。系統會保留原圖，另產生最寬 1600 px 的 WebP 網站版；不放大、不裁切。</p>
+      <p className="mt-1 text-sm text-neutral-600">先點選上方要放置圖片的文字區塊，再選擇圖片並上傳。圖片會插入該區塊後方，之後仍可拖曳、上移或下移。</p>
+      <p className="mt-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">目前插入位置：{blocks[selected] ? `${blocks[selected].kind === "image" ? "圖片" : "文字"}區塊 ${selected + 1} 後方` : "文章最後方"}</p>
+      <p className="mt-2 text-sm text-neutral-600">系統會保留原圖，另產生最寬 1600 px 的 WebP 網站版；不放大、不裁切。</p>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <label className="flex cursor-pointer items-center justify-center rounded-full border border-neutral-900 bg-white px-5 py-2 font-medium">
           1. 選擇圖片

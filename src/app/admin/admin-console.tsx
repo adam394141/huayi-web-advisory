@@ -313,6 +313,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         {preview.href ? <a className="rounded-full border border-neutral-900 px-4 py-2 text-sm" href={preview.href} target="_blank" rel="noreferrer">開啟已儲存的前台頁面 ↗</a> : <span className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">{preview.reason}</span>}
         <span className="text-sm text-neutral-500">最後更新：{new Date(editing.updated_at).toLocaleString("zh-TW")}</span>
       </div>
+      <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <label className="block">標題<input className={field} required maxLength={180} value={editing.title} onChange={(event) => setEditing({ ...editing, title: event.target.value })} /></label>
       <label className="block">網址代稱（英文小寫、數字、連字號）<input className={field} required maxLength={140} pattern="[a-z0-9]+(?:[-_][a-z0-9]+)*" value={editing.slug} onChange={(event) => setEditing({ ...editing, slug: event.target.value })} /></label>
       <div className="grid gap-5 sm:grid-cols-2">
@@ -327,6 +328,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         <label className="block">作者<input className={field} maxLength={180} value={editing.author || ""} onChange={(event) => setEditing({ ...editing, author: event.target.value })} /></label>
         <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
       </>}
+      {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} hasUnsavedChanges={JSON.stringify(editing) !== JSON.stringify(original)} prepareArticle={prepareArticleForAi} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
       <ContentBlockEditor
         key={`${collection}:${editing.id}`}
         value={editing.content || ""}
@@ -335,8 +337,6 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         itemId={editing.id}
         accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""}
       />
-      {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} hasUnsavedChanges={JSON.stringify(editing) !== JSON.stringify(original)} prepareArticle={prepareArticleForAi} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
-      <CoverImageUploader value={editing.cover_image || ""} onChange={(cover_image) => setEditing((current) => current ? { ...current, cover_image } : current)} collection={collection} itemId={editing.id} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} fieldClass={field} />
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">排序值<input className={field} type="number" min={-100000} max={100000} value={editing.sort_order ?? 0} onChange={(event) => setEditing({ ...editing, sort_order: Number(event.target.value) })} /></label>
         <label className="mt-8 flex items-center gap-3"><input type="checkbox" checked={!!editing.show_on_homepage} onChange={(event) => setEditing({ ...editing, show_on_homepage: event.target.checked })} />顯示於首頁</label>
