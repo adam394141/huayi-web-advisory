@@ -45,10 +45,15 @@ begin
     select
       o.*,
       split_part(o.name, '/', 3) as content_collection,
-      substring(o.name from '^cms/[^/]+/(?:works|blog_posts)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/optimized/')::uuid as content_id
+      split_part(o.name, '/', 4)::uuid as content_id
     from storage.objects o
     where o.bucket_id = 'published-assets'
-      and o.name ~ ('^cms/' || auth.uid()::text || '/(works|blog_posts)/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/optimized/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.webp$')
+      and split_part(o.name, '/', 1) = 'cms'
+      and split_part(o.name, '/', 2) = auth.uid()::text
+      and split_part(o.name, '/', 3) in ('works', 'blog_posts')
+      and split_part(o.name, '/', 4) ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+      and split_part(o.name, '/', 5) = 'optimized'
+      and split_part(o.name, '/', 6) ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.]webp$'
   ), indexed as (
     select
       o.name as path,
