@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import { ContentBlockEditor } from "./content-block-editor";
+import { RichTextEditor } from "./rich-text-editor";
 import { CoverImageUploader } from "./cover-image-uploader";
 import { getAdminPreview } from "@/lib/admin-preview";
 import { AiOptimizationPanel } from "./ai-optimization-panel";
@@ -329,7 +329,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         <label className="block">文章摘要<textarea className={`${field} min-h-28`} maxLength={5000} value={editing.excerpt || ""} onChange={(event) => setEditing({ ...editing, excerpt: event.target.value })} /></label>
       </>}
       {collection === "blog_posts" && <AiOptimizationPanel articleId={editing.id} updatedAt={original?.updated_at || editing.updated_at} configured={aiConfigured} hasUnsavedChanges={JSON.stringify(editing) !== JSON.stringify(original)} prepareArticle={prepareArticleForAi} accessToken={async () => (await client.auth.getSession()).data.session?.access_token || ""} onApplied={acceptServerItem} />}
-      <ContentBlockEditor
+      <RichTextEditor
         key={`${collection}:${editing.id}`}
         value={editing.content || ""}
         onChange={(content) => setEditing((current) => current ? { ...current, content } : current)}
