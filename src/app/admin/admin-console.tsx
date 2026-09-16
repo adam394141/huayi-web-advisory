@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import { CoverImageUploader } from "./cover-image-uploader";
 import { getAdminPreview } from "@/lib/admin-preview";
 import { AiOptimizationPanel } from "./ai-optimization-panel";
 import { ContentVersionPanel } from "./content-version-panel";
+import { MediaLibrary } from "./media-library";
 
 type Item = {
   id: string; title: string; slug: string; category: string; status: string; cover_image: string | null; updated_at: string;
@@ -55,6 +56,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const [qr, setQr] = useState("");
   const [signedIn, setSignedIn] = useState(false);
   const [collection, setCollection] = useState<"works" | "blog_posts">("works");
+  const [section, setSection] = useState<"content" | "media">("content");
   const [items, setItems] = useState<Item[]>([]);
   const [filters, setFilters] = useState<ListFilters>(EMPTY_FILTERS);
   const [appliedFilters, setAppliedFilters] = useState<ListFilters>(EMPTY_FILTERS);
@@ -70,6 +72,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const [needsReload, setNeedsReload] = useState(false);
 
   useEffect(() => () => { client.auth.stopAutoRefresh(); }, [client]);
+  const getAccessToken = useCallback(async () => (await client.auth.getSession()).data.session?.access_token || "", [client]);
 
   async function load(nextCollection = collection, nextPage = 0, nextFilters = filters) {
     setBusy(true); setMessage(""); setPublishNotice(null); setSaveNotice(null);
@@ -84,7 +87,7 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       });
       const result = await response.json();
       if (!response.ok) { setItems([]); setTotal(0); setMessage(result.error); return; }
-      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setAppliedFilters(nextFilters); setSignedIn(true); setWritable(!!result.writable); setEditing(null); setOriginal(null);
+      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setSection("content"); setAppliedFilters(nextFilters); setSignedIn(true); setWritable(!!result.writable); setEditing(null); setOriginal(null);
     } catch { setMessage("連線失敗，未變更任何資料。"); }
     finally { setBusy(false); }
   }
@@ -92,6 +95,10 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   function switchCollection(nextCollection: "works" | "blog_posts") {
     setFilters(EMPTY_FILTERS);
     void load(nextCollection, 0, EMPTY_FILTERS);
+  }
+
+  function openMediaLibrary() {
+    setSection("media"); setEditing(null); setOriginal(null); setMessage(""); setSaveNotice(null); setPublishNotice(null);
   }
 
   function submitFilters(event: FormEvent) {
@@ -395,10 +402,19 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
         <p className="mt-1">{publishNotice.text}</p>
         {publishNotice.href && <a className="mt-3 inline-block underline" href={publishNotice.href} target="_blank" rel="noreferrer">開啟已發布文章 ↗</a>}
       </div>}
-    </form> : <>
+    </form> : section === "media" ? <>
+      <div className="flex flex-wrap gap-4">
+        <button className="rounded-full border border-neutral-900 px-6 py-3" disabled={busy} onClick={() => switchCollection("works")}>作品</button>
+        <button className="rounded-full border border-neutral-900 px-6 py-3" disabled={busy} onClick={() => switchCollection("blog_posts")}>觀點</button>
+        <button className={button} disabled={busy}>媒體庫</button>
+        <button className="underline" disabled={busy} onClick={logout}>登出</button>
+      </div>
+      <MediaLibrary accessToken={getAccessToken} />
+    </> : <>
       <div className="flex flex-wrap gap-4">
         <button className={collection === "works" ? button : "rounded-full border border-neutral-900 px-6 py-3"} disabled={busy} onClick={() => switchCollection("works")}>作品</button>
         <button className={collection === "blog_posts" ? button : "rounded-full border border-neutral-900 px-6 py-3"} disabled={busy} onClick={() => switchCollection("blog_posts")}>觀點</button>
+        <button className="rounded-full border border-neutral-900 px-6 py-3" disabled={busy} onClick={openMediaLibrary}>媒體庫</button>
         <button className="rounded-full border border-neutral-900 px-6 py-3 disabled:opacity-40" disabled={busy || !writable} onClick={createContent}>＋ 新增{collection === "works" ? "作品" : "觀點"}草稿</button>
         <button className="underline" disabled={busy} onClick={logout}>登出</button>
       </div>

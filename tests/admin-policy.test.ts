@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { getBearer, isAdminId, parseCmsListFilters, parseCollection } from "../src/lib/admin-policy";
+import { getBearer, isAdminId, parseCmsListFilters, parseCollection, parseMediaListFilters } from "../src/lib/admin-policy";
 
 test("管理員必須是明確設定的 UUID，不接受 email 或未設定狀態", () => {
   const id = "11111111-1111-4111-8111-111111111111";
@@ -28,4 +28,15 @@ test("內容列表只接受白名單篩選與排序", () => {
   assert.equal(parseCmsListFilters(new URLSearchParams("status=deleted")), null);
   assert.equal(parseCmsListFilters(new URLSearchParams("sort=drop-table")), null);
   assert.equal(parseCmsListFilters(new URLSearchParams(`q=${"a".repeat(101)}`)), null);
+});
+
+test("媒體庫只接受安全的搜尋、類型、使用狀態與頁碼", () => {
+  assert.deepEqual(parseMediaListFilters(new URLSearchParams("q=高大&collection=works&usage=cover&page=2")), {
+    query: "高大", collection: "works", usage: "cover", page: 2,
+  });
+  assert.deepEqual(parseMediaListFilters(new URLSearchParams()), { query: "", collection: "", usage: "", page: 0 });
+  assert.equal(parseMediaListFilters(new URLSearchParams("collection=users")), null);
+  assert.equal(parseMediaListFilters(new URLSearchParams("usage=delete")), null);
+  assert.equal(parseMediaListFilters(new URLSearchParams("page=-1")), null);
+  assert.equal(parseMediaListFilters(new URLSearchParams(`q=${"a".repeat(101)}`)), null);
 });

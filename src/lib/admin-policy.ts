@@ -31,3 +31,27 @@ export function parseCmsListFilters(search: URLSearchParams): CmsListFilters | n
   if (sort !== "site" && sort !== "updated") return null;
   return { query, category, status, sort };
 }
+
+export type MediaListFilters = {
+  query: string;
+  collection: "" | "works" | "blog_posts";
+  usage: "" | "cover" | "content" | "unreferenced";
+  page: number;
+};
+
+export function parseMediaListFilters(search: URLSearchParams): MediaListFilters | null {
+  const query = (search.get("q") || "").trim();
+  const collection = (search.get("collection") || "").trim();
+  const usage = (search.get("usage") || "").trim();
+  const page = Number(search.get("page") || "0");
+  if (query.length > 100) return null;
+  if (!["", "works", "blog_posts"].includes(collection)) return null;
+  if (!["", "cover", "content", "unreferenced"].includes(usage)) return null;
+  if (!Number.isSafeInteger(page) || page < 0 || page > 1000) return null;
+  return {
+    query,
+    collection: collection as MediaListFilters["collection"],
+    usage: usage as MediaListFilters["usage"],
+    page,
+  };
+}
