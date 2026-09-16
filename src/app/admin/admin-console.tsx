@@ -10,7 +10,10 @@ import { getAdminPreview } from "@/lib/admin-preview";
 import { AiOptimizationPanel } from "./ai-optimization-panel";
 import { ContentVersionPanel } from "./content-version-panel";
 
-type Item = { id: string; title: string; category: string; status: string; cover_image: string | null; updated_at: string };
+type Item = {
+  id: string; title: string; slug: string; category: string; status: string; cover_image: string | null; updated_at: string;
+  client?: string | null; author?: string | null; published_at?: string | null;
+};
 type EditorItem = Item & {
   slug: string; content: string | null; show_on_homepage: boolean | null; sort_order: number | null;
   description?: string | null; client?: string | null; design_rationale?: string | null;
@@ -19,6 +22,16 @@ type EditorItem = Item & {
 };
 
 const SAVE_TIMEOUT_MS = 30_000;
+type ListFilters = { query: string; category: string; status: string; sort: "site" | "updated" };
+const EMPTY_FILTERS: ListFilters = { query: "", category: "", status: "", sort: "site" };
+const STATUS_LABELS: Record<string, string> = { draft: "草稿", preview: "預覽", approved: "已核准", published: "已發布", archived: "封存" };
+const STATUS_STYLES: Record<string, string> = {
+  draft: "border-neutral-300 bg-neutral-50 text-neutral-700",
+  preview: "border-blue-300 bg-blue-50 text-blue-800",
+  approved: "border-amber-300 bg-amber-50 text-amber-900",
+  published: "border-green-300 bg-green-50 text-green-800",
+  archived: "border-neutral-300 bg-neutral-200 text-neutral-700",
+};
 
 async function saveRequest(input: RequestInfo | URL, init: RequestInit) {
   const controller = new AbortController();
@@ -43,6 +56,8 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const [signedIn, setSignedIn] = useState(false);
   const [collection, setCollection] = useState<"works" | "blog_posts">("works");
   const [items, setItems] = useState<Item[]>([]);
+  const [filters, setFilters] = useState<ListFilters>(EMPTY_FILTERS);
+  const [appliedFilters, setAppliedFilters] = useState<ListFilters>(EMPTY_FILTERS);
   const [page, setPage] = useState(0);
   const [total, setTotal] = useState(0);
   const [writable, setWritable] = useState(writeConfigured);
@@ -56,18 +71,37 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
 
   useEffect(() => () => { client.auth.stopAutoRefresh(); }, [client]);
 
-  async function load(nextCollection = collection, nextPage = 0) {
+  async function load(nextCollection = collection, nextPage = 0, nextFilters = filters) {
     setBusy(true); setMessage(""); setPublishNotice(null); setSaveNotice(null);
     try {
       const { data } = await client.auth.getSession();
-      const response = await fetch(`/api/cms?collection=${nextCollection}&page=${nextPage}`, {
+      const params = new URLSearchParams({ collection: nextCollection, page: String(nextPage), sort: nextFilters.sort });
+      if (nextFilters.query.trim()) params.set("q", nextFilters.query.trim());
+      if (nextFilters.category.trim()) params.set("category", nextFilters.category.trim());
+      if (nextFilters.status) params.set("status", nextFilters.status);
+      const response = await fetch(`/api/cms?${params.toString()}`, {
         headers: { Authorization: `Bearer ${data.session?.access_token || ""}` }, cache: "no-store",
       });
       const result = await response.json();
       if (!response.ok) { setItems([]); setTotal(0); setMessage(result.error); return; }
-      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setSignedIn(true); setWritable(!!result.writable); setEditing(null); setOriginal(null);
+      setItems(result.items); setTotal(result.total || 0); setPage(nextPage); setCollection(nextCollection); setAppliedFilters(nextFilters); setSignedIn(true); setWritable(!!result.writable); setEditing(null); setOriginal(null);
     } catch { setMessage("連線失敗，未變更任何資料。"); }
     finally { setBusy(false); }
+  }
+
+  function switchCollection(nextCollection: "works" | "blog_posts") {
+    setFilters(EMPTY_FILTERS);
+    void load(nextCollection, 0, EMPTY_FILTERS);
+  }
+
+  function submitFilters(event: FormEvent) {
+    event.preventDefault();
+    void load(collection, 0, filters);
+  }
+
+  function clearFilters() {
+    setFilters(EMPTY_FILTERS);
+    void load(collection, 0, EMPTY_FILTERS);
   }
 
   async function edit(id: string) {
@@ -286,6 +320,8 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
   const button = "rounded-full bg-neutral-900 px-6 py-3 text-white disabled:opacity-40";
   const preview = original ? getAdminPreview(collection, original.status, original.slug) : { href: null, reason: "請先儲存內容後再預覽。" };
   const nextPreview = editing ? getAdminPreview(collection, editing.status, editing.slug) : preview;
+  const hasFilters = !!(appliedFilters.query || appliedFilters.category || appliedFilters.status || appliedFilters.sort !== "site");
+  const categorySuggestions = Array.from(new Set(items.map((item) => item.category).filter(Boolean))).sort((a, b) => a.localeCompare(b, "zh-Hant"));
   return <section className="mx-auto max-w-5xl px-6 py-12">
     <Image src="/brand/huayi-logo.svg" alt="華翼品牌策略" width={150} height={60} className="mb-6 h-auto" />
     <h1 className="text-3xl font-semibold">內容管理</h1>
@@ -361,15 +397,42 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       </div>}
     </form> : <>
       <div className="flex flex-wrap gap-4">
-        <button className={button} disabled={busy} onClick={() => load("works")}>作品</button>
-        <button className={button} disabled={busy} onClick={() => load("blog_posts")}>觀點</button>
+        <button className={collection === "works" ? button : "rounded-full border border-neutral-900 px-6 py-3"} disabled={busy} onClick={() => switchCollection("works")}>作品</button>
+        <button className={collection === "blog_posts" ? button : "rounded-full border border-neutral-900 px-6 py-3"} disabled={busy} onClick={() => switchCollection("blog_posts")}>觀點</button>
         <button className="rounded-full border border-neutral-900 px-6 py-3 disabled:opacity-40" disabled={busy || !writable} onClick={createContent}>＋ 新增{collection === "works" ? "作品" : "觀點"}草稿</button>
         <button className="underline" disabled={busy} onClick={logout}>登出</button>
       </div>
-      <h2 className="my-5 text-xl">{collection === "works" ? "作品" : "觀點"}・共 {total} 筆</h2>
-      <ul className="divide-y">{items.map(item => <li key={item.id} className="flex items-center justify-between gap-5 py-5"><div><h3 className="font-semibold">{item.title}</h3><p className="mt-2 text-sm">{item.category} · {item.status}</p></div><button className="shrink-0 underline" disabled={busy} onClick={() => edit(item.id)}>開啟編輯</button></li>)}</ul>
-      {!items.length && <p className="py-6">目前沒有可讀取的內容。</p>}
-      <div className="mt-5 flex gap-5"><button disabled={busy || page === 0} onClick={() => load(collection, page - 1)}>上一頁</button><span>第 {page + 1} 頁</span><button disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1)}>下一頁</button></div>
+      <form onSubmit={submitFilters} className="mt-6 grid gap-4 rounded-2xl border border-neutral-200 bg-neutral-50 p-5 md:grid-cols-2 lg:grid-cols-4">
+        <label className="block text-sm font-medium">搜尋標題<input className={field} maxLength={100} placeholder={`搜尋${collection === "works" ? "作品" : "觀點"}標題`} value={filters.query} onChange={(event) => setFilters({ ...filters, query: event.target.value })} /></label>
+        <label className="block text-sm font-medium">分類<input className={field} list="cms-category-suggestions" maxLength={80} placeholder="全部分類" value={filters.category} onChange={(event) => setFilters({ ...filters, category: event.target.value })} /><datalist id="cms-category-suggestions">{categorySuggestions.map((category) => <option key={category} value={category} />)}</datalist></label>
+        <label className="block text-sm font-medium">狀態<select className={field} value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}><option value="">全部狀態</option><option value="draft">草稿</option><option value="preview">預覽</option><option value="approved">已核准</option><option value="published">已發布</option><option value="archived">封存</option></select></label>
+        <label className="block text-sm font-medium">排序<select className={field} value={filters.sort} onChange={(event) => setFilters({ ...filters, sort: event.target.value as ListFilters["sort"] })}><option value="site">網站顯示順序</option><option value="updated">最近修改優先</option></select></label>
+        <div className="flex flex-wrap items-center gap-3 md:col-span-2 lg:col-span-4">
+          <button className={button} disabled={busy}>套用篩選</button>
+          <button type="button" className="rounded-full border border-neutral-400 bg-white px-5 py-3 disabled:opacity-40" disabled={busy || !hasFilters} onClick={clearFilters}>清除條件</button>
+        </div>
+      </form>
+      <div className="my-6 flex flex-wrap items-baseline justify-between gap-3"><h2 className="text-xl">{collection === "works" ? "作品" : "觀點"}・共 {total} 筆</h2><p className="text-sm text-neutral-500">第 {page * 30 + (items.length ? 1 : 0)}–{page * 30 + items.length} 筆</p></div>
+      <ul className="grid gap-5">{items.map(item => {
+        const itemPreview = getAdminPreview(collection, item.status, item.slug);
+        return <li key={item.id} className="grid gap-5 rounded-2xl border border-neutral-200 p-4 sm:grid-cols-[140px_1fr_auto] sm:items-center">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
+            {item.cover_image ? <Image src={item.cover_image} alt="" fill sizes="140px" className="object-contain" /> : <div className="flex h-full items-center justify-center px-3 text-center text-xs text-neutral-500">尚未設定封面</div>}
+          </div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2"><span className={`rounded-full border px-3 py-1 text-xs ${STATUS_STYLES[item.status] || STATUS_STYLES.draft}`}>{STATUS_LABELS[item.status] || item.status}</span><span className="text-sm text-neutral-500">{item.category}</span></div>
+            <h3 className="mt-3 font-semibold leading-snug">{item.title}</h3>
+            <p className="mt-2 text-sm text-neutral-600">{collection === "works" ? (item.client || "未填客戶／專案名稱") : (item.author || "未填作者")}</p>
+            <p className="mt-2 text-xs text-neutral-500">最後修改：{new Date(item.updated_at).toLocaleString("zh-TW")}{collection === "blog_posts" && item.published_at ? ` · 發布：${new Date(item.published_at).toLocaleString("zh-TW")}` : ""}</p>
+          </div>
+          <div className="flex flex-wrap gap-3 sm:flex-col sm:items-end">
+            <button className="rounded-full bg-neutral-900 px-4 py-2 text-sm text-white disabled:opacity-40" disabled={busy} onClick={() => edit(item.id)}>開啟編輯</button>
+            {itemPreview.href && <a className="rounded-full border border-neutral-400 px-4 py-2 text-sm" href={itemPreview.href} target="_blank" rel="noreferrer">前台查看 ↗</a>}
+          </div>
+        </li>;
+      })}</ul>
+      {!items.length && <div className="rounded-2xl border border-dashed border-neutral-300 p-8 text-center text-neutral-600">{hasFilters ? "沒有符合目前篩選條件的內容。" : "目前沒有可讀取的內容。"}</div>}
+      <div className="mt-6 flex items-center gap-5"><button className="underline disabled:text-neutral-300" disabled={busy || page === 0} onClick={() => load(collection, page - 1, appliedFilters)}>上一頁</button><span>第 {page + 1} 頁</span><button className="underline disabled:text-neutral-300" disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1, appliedFilters)}>下一頁</button></div>
     </>}
     <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">接受 4 MB 以下的 JPG、PNG、WebP。上傳後自動保留原圖、移除照片定位等非必要資訊，並產生 WebP 網站版。低解析度原圖不會被放大。</p></aside>
   </section>;

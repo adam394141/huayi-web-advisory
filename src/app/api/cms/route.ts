@@ -1,5 +1,5 @@
 import { verifyAdmin } from "@/lib/admin-auth";
-import { parseCollection } from "@/lib/admin-policy";
+import { parseCmsListFilters, parseCollection } from "@/lib/admin-policy";
 import { parseCmsCreate, parseCmsUpdate } from "@/lib/cms-update";
 import { cleanContent } from "@/lib/content-safety";
 import { mapCmsSaveError } from "@/lib/cms-save-error";
@@ -15,6 +15,12 @@ function detailFields(collection: "works" | "blog_posts") {
   return collection === "works"
     ? "id,title,slug,description,content,category,cover_image,status,sort_order,show_on_homepage,updated_at,client,design_rationale,seo_title,seo_description"
     : "id,title,slug,excerpt,content,category,cover_image,status,sort_order,show_on_homepage,updated_at,author,seo_title,seo_description,tags,faq,ai_summary,og_image,published_at";
+}
+
+function listFields(collection: "works" | "blog_posts") {
+  return collection === "works"
+    ? "id,title,slug,category,cover_image,status,sort_order,updated_at,client"
+    : "id,title,slug,category,cover_image,status,sort_order,updated_at,author,published_at";
 }
 
 export async function GET(request: Request) {
@@ -38,11 +44,18 @@ export async function GET(request: Request) {
     }
     const page = Number(search.get("page") || "0");
     if (!Number.isSafeInteger(page) || page < 0 || page > 1000) return reply({ error: "頁碼無效。" }, 400);
-    const { data, error, count } = await auth.client.from(collection)
-      .select("id,title,slug,category,cover_image,status,sort_order,updated_at", { count: "exact" })
-      .order("sort_order", { ascending: true }).order("id").range(page * 30, page * 30 + 29);
+    const filters = parseCmsListFilters(search);
+    if (!filters) return reply({ error: "搜尋或篩選條件無效。" }, 400);
+    let listQuery = auth.client.from(collection).select(listFields(collection), { count: "exact" });
+    if (filters.query) listQuery = listQuery.ilike("title", `%${filters.query}%`);
+    if (filters.category) listQuery = listQuery.eq("category", filters.category);
+    if (filters.status) listQuery = listQuery.eq("status", filters.status);
+    listQuery = filters.sort === "updated"
+      ? listQuery.order("updated_at", { ascending: false }).order("id")
+      : listQuery.order("sort_order", { ascending: true }).order("updated_at", { ascending: false }).order("id");
+    const { data, error, count } = await listQuery.range(page * 30, page * 30 + 29);
     if (error) return reply({ error: "暫時無法讀取，請聯絡管理者檢查設定。" }, 503);
-    return reply({ items: data, total: count, page, writable: process.env.CMS_WRITE_ENABLED === "true" });
+    return reply({ items: data, total: count, page, filters, writable: process.env.CMS_WRITE_ENABLED === "true" });
   } catch { return reply({ error: "服務暫時無法使用，請稍後重試。" }, 503); }
 }
 
