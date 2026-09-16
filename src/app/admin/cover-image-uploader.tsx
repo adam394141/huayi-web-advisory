@@ -61,14 +61,14 @@ export function CoverImageUploader({ value, onChange, collection, itemId, access
       if (!response.ok) { setMessage(result.error || "封面上傳失敗。"); return; }
       onChange(result.url); setDisplayDimensions({ width: result.width, height: result.height });
       const saving = result.savedPercent > 0 ? `縮小 ${result.savedPercent}%` : "已完成網站格式轉換";
-      setMessage(`封面已換成網站版：${formatBytes(result.originalBytes)} → ${formatBytes(result.optimizedBytes)}（${saving}）。請記得儲存整頁。`);
+      setMessage(`封面網站版已完成：來源 ${formatBytes(result.originalBytes)} → 網站版 ${formatBytes(result.optimizedBytes)}（${saving}）。請記得儲存整頁。`);
       setFile(null); setSourceDimensions(null); if (fileInput.current) fileInput.current.value = "";
     } catch { setMessage("封面上傳失敗，未修改頁面。請檢查網路後再試一次。"); }
     finally { setUploading(false); }
   }
 
   return <section className="space-y-3 rounded-2xl border border-neutral-200 p-4">
-    <div><h3 className="font-semibold">封面圖片</h3><p className="mt-1 text-sm text-neutral-600">建議 1200 × 900 px。系統保留原圖，另產生最寬 1200 px 的 WebP 網站版；不放大、不裁切。</p></div>
+    <div><h3 className="font-semibold">封面圖片</h3><p className="mt-1 text-sm text-neutral-600">建議 1200 × 900 px。系統只保存最寬 1200 px 的 WebP 網站版；不放大、不裁切。設計原稿或攝影原檔請自行保留。</p></div>
     <label className="block">目前封面圖片網址<input className={fieldClass} maxLength={2048} value={value} onChange={(event) => { onChange(event.target.value); setDisplayDimensions(null); setMessage(""); }} /></label>
     {value && <div><div className="overflow-hidden rounded-2xl bg-neutral-100">
       {/* 後台需讀取使用者輸入網址的原始尺寸，因此使用原生 img。 */}

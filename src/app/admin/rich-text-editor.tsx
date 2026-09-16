@@ -254,7 +254,7 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
       }
       setImageAttrs(attrs);
       const saving = result.savedPercent > 0 ? `縮小 ${result.savedPercent}%` : "已完成網站格式轉換";
-      setMessage(`圖片已放入目前游標位置：${formatBytes(result.originalBytes)} → ${formatBytes(result.optimizedBytes)}（${saving}）。`);
+      setMessage(`圖片已放入目前游標位置：來源 ${formatBytes(result.originalBytes)} → 網站版 ${formatBytes(result.optimizedBytes)}（${saving}）。`);
       setFile(null);
       setDimensions(null);
       if (fileInput.current) fileInput.current.value = "";

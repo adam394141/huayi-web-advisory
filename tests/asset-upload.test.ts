@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { detectAcceptedImage, validAssetContext } from "../src/lib/asset-upload";
+import { buildCmsImageStoragePlan, detectAcceptedImage, validAssetContext } from "../src/lib/asset-upload";
 
 test("只接受真實簽章與相符 MIME 的 JPG、PNG、WebP", () => {
   assert.deepEqual(detectAcceptedImage(new Uint8Array([0xff,0xd8,0xff,0,0,0,0,0,0,0,0,0]), "image/jpeg", 12), { extension: "jpg", contentType: "image/jpeg" });
@@ -24,4 +24,19 @@ test("上傳位置只接受兩種內容與 UUID", () => {
   assert.equal(validAssetContext("blog_posts", id), true);
   assert.equal(validAssetContext("users", id), false);
   assert.equal(validAssetContext("works", "../etc"), false);
+});
+
+test("新圖片只建立一份 optimized 網站版儲存路徑", () => {
+  const plan = buildCmsImageStoragePlan(
+    "e5fc7b65-f73e-4aed-b98d-7bed15975539",
+    "blog_posts",
+    "80f4efc5-50c1-445f-8172-f23638b6e60b",
+    "7f71918e-8070-4da7-9da0-63861732a8f2",
+  );
+  assert.deepEqual(Object.keys(plan), ["optimizedPath"]);
+  assert.equal(
+    plan.optimizedPath,
+    "cms/e5fc7b65-f73e-4aed-b98d-7bed15975539/blog_posts/80f4efc5-50c1-445f-8172-f23638b6e60b/optimized/7f71918e-8070-4da7-9da0-63861732a8f2.webp",
+  );
+  assert.doesNotMatch(plan.optimizedPath, /\/original\//);
 });

@@ -1,5 +1,5 @@
 import { verifyAdmin } from "@/lib/admin-auth";
-import { detectAcceptedImage, IMAGE_UPLOAD_LIMIT, validAssetContext } from "@/lib/asset-upload";
+import { buildCmsImageStoragePlan, detectAcceptedImage, IMAGE_UPLOAD_LIMIT, validAssetContext } from "@/lib/asset-upload";
 import { optimizeImageForWeb, parseImageUsage } from "@/lib/image-optimization";
 
 export const dynamic = "force-dynamic";
@@ -25,8 +25,7 @@ export async function POST(request: Request) {
     const usage = parseImageUsage(form.get("usage"));
     if (!(file instanceof File) || !validAssetContext(collection, itemId) || !usage) return reply({ error: "上傳資料不完整。" }, 400);
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const image = detectAcceptedImage(bytes, file.type, file.size);
-    if (!image) return reply({ error: "僅接受 4 MB 以下的 JPG、PNG 或 WebP 圖片。" }, 400);
+    if (!detectAcceptedImage(bytes, file.type, file.size)) return reply({ error: "僅接受 4 MB 以下的 JPG、PNG 或 WebP 圖片。" }, 400);
     console.info("[cms-assets] accepted", { requestId, collection, usage, bytes: file.size });
 
     let optimized: Awaited<ReturnType<typeof optimizeImageForWeb>>;
@@ -49,31 +48,18 @@ export async function POST(request: Request) {
     }
 
     const assetId = crypto.randomUUID();
-    const originalPath = `cms/${auth.userId}/${table}/${id}/original/${assetId}.${image.extension}`;
-    const optimizedPath = `cms/${auth.userId}/${table}/${id}/optimized/${assetId}.${optimized.extension}`;
+    const { optimizedPath } = buildCmsImageStoragePlan(auth.userId, table, id, assetId);
     const storage = auth.client.storage.from("published-assets");
     const uploadStartedAt = performance.now();
-    // 原圖與網站版互不相依，並行保存可避免兩次網路等待時間相加。
-    const [originalUpload, optimizedUpload] = await Promise.all([
-      storage.upload(originalPath, bytes, {
-        contentType: image.contentType, cacheControl: "31536000", upsert: false,
-      }),
-      storage.upload(optimizedPath, optimized.bytes, {
-        contentType: optimized.contentType, cacheControl: "31536000", upsert: false,
-      }),
-    ]);
-    if (originalUpload.error || optimizedUpload.error) {
+    // Supabase 只保存前台實際使用的網站版；來源原檔由管理員在公司素材空間自行管理。
+    const optimizedUpload = await storage.upload(optimizedPath, optimized.bytes, {
+      contentType: optimized.contentType, cacheControl: "31536000", upsert: false,
+    });
+    if (optimizedUpload.error) {
       console.error("[cms-assets] upload-failed", {
         requestId,
-        originalCode: originalUpload.error?.name || null,
-        optimizedCode: optimizedUpload.error?.name || null,
+        optimizedCode: optimizedUpload.error.name || null,
       });
-      // 其中一份成功時清除孤立檔案，避免失敗重試累積無主檔案。
-      const orphanedPaths = [
-        !originalUpload.error && optimizedUpload.error ? originalPath : null,
-        originalUpload.error && !optimizedUpload.error ? optimizedPath : null,
-      ].filter((path): path is string => Boolean(path));
-      if (orphanedPaths.length) await storage.remove(orphanedPaths);
       return reply({ error: "圖片保存失敗，未修改頁面。請稍後重試。" }, 503);
     }
 
@@ -83,7 +69,7 @@ export async function POST(request: Request) {
       requestId,
       collection,
       usage,
-      originalBytes: optimized.originalBytes,
+      sourceBytes: optimized.originalBytes,
       optimizedBytes: optimized.optimizedBytes,
       uploadMs: Math.round(performance.now() - uploadStartedAt),
     });

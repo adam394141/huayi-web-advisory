@@ -450,6 +450,6 @@ export function AdminConsole({ configured, writeConfigured, aiConfigured }: { co
       {!items.length && <div className="rounded-2xl border border-dashed border-neutral-300 p-8 text-center text-neutral-600">{hasFilters ? "沒有符合目前篩選條件的內容。" : "目前沒有可讀取的內容。"}</div>}
       <div className="mt-6 flex items-center gap-5"><button className="underline disabled:text-neutral-300" disabled={busy || page === 0} onClick={() => load(collection, page - 1, appliedFilters)}>上一頁</button><span>第 {page + 1} 頁</span><button className="underline disabled:text-neutral-300" disabled={busy || (page + 1) * 30 >= total} onClick={() => load(collection, page + 1, appliedFilters)}>下一頁</button></div>
     </>}
-    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留原圖比例，不預設裁切。</p><p className="mt-2 text-sm">接受 4 MB 以下的 JPG、PNG、WebP。上傳後自動保留原圖、移除照片定位等非必要資訊，並產生 WebP 網站版。低解析度原圖不會被放大。</p></aside>
+    <aside className="mt-10 rounded-2xl bg-neutral-100 p-6"><h2 className="font-semibold">圖片準備說明</h2><p className="mt-2">作品封面建議 1200 × 900 px；作品內頁建議寬 1600 px 以上、高度不限。保留圖片比例，不預設裁切。</p><p className="mt-2 text-sm">接受 4 MB 以下的 JPG、PNG、WebP。上傳後只保存移除照片定位等非必要資訊的 WebP 網站版；低解析度圖片不會被放大。設計原稿或攝影原檔請自行保留於公司的素材空間。</p></aside>
   </section>;
 }

@@ -21,3 +21,10 @@ export function validAssetContext(collection: unknown, itemId: unknown) {
 }
 
 export const IMAGE_UPLOAD_LIMIT = MAX_IMAGE_BYTES;
+
+/** 新上傳只建立一份網站版，避免來源原檔重複占用 Supabase Storage。 */
+export function buildCmsImageStoragePlan(userId: string, collection: "works" | "blog_posts", itemId: string, assetId: string) {
+  return {
+    optimizedPath: `cms/${userId}/${collection}/${itemId}/optimized/${assetId}.webp`,
+  } as const;
+}
