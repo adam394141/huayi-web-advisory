@@ -301,8 +301,8 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
         setMessage("找不到原本選取的圖片，請重新點選內文圖片後再替換。");
         return;
       }
-      editor.commands.command(({ tr, dispatch }) => {
-        dispatch?.(tr.setNodeMarkup(position, undefined, { ...currentImage.attrs, ...attrs }));
+      editor.commands.command(({ tr }) => {
+        tr.setNodeMarkup(position, undefined, { ...currentImage.attrs, ...attrs });
         return true;
       });
     } else {
