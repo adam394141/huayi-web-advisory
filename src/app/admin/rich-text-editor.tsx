@@ -301,10 +301,9 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
         setMessage("找不到原本選取的圖片，請重新點選內文圖片後再替換。");
         return;
       }
-      editor.commands.command(({ tr }) => {
-        tr.setNodeMarkup(position, undefined, { ...currentImage.attrs, ...attrs });
-        return true;
-      });
+      editor.view.dispatch(
+        editor.state.tr.setNodeMarkup(position, undefined, { ...currentImage.attrs, ...attrs }),
+      );
     } else {
       const position = Math.max(1, Math.min(insertPosition.current, editor.state.doc.content.size));
       editor.chain().focus().insertContentAt(position, [{ type: "cmsImage", attrs }, { type: "paragraph" }]).run();
