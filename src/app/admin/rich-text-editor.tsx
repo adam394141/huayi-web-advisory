@@ -118,6 +118,7 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
   const fileInput = useRef<HTMLInputElement>(null);
   const uploadMode = useRef<UploadMode>("insert");
   const insertPosition = useRef(1);
+  const selectedImagePosition = useRef<number | null>(null);
   const lastEmittedValue = useRef<string | null>(null);
 
   const editor = useEditor({
@@ -146,8 +147,16 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
       lastEmittedValue.current = html;
       onChange(html);
     },
-    onSelectionUpdate: ({ editor: current }) => setImageAttrs(selectedImage(current)),
-    onCreate: ({ editor: current }) => setImageAttrs(selectedImage(current)),
+    onSelectionUpdate: ({ editor: current }) => {
+      const attrs = selectedImage(current);
+      setImageAttrs(attrs);
+      selectedImagePosition.current = attrs ? current.state.selection.from : null;
+    },
+    onCreate: ({ editor: current }) => {
+      const attrs = selectedImage(current);
+      setImageAttrs(attrs);
+      selectedImagePosition.current = attrs ? current.state.selection.from : null;
+    },
   });
 
   useEffect(() => {
@@ -193,7 +202,9 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
   function chooseFromLibrary(mode: UploadMode) {
     if (!editor) return;
     uploadMode.current = mode;
-    insertPosition.current = mode === "replace" ? editor.state.selection.from : editor.state.selection.to;
+    insertPosition.current = mode === "replace"
+      ? selectedImagePosition.current ?? editor.state.selection.from
+      : editor.state.selection.to;
     setMessage("");
     setPickerOpen(true);
   }
