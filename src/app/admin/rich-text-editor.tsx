@@ -295,7 +295,16 @@ export function RichTextEditor({ value, onChange, collection, itemId, accessToke
     };
     if (uploadMode.current === "replace") {
       const position = Math.max(0, Math.min(insertPosition.current, Math.max(0, editor.state.doc.content.size - 1)));
-      editor.chain().focus().setNodeSelection(position).updateAttributes("cmsImage", attrs).run();
+      const currentImage = editor.state.doc.nodeAt(position);
+      if (currentImage?.type.name !== "cmsImage") {
+        setPickerOpen(false);
+        setMessage("找不到原本選取的圖片，請重新點選內文圖片後再替換。");
+        return;
+      }
+      editor.commands.command(({ tr, dispatch }) => {
+        dispatch?.(tr.setNodeMarkup(position, undefined, { ...currentImage.attrs, ...attrs }));
+        return true;
+      });
     } else {
       const position = Math.max(1, Math.min(insertPosition.current, editor.state.doc.content.size));
       editor.chain().focus().insertContentAt(position, [{ type: "cmsImage", attrs }, { type: "paragraph" }]).run();
