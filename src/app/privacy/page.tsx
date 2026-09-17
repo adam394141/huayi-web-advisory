@@ -1,7 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "隱私權政策｜華翼品牌策略", robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: "隱私權政策｜華翼品牌策略",
+  description: "華翼品牌策略網站隱私權政策，說明聯絡資料、Cookie 與網站使用資訊的處理方式。",
+  alternates: { canonical: "/privacy" },
+  robots: { index: false, follow: false },
+};
 
 export default function PrivacyPage() {
   return (

@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "關於華翼｜華翼品牌策略",
   description:
     "華翼品牌策略，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
+  alternates: { canonical: "/about" },
 };
 
 const METHOD_STEPS = [

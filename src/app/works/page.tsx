@@ -7,6 +7,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "作品｜華翼品牌策略",
   description: "華翼品牌策略精選設計作品，涵蓋品牌識別、品牌周邊、行銷專案與 AI 專案。",
+  alternates: { canonical: "/works" },
 };
 
 export default async function WorksPage() {

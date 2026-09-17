@@ -22,6 +22,7 @@ const notoSerifTC = Noto_Serif_TC({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getCanonicalSiteUrl()),
+  alternates: { canonical: "/" },
   icons: { icon: "/brand/huayi-logo.svg" },
   title: "華翼品牌策略 HUAYI｜品牌顧問 × AI 導入",
   description:

@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "服務項目｜華翼品牌策略",
   description:
     "華翼提供品牌策略、企業 AI 導入、品牌行銷與商業成長、品牌體驗與設計四大服務。",
+  alternates: { canonical: "/services" },
 };
 
 const SERVICES = [

@@ -31,7 +31,9 @@ export function parseWebpDimensions(bytes: Uint8Array): ImageDimensions | null {
 export async function fetchWebpDimensions(url: string): Promise<ImageDimensions | null> {
   try {
     const response = await fetch(url, { headers: { Range: "bytes=0-31" }, cache: "force-cache" });
-    if (response.status !== 206 || !response.headers.get("content-range")?.startsWith("bytes 0-31/")) return null;
+    // Supabase Storage 會正確回傳 206，但瀏覽器未必能跨網域讀取
+    // Content-Range。只要 Range 請求成功，就直接解析已取得的 WebP 檔頭。
+    if (response.status !== 200 && response.status !== 206) return null;
     return parseWebpDimensions(new Uint8Array(await response.arrayBuffer()));
   } catch {
     return null;

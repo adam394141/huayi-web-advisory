@@ -8,6 +8,7 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: "觀點｜華翼品牌策略",
   description: "華翼品牌策略的品牌觀點與 AI 趨勢分享。",
+  alternates: { canonical: "/blog" },
 };
 
 function formatDate(dateStr: string) {
