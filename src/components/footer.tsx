@@ -53,6 +53,12 @@ export function Footer() {
           <p className="text-[12px] text-[var(--color-subtle)]">
             © 2026 華翼品牌策略 HUAYI. All rights reserved.
           </p>
+          <Link
+            href="/privacy"
+            className="mt-3 inline-block text-[12px] text-[var(--color-subtle)] underline underline-offset-4 transition-colors hover:text-[var(--color-fg)]"
+          >
+            隱私權政策
+          </Link>
         </div>
       </div>
     </footer>
