@@ -1,92 +1,76 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { shouldAnimate, isForceMode } from "@/lib/motion";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { shouldAnimate } from "@/lib/motion";
 
-const SESSION_KEY = "huayi-logo-played";
-
+// 每次進首頁都播放；等待實際 Logo 載入，不用 sessionStorage 靜默跳過。
 export function LogoMotion() {
-  const [phase, setPhase] = useState<"idle" | "reveal" | "fade" | "done">("idle");
+  const [phase, setPhase] = useState<"off" | "loading" | "reveal" | "fade">("off");
+  const [reduced, setReduced] = useState(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const clearTimers = () => timers.current.forEach(clearTimeout);
+  const finish = () => {
+    clearTimers();
+    setPhase("off");
+    document.documentElement.dataset.intro = "done";
+  };
+  const play = () => {
+    clearTimers();
+    // 按下「播放完整動態」代表訪客主動選擇，首次載入仍尊重系統設定。
+    document.documentElement.dataset.motion = "force";
+    setReduced(false);
+    document.documentElement.dataset.intro = "playing";
+    setPhase("loading");
+    timers.current = [setTimeout(finish, 6000)];
+  };
+  const reveal = () => {
+    clearTimers();
+    setPhase("reveal");
+    timers.current = [setTimeout(() => setPhase("fade"), 2000), setTimeout(finish, 2800)];
+  };
 
   useEffect(() => {
-    if (!shouldAnimate()) {
-      const id = setTimeout(() => setPhase("done"), 0);
-      return () => clearTimeout(id);
-    }
-
-    if (!isForceMode()) {
-      try {
-        if (sessionStorage.getItem(SESSION_KEY)) {
-          const id = setTimeout(() => setPhase("done"), 0);
-          return () => clearTimeout(id);
-        }
-      } catch { /* SSR or private browsing */ }
-    }
-
-    const t1 = setTimeout(() => setPhase("reveal"), 50);
-    const t2 = setTimeout(() => setPhase("fade"), 900);
-    const t3 = setTimeout(() => {
-      setPhase("done");
-      try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* */ }
-    }, 1200);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    const start = setTimeout(() => {
+      setReduced(!shouldAnimate());
+      if (shouldAnimate()) {
+        document.documentElement.dataset.intro = "playing";
+        setPhase("loading");
+        timers.current = [setTimeout(() => {
+          setPhase("off");
+          document.documentElement.dataset.intro = "done";
+        }, 6000)];
+      }
+    }, 0);
+    return () => {
+      clearTimeout(start);
+      timers.current.forEach(clearTimeout);
+      delete document.documentElement.dataset.intro;
+    };
   }, []);
 
-  if (phase === "done") return null;
-
   return (
-    <div
-      aria-hidden
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#FDFCFA",
-        opacity: phase === "fade" ? 0 : 1,
-        transition: "opacity 0.3s ease",
-        pointerEvents: "none",
-      }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            justifyContent: "center",
-            gap: "10px",
-            opacity: phase === "reveal" || phase === "fade" ? 1 : 0,
-            transform: phase === "reveal" || phase === "fade" ? "translateY(0)" : "translateY(6px)",
-            transition: "opacity 0.5s cubic-bezier(0.23,1,0.32,1), transform 0.5s cubic-bezier(0.23,1,0.32,1)",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-noto-serif-tc, serif)",
-              fontSize: "2.2rem",
-              fontWeight: 600,
-              color: "#1A1A1A",
-              letterSpacing: "0.05em",
-            }}
-          >
-            華翼
-          </span>
-          <span style={{ fontSize: "0.65rem", letterSpacing: "0.3em", color: "#999" }}>
-            HUAYI
-          </span>
-        </div>
-        <div
-          style={{
-            margin: "12px auto 0",
-            height: "2px",
-            background: "#FFBF00",
-            width: phase === "reveal" || phase === "fade" ? "36px" : "0px",
-            transition: "width 0.6s cubic-bezier(0.23,1,0.32,1) 0.2s",
-          }}
-        />
+    <>
+      <div className="motion-controls">
+        <button type="button" onClick={play} className="motion-replay">
+          {reduced ? "播放完整動態" : "重播品牌開場"} <span aria-hidden="true">↺</span>
+        </button>
+        {!reduced && <button type="button" className="motion-reduce" onClick={() => {
+          document.documentElement.dataset.motion = "reduce";
+          setReduced(true);
+          finish();
+        }}>減少動態</button>}
       </div>
-    </div>
+      {phase !== "off" && (
+        <div className="brand-intro" data-phase={phase}>
+          <div className="brand-intro-mark">
+            <Image src="/brand/huayi-logo.svg" alt="華翼 HUAYI" width={276} height={96} priority onLoad={reveal} onError={finish} />
+            <p>品牌決定方向，AI 決定速度。</p>
+            <span className="brand-intro-line" aria-hidden="true" />
+          </div>
+          <button type="button" onClick={finish} className="brand-intro-skip">略過開場 →</button>
+        </div>
+      )}
+    </>
   );
 }

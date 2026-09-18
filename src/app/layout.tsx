@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
-import { LogoMotion } from "@/components/logo-motion";
-import { MotionBadge } from "@/components/motion-badge";
+import { CookieNotice } from "@/components/cookie-notice";
+import { getCanonicalSiteUrl, isIndexableEnvironment } from "@/lib/site-url";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -21,6 +21,9 @@ const notoSerifTC = Noto_Serif_TC({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getCanonicalSiteUrl()),
+  alternates: { canonical: "/" },
+  icons: { icon: "/brand/huayi-logo.svg" },
   title: "華翼品牌策略 HUAYI｜品牌顧問 × AI 導入",
   description:
     "華翼品牌策略為台灣中小企業與二代接班人，提供品牌策略定位、企業 AI 導入、品牌行銷與商業成長、品牌體驗與設計的專業顧問服務。",
@@ -32,6 +35,7 @@ export const metadata: Metadata = {
     locale: "zh_TW",
     type: "website",
   },
+  robots: isIndexableEnvironment() ? { index: true, follow: true } : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {
@@ -49,15 +53,15 @@ export default function RootLayout({
   return (
     <html
       lang="zh-Hant-TW"
+      suppressHydrationWarning
       className={`${notoSansTC.variable} ${notoSerifTC.variable}`}
     >
       <body className="font-sans antialiased">
         <script dangerouslySetInnerHTML={{ __html: motionInitScript }} />
-        <LogoMotion />
-        <MotionBadge />
         <Header />
         <main className="pt-[60px] md:pt-[72px]">{children}</main>
         <Footer />
+        <CookieNotice />
       </body>
     </html>
   );

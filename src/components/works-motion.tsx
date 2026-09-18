@@ -98,6 +98,8 @@ function WorkCard({ work, index }: { work: WorkItem; index: number }) {
                 alt={work.title}
                 width={600}
                 height={750}
+                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                quality={82}
                 className="aspect-[4/5] w-full object-contain transition-transform duration-500 group-hover:scale-[1.03]"
               />
             ) : (

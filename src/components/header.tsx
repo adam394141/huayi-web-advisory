@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -45,14 +46,7 @@ export function Header() {
       }`}
     >
       <div className="mx-auto flex h-[60px] max-w-[1280px] items-center justify-between px-[var(--space-page-x)] md:h-[72px]">
-        <Link href="/" className="flex items-baseline gap-2">
-          <span className="font-serif text-[18px] font-semibold text-[var(--color-fg)] md:text-[20px]">
-            華翼
-          </span>
-          <span className="text-[10px] tracking-[0.2em] text-[var(--color-subtle)]">
-            HUAYI
-          </span>
-        </Link>
+        <Link href="/" className="flex min-h-11 items-center" aria-label="華翼首頁"><BrandLogo /></Link>
 
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_ITEMS.map((item) => {
@@ -62,7 +56,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative pb-1 text-[13px] tracking-wider transition-colors duration-200 ${
+                className={`relative pb-1 text-[15px] tracking-wider transition-colors duration-200 ${
                   isActive
                     ? "text-[var(--color-fg)]"
                     : "text-[var(--color-body)] hover:text-[var(--color-fg)]"
@@ -79,7 +73,7 @@ export function Header() {
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-10 w-10 flex-col items-center justify-center gap-[5px] md:hidden"
+          className="flex h-11 w-11 flex-col items-center justify-center gap-[5px] md:hidden"
           aria-label={menuOpen ? "關閉選單" : "開啟選單"}
           aria-expanded={menuOpen}
         >
