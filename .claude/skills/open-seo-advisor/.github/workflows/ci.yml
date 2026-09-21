@@ -1,0 +1,188 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }} / ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package with dev dependencies
+        working-directory: scripts
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run lint (ruff)
+        working-directory: scripts
+        run: python -m ruff check seo_advisor tests
+
+      - name: Run tests (pytest)
+        working-directory: scripts
+        run: python -m pytest -v
+
+  cli-smoke-test:
+    name: CLI smoke test (all demo commands)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package
+        working-directory: scripts
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Consultant demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli demo --out ./ci-demo
+          test -f ci-demo/report-beginner.md
+          test -f ci-demo/report.json
+
+      - name: Content from consultant report (write --from-report)
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli write --from-report ci-demo/report.json \
+            --llm-provider mock --out ./ci-from-report
+          test -f ci-from-report/draft.md
+
+      - name: Autopilot demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli auto-demo --out ./ci-auto
+          test -f ci-auto/auto-report-beginner.md
+          test -f ci-auto/cost-estimate.json
+          test -f ci-auto/cost-estimate.md
+
+      - name: Autopilot with bare domain routes correctly
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli auto "example.com" --mock --out ./ci-auto-bare
+          grep -q consultant ci-auto-bare/auto-report.json
+
+      - name: Growth demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli growth demo --out ./ci-growth
+          test -f ci-growth/analytics-report.json
+
+      - name: Ecommerce demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli ecommerce demo --out ./ci-ecom
+          test -f ci-ecom/ecommerce-report.json
+
+      - name: Matrix demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli matrix demo --out ./ci-matrix
+          test -f ci-matrix/matrix-report.json
+
+      - name: Image demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli image demo --out ./ci-image
+          test -f ci-image/image-manifest.json
+
+      - name: Ads demo
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli ads demo --out ./ci-ads
+          test -f ci-ads/action-plan.json
+          test -f ci-ads/ads-report.json
+
+      - name: Creative brief from ads report (image from-ads)
+        working-directory: scripts
+        run: |
+          python -m seo_advisor.cli image from-ads --ads-report ci-ads/ads-report.json --out ./ci-cre
+          test -f ci-cre/image-brief.md
+          test -f ci-cre/image-brief.json
+
+  security-audit:
+    name: Dependency vulnerability scan (pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package with dev dependencies
+        working-directory: scripts
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install pip-audit
+
+      - name: Record resolved dependency versions
+        working-directory: scripts
+        run: pip freeze > pip-freeze.txt
+
+      - name: Upload resolved dependency versions
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-freeze-${{ github.sha }}
+          path: scripts/pip-freeze.txt
+          retention-days: 90
+
+      - name: Scan for known vulnerabilities (pip-audit)
+        working-directory: scripts
+        # 只掃描已安裝環境是否有已知 CVE，不鎖版本、不動 pyproject.toml 的依賴宣告策略。
+        # 失敗時不擋 PR（--strict 關閉），先讓漏洞可見；之後視雜訊狀況再決定是否轉為必過關卡。
+        run: pip-audit --desc || echo "::warning::pip-audit 發現已知漏洞，請檢視上方輸出"
+
+  wheel-install-smoke:
+    name: Wheel build + clean install smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheel
+        working-directory: scripts
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build --wheel --outdir dist
+
+      - name: Install wheel in a clean venv and run demos
+        working-directory: scripts
+        run: |
+          python -m venv /tmp/clean-venv
+          /tmp/clean-venv/bin/python -m pip install --upgrade pip
+          /tmp/clean-venv/bin/python -m pip install dist/*.whl
+          # 用正式安裝的 console script 跑，驗證 package-data（角色卡/方法論/demo 資產）都被打包
+          /tmp/clean-venv/bin/seo-advisor auto-demo --out /tmp/ci-wheel-auto
+          /tmp/clean-venv/bin/seo-advisor matrix demo --out /tmp/ci-wheel-matrix
+          /tmp/clean-venv/bin/seo-advisor ecommerce demo --out /tmp/ci-wheel-ecom
+          test -f /tmp/ci-wheel-auto/auto-report-beginner.md
+          test -f /tmp/ci-wheel-matrix/matrix-report.json
+          test -f /tmp/ci-wheel-ecom/ecommerce-report.json
