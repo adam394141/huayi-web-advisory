@@ -8,6 +8,8 @@ import { getPublishedWorks, getHomepagePosts } from "@/lib/content";
 import { getImageById } from "@/lib/home-images";
 import { LogoMotion } from "@/components/logo-motion";
 import { WorkCover } from "@/components/work-cover";
+import { safeJsonLd } from "@/lib/content-safety";
+import { getCanonicalSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 60;
 
@@ -34,8 +36,52 @@ export default async function HomePage() {
   const teamAdam = getImageById("team-adam");
   const teamRosie = getImageById("team-rosie");
 
+  const site = getCanonicalSiteUrl();
+
+  const homeLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${site}/#organization`,
+        name: "華翼品牌策略",
+        alternateName: "HUAYI Brand Strategy",
+        url: site,
+        logo: `${site}/brand/huayi-logo.svg`,
+        description: "為台灣中小企業與二代接班人，提供品牌策略定位、企業 AI 導入、品牌行銷與品牌體驗的專業顧問服務。",
+        areaServed: { "@type": "Country", name: "TW" },
+        knowsLanguage: "zh-Hant-TW",
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${site}/#website`,
+        url: site,
+        name: "華翼品牌策略",
+        publisher: { "@id": `${site}/#organization` },
+        inLanguage: "zh-Hant-TW",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${site}/#webpage`,
+        url: site,
+        name: "華翼品牌策略 HUAYI｜品牌顧問 × AI 導入",
+        isPartOf: { "@id": `${site}/#website` },
+        about: { "@id": `${site}/#organization` },
+      },
+      {
+        "@type": "SiteNavigationElement",
+        name: ["關於華翼", "服務項目", "作品集", "觀點", "聯絡我們"],
+        url: [`${site}/about`, `${site}/services`, `${site}/works`, `${site}/blog`, `${site}/contact`],
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(homeLd) }}
+      />
       {/* 1. Hero — 大型圖片 + 極簡文案 */}
       <LogoMotion />
       <section className="home-hero px-[var(--space-page-x)] pt-8 md:pt-12">

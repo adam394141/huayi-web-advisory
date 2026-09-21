@@ -1,11 +1,16 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getWorkBySlug, getWorkStorageImages } from "@/lib/content";
+import { getWorkBySlug, getWorkStorageImages, getPublishedWorks } from "@/lib/content";
 import { WorkDetail } from "./work-detail";
 import { safeJsonLd } from "@/lib/content-safety";
 import { getCanonicalSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const works = await getPublishedWorks();
+  return works.map((w) => ({ slug: w.slug }));
+}
 
 export async function generateMetadata({
   params,
@@ -56,12 +61,13 @@ export default async function WorkDetailPage({
     .filter((img) => img.name !== coverFilename)
     .map((img) => img.url);
 
+  const site = getCanonicalSiteUrl();
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "首頁", item: "https://huayi.tw" },
-      { "@type": "ListItem", position: 2, name: "作品", item: "https://huayi.tw/works" },
+      { "@type": "ListItem", position: 1, name: "首頁", item: site },
+      { "@type": "ListItem", position: 2, name: "作品", item: `${site}/works` },
       { "@type": "ListItem", position: 3, name: work.title },
     ],
   };

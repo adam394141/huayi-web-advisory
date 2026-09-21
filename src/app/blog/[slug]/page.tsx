@@ -1,12 +1,17 @@
 import { notFound, permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
-import { getPostBySlug } from "@/lib/content";
+import { getPostBySlug, getPublishedPosts } from "@/lib/content";
 import { BlogContent } from "./blog-content";
 import { safeJsonLd } from "@/lib/content-safety";
 import { getCanonicalSiteUrl } from "@/lib/site-url";
 import { getContentRedirect } from "@/lib/content-redirect";
 
 export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const posts = await getPublishedPosts();
+  return posts.map((p) => ({ slug: p.slug }));
+}
 
 export async function generateMetadata({
   params,

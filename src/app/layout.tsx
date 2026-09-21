@@ -34,6 +34,13 @@ export const metadata: Metadata = {
     siteName: "華翼品牌策略",
     locale: "zh_TW",
     type: "website",
+    images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "華翼品牌策略 HUAYI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "華翼品牌策略 HUAYI｜品牌顧問 × AI 導入",
+    description: "為台灣中小企業與二代接班人，提供品牌策略定位、企業 AI 導入、品牌行銷與品牌體驗的專業顧問服務。",
+    images: ["/og-default.png"],
   },
   robots: isIndexableEnvironment() ? { index: true, follow: true } : { index: false, follow: false },
 };
