@@ -49,7 +49,7 @@ const CAPABILITIES = [
 
 const TEAM = [
   { name: "Adam", title: "品牌顧問" },
-  { name: "Rosie", title: "品牌顧問" },
+  { name: "Rosie", title: "顧問資料補充中" },
 ];
 
 export default function AboutPage() {

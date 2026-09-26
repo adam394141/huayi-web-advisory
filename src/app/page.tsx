@@ -332,8 +332,8 @@ export default async function HomePage() {
         <SectionHeader label="TEAM" title="華翼團隊" />
         <div className="mt-10 grid max-w-[640px] gap-8 md:grid-cols-2">
           {[
-            { name: "Adam", img: teamAdam },
-            { name: "Rosie", img: teamRosie },
+            { name: "Adam", img: teamAdam, subtitle: "品牌顧問" },
+            { name: "Rosie", img: teamRosie, subtitle: "顧問資料補充中" },
           ].map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
               <ImagePlaceholder
@@ -346,7 +346,7 @@ export default async function HomePage() {
                 {member.name}
               </h3>
               <p className="mt-1 text-[15px] text-[var(--color-body)]">
-                品牌顧問
+                {member.subtitle}
               </p>
             </ScrollReveal>
           ))}
