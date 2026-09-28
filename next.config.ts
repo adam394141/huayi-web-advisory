@@ -31,6 +31,17 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  async redirects() {
+    return [
+      // 舊站主要頁面 → 新站（301 永久轉址）
+      { source: "/intro.asp", destination: "/about", permanent: true },
+      { source: "/product-list.asp", destination: "/works", permanent: true },
+      { source: "/article-list.asp", destination: "/blog", permanent: true },
+      { source: "/contact.asp", destination: "/contact", permanent: true },
+      { source: "/online-class.asp", destination: "/services", permanent: true },
+      { source: "/contact_updateCnt.asp", destination: "/contact", permanent: true },
+    ];
+  },
   images: {
     qualities: [75, 82],
     remotePatterns: [
