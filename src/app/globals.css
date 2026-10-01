@@ -24,6 +24,15 @@
   --color-ai-text: #E8E8F0;
   --color-ai-muted: #9999B0;
 
+  /* 講師頁專用色（adam_cpc / rosie_cpc） */
+  --color-adam-navy: #1A2942;
+  --color-adam-navy-light: #273A5A;
+  --color-adam-gold: #C4A464;
+  --color-adam-ivory: #F7F3EA;
+  --color-adam-warm-gray: #6D6A64;
+  --color-adam-gold-line: #E3D6BC;
+  --color-adam-blue-gray: #EEF1F5;
+
   --radius-module: 28px;
   --radius-card: 20px;
   --radius-image: 20px;

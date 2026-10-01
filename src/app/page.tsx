@@ -332,22 +332,24 @@ export default async function HomePage() {
         <SectionHeader label="TEAM" title="華翼團隊" />
         <div className="mt-10 grid max-w-[640px] gap-8 md:grid-cols-2">
           {[
-            { name: "Adam", img: teamAdam, subtitle: "品牌顧問" },
-            { name: "Rosie", img: teamRosie, subtitle: "顧問資料補充中" },
+            { name: "Adam", img: teamAdam, subtitle: "品牌顧問", href: "/adam_cpc" },
+            { name: "Rosie", img: teamRosie, subtitle: "雙定位品牌顧問", href: "/rosie_cpc" },
           ].map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
-              <ImagePlaceholder
-                src={member.img?.file}
-                alt={member.img?.alt ?? `${member.name} — 品牌顧問`}
-                aspect="3/4"
-                rounded="var(--radius-card)"
-              />
-              <h3 className="mt-4 text-[16px] font-medium text-[var(--color-fg)]">
-                {member.name}
-              </h3>
-              <p className="mt-1 text-[15px] text-[var(--color-body)]">
-                {member.subtitle}
-              </p>
+              <Link href={member.href}>
+                <ImagePlaceholder
+                  src={member.img?.file}
+                  alt={member.img?.alt ?? `${member.name} — 品牌顧問`}
+                  aspect="3/4"
+                  rounded="var(--radius-card)"
+                />
+                <h3 className="mt-4 text-[16px] font-medium text-[var(--color-fg)]">
+                  {member.name}
+                </h3>
+                <p className="mt-1 text-[15px] text-[var(--color-body)]">
+                  {member.subtitle}
+                </p>
+              </Link>
             </ScrollReveal>
           ))}
         </div>
