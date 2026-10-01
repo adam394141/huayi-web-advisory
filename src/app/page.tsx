@@ -332,7 +332,7 @@ export default async function HomePage() {
         <SectionHeader label="TEAM" title="華翼團隊" />
         <div className="mt-10 grid max-w-[640px] gap-8 md:grid-cols-2">
           {[
-            { name: "Adam", img: teamAdam, subtitle: "品牌顧問", href: "/adam_cpc", objectPosition: undefined },
+            { name: "Adam", img: teamAdam, subtitle: "品牌顧問及 AI 講師", href: "/adam_cpc", objectPosition: undefined },
             { name: "Rosie", img: teamRosie, subtitle: "雙定位品牌顧問", href: "/rosie_cpc", objectPosition: "top" as const },
           ].map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
