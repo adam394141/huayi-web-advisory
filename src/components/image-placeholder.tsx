@@ -12,6 +12,7 @@ interface ImagePlaceholderProps {
   contain?: boolean;
   priority?: boolean;
   caption?: string;
+  objectPosition?: string;
 }
 
 export function ImagePlaceholder({
@@ -23,6 +24,7 @@ export function ImagePlaceholder({
   contain = false,
   priority = false,
   caption,
+  objectPosition,
 }: ImagePlaceholderProps) {
   const [failedSource, setFailedSource] = useState<string | null>(null);
   const [originalSource, setOriginalSource] = useState<string | null>(null);
@@ -85,6 +87,7 @@ export function ImagePlaceholder({
         alt={alt}
         fill
         className={contain ? "object-contain" : "object-cover"}
+        style={objectPosition ? { objectPosition } : undefined}
         sizes={priority ? "(max-width: 1280px) 100vw, 1280px" : "(max-width: 768px) 100vw, (max-width: 1280px) 75vw, 1280px"}
         priority={priority}
         unoptimized={originalSource === src}
