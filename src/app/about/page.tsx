@@ -6,7 +6,7 @@ import { ImagePlaceholder } from "@/components/image-placeholder";
 export const metadata: Metadata = {
   title: "關於華翼｜華翼品牌策略",
   description:
-    "華翼品牌策略，從設計公司轉型為品牌策略顧問，服務台灣中小企業與二代接班人。",
+    "華翼以駐廠顧問方式協助企業建立品牌與行銷團隊，建好、教會、交接，讓現場能獨立運作。",
   alternates: { canonical: "/about" },
 };
 
@@ -74,22 +74,19 @@ export default function AboutPage() {
             <h2 className="font-serif text-[1.4rem] font-semibold leading-snug text-[var(--color-fg)] md:text-[1.8rem]">
               從設計公司
               <br />
-              到品牌策略顧問
+              到駐廠建置顧問
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <div className="space-y-5 text-[16px] leading-[1.9] text-[var(--color-body)]">
               <p>
-                華翼品牌策略立足台灣，以品牌策略顧問的角色，服務中小企業與二代接班人。
+                華翼品牌策略立足台灣，以駐廠顧問的方式，協助中小企業與二代接班人建立品牌與行銷團隊。
               </p>
               <p>
-                我們相信，品牌不只是一個 Logo
-                或一套視覺系統，而是企業在市場中的差異化資產。從品牌定位到
-                AI
-                導入，我們的目標是讓每一個有實力的品牌，都能被市場看見真正的價值。
+                我們不是替客戶做事的人，而是把一套能運作的系統帶進客戶現場——完成建置、培養接手團隊，讓現場能獨立運作後撤離，再將方法複製到下一個場域。
               </p>
               <p>
-                品牌決定企業方向，AI 決定企業速度——這是華翼的核心信念，也是我們每一次顧問服務的出發點。
+                像賣設備給工廠的駐廠工程師：機器進場、安裝設定、教學試運轉，確認現場能用，工程師才離開。
               </p>
             </div>
           </ScrollReveal>

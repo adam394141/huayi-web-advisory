@@ -13,13 +13,13 @@ import { getCanonicalSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 60;
 
-const CHALLENGE_TAGS = ["定位不清", "團隊斷層", "AI 難落地", "行銷失焦"];
+const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "有方向但落不了地", "關鍵人物離開就斷"];
 
 const SERVICES_CARDS = [
-  { imageId: "service-strategy", title: "品牌策略", desc: "市場研究到品牌定位，建立差異化資產" },
-  { imageId: "service-ai", title: "AI 導入", desc: "找到 AI 創造價值的切入點，快速驗證" },
-  { imageId: "service-marketing", title: "行銷成長", desc: "整合廣告與內容，聚焦轉換與成長" },
-  { imageId: "service-design", title: "品牌體驗", desc: "品牌識別到包裝設計，打造一致體驗" },
+  { imageId: "service-strategy", title: "診斷現場", desc: "盤點品牌與行銷各環節的真實需求與缺口" },
+  { imageId: "service-ai", title: "建立團隊", desc: "依優先順序逐步補上對的人，搭配 AI 工具提升效率" },
+  { imageId: "service-marketing", title: "駐廠陪跑", desc: "帶著團隊實作、修正，直到流程能被穩定執行" },
+  { imageId: "service-design", title: "移交撤離", desc: "團隊獨立運作後撤離，方法複製到下一個場域" },
 ];
 
 export default async function HomePage() {
@@ -98,10 +98,10 @@ export default async function HomePage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1} className="hero-entrance">
             <h1 className="mt-7 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
-              品牌決定方向，AI 決定速度。
+              建好、教會、交接。
             </h1>
-            <p className="mt-4 max-w-[520px] text-[16px] leading-relaxed text-[var(--color-body)]">
-              為台灣中小企業與二代接班人，打造差異化品牌資產
+            <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
+              華翼以駐廠顧問方式，協助企業建立品牌與行銷團隊，讓現場能獨立運作後撤離，再將方法複製到下一個場域。
             </p>
             <p className="mt-6">
               <Link
@@ -143,7 +143,7 @@ export default async function HomePage() {
 
       {/* 3. Services — 2×2 大圖片卡 */}
       <Section className="bg-[var(--color-surface)]">
-        <SectionHeader label="SERVICES" title="四大服務" />
+        <SectionHeader label="HOW WE WORK" title="建置流程" />
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {SERVICES_CARDS.map((svc, i) => {
             const img = getImageById(svc.imageId);
@@ -217,10 +217,10 @@ export default async function HomePage() {
               AI INTEGRATION
             </p>
             <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-ai-text)] md:text-[2rem]">
-              AI 是策略的一部分
+              AI 是建置的加速器
             </h2>
             <p className="mt-4 text-[16px] leading-relaxed text-[var(--color-ai-muted)]">
-              協助企業找到 AI 真正創造價值的切入點
+              在團隊建置過程中導入 AI 工具，讓新團隊從第一天就能高效運作
             </p>
             <p className="mt-6">
               <Link
@@ -371,7 +371,7 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto max-w-[1280px] text-center">
           <ScrollReveal>
             <h2 className="mx-auto max-w-[480px] font-serif text-[1.4rem] leading-relaxed text-[var(--color-fg)] md:text-[1.8rem]">
-              讓好品牌，被市場看見真正的價值
+              先花一小時做企業體檢，我們直接告訴你現在該外包還是該建團隊
             </h2>
             <p className="mt-8">
               <Link
