@@ -165,7 +165,7 @@ export default function AboutPage() {
         <div className="mt-10 grid max-w-[720px] gap-10 md:grid-cols-2">
           {TEAM.map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
-              <ImagePlaceholder src={member.name === "Adam" ? "/home/adam.jpg" : null} alt={member.name + " 品牌顧問"} aspect="3/4" />
+              <ImagePlaceholder src={member.name === "Adam" ? "/home/adam.jpg" : "/rosie_cpc/rosie-professional.jpg"} alt={member.name + " 品牌顧問"} aspect="3/4" />
               <h3 className="mt-5 text-[18px] font-medium text-[var(--color-fg)]">
                 {member.name}
               </h3>
