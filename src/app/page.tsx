@@ -16,10 +16,10 @@ export const revalidate = 60;
 const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "請了高階主管也不知道專不專業", "有方向但落不了地", "關鍵人物離開就斷"];
 
 const SERVICES_CARDS = [
-  { imageId: "service-strategy", title: "診斷現場", desc: "盤點品牌與行銷各環節的真實需求與缺口" },
-  { imageId: "service-ai", title: "建立團隊", desc: "依優先順序逐步補上對的人，搭配 AI 工具提升效率" },
-  { imageId: "service-marketing", title: "駐點陪跑", desc: "帶著團隊實作、修正，直到流程能被穩定執行" },
-  { imageId: "service-design", title: "獨立運作", desc: "團隊自主運轉後華翼退場，不綁定、不依賴" },
+  { imageId: "service-strategy", title: "品牌策略", desc: "市場研究到品牌定位，建立差異化資產" },
+  { imageId: "service-ai", title: "AI 導入", desc: "找到 AI 創造價值的切入點，快速驗證" },
+  { imageId: "service-marketing", title: "行銷成長", desc: "整合廣告與內容，聚焦轉換與成長" },
+  { imageId: "service-design", title: "品牌體驗", desc: "品牌識別到包裝設計，打造一致體驗" },
 ];
 
 export default async function HomePage() {
@@ -70,7 +70,7 @@ export default async function HomePage() {
       },
       {
         "@type": "SiteNavigationElement",
-        name: ["關於華翼", "服務項目", "作品集", "觀點", "聯絡我們"],
+        name: ["關於華翼", "服務項目", "設計作品", "觀點", "聯絡我們"],
         url: [`${site}/about`, `${site}/services`, `${site}/works`, `${site}/blog`, `${site}/contact`],
       },
     ],
@@ -148,7 +148,7 @@ export default async function HomePage() {
 
       {/* 3. Services — 2×2 大圖片卡 */}
       <Section className="bg-[var(--color-surface)]">
-        <SectionHeader label="HOW WE WORK" title="建置流程" />
+        <SectionHeader label="SERVICES" title="四大服務" />
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {SERVICES_CARDS.map((svc, i) => {
             const img = getImageById(svc.imageId);
@@ -242,12 +242,12 @@ export default async function HomePage() {
       {/* 6. Works — 等高網格，保留完整設計圖 */}
       <Section>
         <div className="flex items-end justify-between">
-          <SectionHeader label="SELECTED WORKS" title="精選作品" />
+          <SectionHeader label="DESIGN WORKS" title="設計作品" />
           <Link
             href="/works"
             className="hidden text-[12px] tracking-wider text-[var(--color-body)] transition-colors hover:text-[var(--color-fg)] md:block"
           >
-            查看所有作品 →
+            查看所有設計作品 →
           </Link>
         </div>
         <div className="mt-10 grid gap-x-6 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
@@ -278,7 +278,7 @@ export default async function HomePage() {
             href="/works"
             className="text-[15px] text-[var(--color-subtle)] transition-colors hover:text-[var(--color-fg)]"
           >
-            查看所有作品 →
+            查看所有設計作品 →
           </Link>
         </p>
       </Section>
@@ -338,7 +338,7 @@ export default async function HomePage() {
         <div className="mt-10 grid max-w-[640px] gap-8 md:grid-cols-2">
           {[
             { name: "Adam", img: teamAdam, subtitle: "品牌顧問及 AI 講師", href: "/adam_cpc", objectPosition: undefined },
-            { name: "Rosie", img: teamRosie, subtitle: "雙定位品牌顧問", href: "/rosie_cpc", objectPosition: "top" as const },
+            { name: "Rosie", img: teamRosie, subtitle: "品牌顧問", href: "/rosie_cpc", objectPosition: "top" as const },
           ].map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
               <Link href={member.href}>

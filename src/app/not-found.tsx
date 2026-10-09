@@ -28,7 +28,7 @@ export default function NotFound() {
         <ul className="flex flex-wrap justify-center gap-6 text-[14px] text-[var(--color-subtle)]">
           <li><Link href="/about" className="hover:text-[var(--color-fg)]">關於華翼</Link></li>
           <li><Link href="/services" className="hover:text-[var(--color-fg)]">服務項目</Link></li>
-          <li><Link href="/works" className="hover:text-[var(--color-fg)]">作品集</Link></li>
+          <li><Link href="/works" className="hover:text-[var(--color-fg)]">設計作品</Link></li>
           <li><Link href="/blog" className="hover:text-[var(--color-fg)]">觀點</Link></li>
         </ul>
       </nav>

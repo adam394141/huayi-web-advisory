@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const NAV_ITEMS = [
   { label: "關於華翼", href: "/about" },
   { label: "服務項目", href: "/services" },
-  { label: "作品", href: "/works" },
+  { label: "設計作品", href: "/works" },
   { label: "觀點", href: "/blog" },
   { label: "聯絡我們", href: "/contact" },
 ];
