@@ -98,34 +98,35 @@ export default function ServicesPage() {
           key={step.num}
           className={i % 2 === 1 ? "bg-[var(--color-surface)]" : ""}
         >
-          <ScrollReveal>
-            <Image
-              src={step.image}
-              alt={step.title}
-              width={800}
-              height={600}
-              className="w-full rounded-[var(--radius-card)]"
-            />
-          </ScrollReveal>
-          <div className="mt-10 grid gap-12 md:grid-cols-2">
-            <ScrollReveal delay={0.1}>
-              <div className="flex items-start gap-4">
-                <span className="text-[3rem] font-light leading-none text-[var(--color-faint)]/30">
-                  {step.num}
-                </span>
-                <step.icon
-                  className="mt-3 h-8 w-8 text-[var(--color-gold-dark)]"
-                  strokeWidth={1.5}
-                />
-              </div>
-              <h2 className="mt-6 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">
-                {step.title}
-              </h2>
-              <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">
-                {step.desc}
-              </p>
+          <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-start">
+            <ScrollReveal>
+              <Image
+                src={step.image}
+                alt={step.title}
+                width={400}
+                height={300}
+                className="w-full max-w-[360px] rounded-[var(--radius-card)]"
+              />
             </ScrollReveal>
-            <ScrollReveal delay={0.2}>
+            <div>
+              <ScrollReveal delay={0.1}>
+                <div className="flex items-start gap-4">
+                  <span className="text-[3rem] font-light leading-none text-[var(--color-faint)]/30">
+                    {step.num}
+                  </span>
+                  <step.icon
+                    className="mt-3 h-8 w-8 text-[var(--color-gold-dark)]"
+                    strokeWidth={1.5}
+                  />
+                </div>
+                <h2 className="mt-6 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">
+                  {step.title}
+                </h2>
+                <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">
+                  {step.desc}
+                </p>
+              </ScrollReveal>
+              <ScrollReveal delay={0.2}>
               <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
                 <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
                   主要交付項目
@@ -143,6 +144,7 @@ export default function ServicesPage() {
                 </ul>
               </div>
             </ScrollReveal>
+            </div>
           </div>
         </Section>
       ))}

@@ -143,6 +143,11 @@ export default async function HomePage() {
               外包團隊有磨合期、溝通問題，甚至擺爛風險。建立自己的團隊，溝通成本更低、更好掌控。
             </p>
           </ScrollReveal>
+          <ScrollReveal delay={0.4}>
+            <p className="mt-6 mx-auto max-w-[520px] text-center font-serif text-[1.1rem] leading-relaxed text-[var(--color-fg)]">
+              你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。<br />如果需要建團隊，我們以駐點顧問方式，陪你從零開始。
+            </p>
+          </ScrollReveal>
         </div>
       </Section>
 
@@ -189,16 +194,25 @@ export default async function HomePage() {
               rounded="var(--radius-module)"
             />
           </ScrollReveal>
-          <div className="mt-8 flex items-center justify-center gap-6 md:gap-10">
-            {["診斷", "策略", "執行"].map((step, i) => (
-              <ScrollReveal key={step} delay={i * 0.1}>
-                <div className="flex items-center gap-4 md:gap-8">
-                  <span className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)] md:text-[1.3rem]">
-                    {step}
-                  </span>
-                  {i < 2 && (
-                    <span className="text-[var(--color-faint)]">→</span>
-                  )}
+          <div className="mt-10 grid gap-8 md:grid-cols-3">
+            {[
+              { title: "診斷", desc: "找出真正要解決的問題，區分該外包、該內建、還是用 AI 取代" },
+              { title: "策略", desc: "設計可執行的方案，包含團隊編制、流程規劃與優先順序" },
+              { title: "執行", desc: "進場建置，帶著團隊實作與修正，直到能獨立運作" },
+            ].map((step, i) => (
+              <ScrollReveal key={step.title} delay={i * 0.1}>
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-[2rem] font-light text-[var(--color-faint)]/40">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-serif text-[1.2rem] font-semibold text-[var(--color-fg)] md:text-[1.4rem]">
+                      {step.title}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-body)]">
+                    {step.desc}
+                  </p>
                 </div>
               </ScrollReveal>
             ))}
