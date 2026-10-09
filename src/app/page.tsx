@@ -13,13 +13,13 @@ import { getCanonicalSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 60;
 
-const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "有方向但落不了地", "關鍵人物離開就斷"];
+const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "請了高階主管也不知道專不專業", "有方向但落不了地", "關鍵人物離開就斷"];
 
 const SERVICES_CARDS = [
   { imageId: "service-strategy", title: "診斷現場", desc: "盤點品牌與行銷各環節的真實需求與缺口" },
   { imageId: "service-ai", title: "建立團隊", desc: "依優先順序逐步補上對的人，搭配 AI 工具提升效率" },
-  { imageId: "service-marketing", title: "駐廠陪跑", desc: "帶著團隊實作、修正，直到流程能被穩定執行" },
-  { imageId: "service-design", title: "移交撤離", desc: "團隊獨立運作後撤離，方法複製到下一個場域" },
+  { imageId: "service-marketing", title: "駐點陪跑", desc: "帶著團隊實作、修正，直到流程能被穩定執行" },
+  { imageId: "service-design", title: "獨立運作", desc: "團隊自主運轉後華翼退場，不綁定、不依賴" },
 ];
 
 export default async function HomePage() {
@@ -98,10 +98,10 @@ export default async function HomePage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1} className="hero-entrance">
             <h1 className="mt-7 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
-              建好、教會、交接。
+              品牌決定方向，AI 決定速度。
             </h1>
             <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
-              華翼以駐廠顧問方式，協助企業建立品牌與行銷團隊，讓現場能獨立運作後撤離，再將方法複製到下一個場域。
+              駐點顧問，建立團隊，直到可以獨立運作
             </p>
             <p className="mt-6">
               <Link
@@ -138,6 +138,11 @@ export default async function HomePage() {
               </ScrollReveal>
             ))}
           </div>
+          <ScrollReveal delay={0.3}>
+            <p className="mt-8 mx-auto max-w-[520px] text-center text-[15px] leading-relaxed text-[var(--color-body)]">
+              外包團隊有磨合期、溝通問題，甚至擺爛風險。建立自己的團隊，溝通成本更低、更好掌控。
+            </p>
+          </ScrollReveal>
         </div>
       </Section>
 

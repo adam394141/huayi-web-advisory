@@ -7,7 +7,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 export const metadata: Metadata = {
   title: "服務項目｜華翼品牌策略",
   description:
-    "華翼以駐廠顧問方式協助企業建立品牌與行銷團隊：診斷現場、建立團隊、駐廠陪跑、移交撤離。",
+    "華翼以駐點顧問方式協助企業建立品牌與行銷團隊：診斷現場、建立團隊、駐點陪跑、移交撤離。",
   alternates: { canonical: "/services" },
 };
 
@@ -39,7 +39,7 @@ const CORE_STEPS = [
   {
     num: "03",
     icon: Route,
-    title: "駐廠陪跑",
+    title: "駐點陪跑",
     desc: "顧問進駐現場，帶著團隊實作、修正、校準，直到流程能被穩定執行。不是遠端下指令，而是在你的辦公室裡一起工作。",
     deliverables: [
       "每週現場指導",
@@ -63,10 +63,10 @@ const CORE_STEPS = [
 ];
 
 const ADDON_MODULES = [
-  { title: "品牌策略", desc: "品牌定位、競品分析、差異化策略" },
-  { title: "廣告投放", desc: "Facebook / Google 廣告代操與優化" },
-  { title: "品牌設計", desc: "CIS 識別、包裝設計、主視覺" },
-  { title: "內容行銷", desc: "社群經營、部落格、SEO 內容規劃" },
+  { title: "品牌策略", desc: "品牌定位、市場競品分析、差異化策略、品牌金字塔建構" },
+  { title: "企業 AI 導入", desc: "AI 導入評估、企業內訓、流程自動化、MVP 系統開發" },
+  { title: "品牌行銷", desc: "Facebook / Google 廣告投放、社群經營、內容行銷" },
+  { title: "品牌設計", desc: "CIS 識別系統、包裝設計、活動主視覺、品牌周邊" },
 ];
 
 export default function ServicesPage() {
@@ -79,10 +79,10 @@ export default function ServicesPage() {
             SERVICES
           </p>
           <h1 className="mt-4 font-serif text-[2rem] font-semibold text-[var(--color-fg)] md:text-[3rem]">
-            駐廠建置，建好就走。
+            駐點建置，建好就走。
           </h1>
           <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
-            華翼像設備進場的駐廠工程師——進到現場完成診斷、建置、教學與陪跑，直到團隊能自己運作，再把方法複製到下一個場域。
+            華翼像設備進場的駐點工程師——進到現場完成診斷、建置、教學與陪跑，直到團隊能自己運作，再把方法複製到下一個場域。
           </p>
         </ScrollReveal>
       </Section>

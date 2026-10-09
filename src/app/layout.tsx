@@ -24,13 +24,13 @@ export const metadata: Metadata = {
   metadataBase: new URL(getCanonicalSiteUrl()),
   alternates: { canonical: "/" },
   icons: { icon: "/brand/huayi-logo.svg" },
-  title: "華翼品牌策略 HUAYI｜駐廠建置，建好就走",
+  title: "華翼品牌策略 HUAYI｜駐點建置，建好就走",
   description:
-    "華翼以駐廠顧問方式，協助台灣中小企業建立品牌與行銷團隊。診斷現場、建立團隊、駐廠陪跑、移交撤離——讓現場能獨立運作。",
-  keywords: ["品牌策略", "行銷團隊建置", "駐廠顧問", "AI導入", "華翼"],
+    "華翼以駐點顧問方式，協助台灣中小企業建立品牌與行銷團隊。診斷現場、建立團隊、駐點陪跑、移交撤離——讓現場能獨立運作。",
+  keywords: ["品牌策略", "行銷團隊建置", "駐點顧問", "AI導入", "華翼"],
   openGraph: {
     title: "華翼品牌策略 HUAYI",
-    description: "駐廠建置，建好就走。協助企業建立品牌與行銷團隊。",
+    description: "駐點建置，建好就走。協助企業建立品牌與行銷團隊。",
     siteName: "華翼品牌策略",
     locale: "zh_TW",
     type: "website",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "華翼品牌策略 HUAYI｜駐廠建置，建好就走",
-    description: "以駐廠顧問方式協助企業建立品牌與行銷團隊，讓現場能獨立運作。",
+    title: "華翼品牌策略 HUAYI｜駐點建置，建好就走",
+    description: "以駐點顧問方式協助企業建立品牌與行銷團隊，讓現場能獨立運作。",
     images: ["/og-default.png"],
   },
   robots: isIndexableEnvironment() ? { index: true, follow: true } : { index: false, follow: false },

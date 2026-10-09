@@ -6,7 +6,7 @@ import { ImagePlaceholder } from "@/components/image-placeholder";
 export const metadata: Metadata = {
   title: "關於華翼｜華翼品牌策略",
   description:
-    "華翼以駐廠顧問方式協助企業建立品牌與行銷團隊，建好、教會、交接，讓現場能獨立運作。",
+    "華翼以駐點顧問方式協助企業建立品牌與行銷團隊，建好、教會、交接，讓現場能獨立運作。",
   alternates: { canonical: "/about" },
 };
 
@@ -74,19 +74,19 @@ export default function AboutPage() {
             <h2 className="font-serif text-[1.4rem] font-semibold leading-snug text-[var(--color-fg)] md:text-[1.8rem]">
               從設計公司
               <br />
-              到駐廠建置顧問
+              到駐點建置顧問
             </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.1}>
             <div className="space-y-5 text-[16px] leading-[1.9] text-[var(--color-body)]">
               <p>
-                華翼品牌策略立足台灣，以駐廠顧問的方式，協助中小企業與二代接班人建立品牌與行銷團隊。
+                華翼品牌策略立足台灣，以駐點顧問的方式，協助中小企業與二代接班人建立品牌與行銷團隊。
               </p>
               <p>
                 我們不是替客戶做事的人，而是把一套能運作的系統帶進客戶現場——完成建置、培養接手團隊，讓現場能獨立運作後撤離，再將方法複製到下一個場域。
               </p>
               <p>
-                像賣設備給工廠的駐廠工程師：機器進場、安裝設定、教學試運轉，確認現場能用，工程師才離開。
+                像賣設備給工廠的駐點工程師：機器進場、安裝設定、教學試運轉，確認現場能用，工程師才離開。
               </p>
             </div>
           </ScrollReveal>
