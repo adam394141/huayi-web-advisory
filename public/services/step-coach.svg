@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#F8F6F2"/>
+  <!-- Circular process / orbit -->
+  <circle cx="400" cy="290" r="130" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.15" stroke-dasharray="6 4"/>
+  <circle cx="400" cy="290" r="80" stroke="#1A1A1A" stroke-width="1" fill="none" opacity="0.08"/>
+  <!-- Center node - core -->
+  <circle cx="400" cy="290" r="20" fill="#8B7355" opacity="0.2"/>
+  <circle cx="400" cy="290" r="8" fill="#8B7355" opacity="0.5"/>
+  <!-- Orbit nodes - team members doing tasks -->
+  <circle cx="400" cy="160" r="14" fill="#1A1A1A" opacity="0.15"/>
+  <circle cx="520" cy="340" r="14" fill="#1A1A1A" opacity="0.15"/>
+  <circle cx="280" cy="340" r="14" fill="#1A1A1A" opacity="0.15"/>
+  <!-- Arrow paths showing iteration -->
+  <path d="M420 165 Q 500 200 525 325" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.25" stroke-linecap="round"/>
+  <path d="M510 355 Q 430 400 290 350" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.25" stroke-linecap="round"/>
+  <path d="M270 330 Q 280 230 395 170" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.25" stroke-linecap="round"/>
+  <!-- Small arrowheads -->
+  <circle cx="475" cy="245" r="3" fill="#8B7355" opacity="0.4"/>
+  <circle cx="385" cy="375" r="3" fill="#8B7355" opacity="0.4"/>
+  <circle cx="310" cy="250" r="3" fill="#8B7355" opacity="0.4"/>
+  <!-- Progress bars below -->
+  <rect x="280" y="460" width="240" height="6" rx="3" fill="#1A1A1A" opacity="0.06"/>
+  <rect x="280" y="460" width="180" height="6" rx="3" fill="#8B7355" opacity="0.25"/>
+  <rect x="280" y="480" width="240" height="6" rx="3" fill="#1A1A1A" opacity="0.06"/>
+  <rect x="280" y="480" width="140" height="6" rx="3" fill="#8B7355" opacity="0.18"/>
+  <rect x="280" y="500" width="240" height="6" rx="3" fill="#1A1A1A" opacity="0.06"/>
+  <rect x="280" y="500" width="210" height="6" rx="3" fill="#8B7355" opacity="0.3"/>
+</svg>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Users, Route, LogOut } from "lucide-react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -7,7 +8,7 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 export const metadata: Metadata = {
   title: "服務項目｜華翼品牌策略",
   description:
-    "華翼以駐點顧問方式協助企業建立品牌與行銷團隊：診斷現場、建立團隊、駐點陪跑、移交撤離。",
+    "華翼以駐點顧問方式協助企業建立品牌與行銷團隊：診斷現場、建立團隊、駐點陪跑、獨立運作。",
   alternates: { canonical: "/services" },
 };
 
@@ -15,6 +16,7 @@ const CORE_STEPS = [
   {
     num: "01",
     icon: Search,
+    image: "/services/step-diagnose.svg",
     title: "診斷現場",
     desc: "進入企業盤點品牌與行銷各環節的真實需求，區分哪些該外包、哪些該內建、哪些可以用 AI 取代。不是給你一份報告就走，而是找出真正要解決的問題。",
     deliverables: [
@@ -27,6 +29,7 @@ const CORE_STEPS = [
   {
     num: "02",
     icon: Users,
+    image: "/services/step-build.svg",
     title: "建立團隊",
     desc: "依優先順序逐步補上對的人——設計師、企劃、小編、電商。不是一次到位，而是跟著企業的節奏一步一步建，同時導入 AI 工具讓新團隊從第一天就能高效運作。",
     deliverables: [
@@ -39,6 +42,7 @@ const CORE_STEPS = [
   {
     num: "03",
     icon: Route,
+    image: "/services/step-coach.svg",
     title: "駐點陪跑",
     desc: "顧問進駐現場，帶著團隊實作、修正、校準，直到流程能被穩定執行。不是遠端下指令，而是在你的辦公室裡一起工作。",
     deliverables: [
@@ -51,8 +55,9 @@ const CORE_STEPS = [
   {
     num: "04",
     icon: LogOut,
-    title: "移交撤離",
-    desc: "團隊具備獨立運作能力後，華翼撤離。移交的不只是人和流程，還有判斷問題的能力。建好就走，不綁定、不依賴。",
+    image: "/services/step-independent.svg",
+    title: "獨立運作",
+    desc: "團隊具備獨立運作能力後，華翼退場。移交的不只是人和流程，還有判斷問題的能力。建好就走，不綁定、不依賴。",
     deliverables: [
       "獨立運作驗收",
       "SOP 與操作手冊",
@@ -93,8 +98,17 @@ export default function ServicesPage() {
           key={step.num}
           className={i % 2 === 1 ? "bg-[var(--color-surface)]" : ""}
         >
-          <div className="grid gap-12 md:grid-cols-2">
-            <ScrollReveal>
+          <ScrollReveal>
+            <Image
+              src={step.image}
+              alt={step.title}
+              width={800}
+              height={600}
+              className="w-full rounded-[var(--radius-card)]"
+            />
+          </ScrollReveal>
+          <div className="mt-10 grid gap-12 md:grid-cols-2">
+            <ScrollReveal delay={0.1}>
               <div className="flex items-start gap-4">
                 <span className="text-[3rem] font-light leading-none text-[var(--color-faint)]/30">
                   {step.num}
@@ -111,7 +125,7 @@ export default function ServicesPage() {
                 {step.desc}
               </p>
             </ScrollReveal>
-            <ScrollReveal delay={0.1}>
+            <ScrollReveal delay={0.2}>
               <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
                 <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
                   主要交付項目

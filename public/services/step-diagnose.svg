@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#F8F6F2"/>
+  <!-- Magnifying glass -->
+  <circle cx="340" cy="280" r="100" stroke="#1A1A1A" stroke-width="3" fill="none" opacity="0.15"/>
+  <circle cx="340" cy="280" r="100" stroke="#8B7355" stroke-width="2.5" fill="none" stroke-dasharray="8 6"/>
+  <line x1="410" y1="350" x2="480" y2="420" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+  <!-- Data points -->
+  <circle cx="310" cy="250" r="6" fill="#8B7355" opacity="0.7"/>
+  <circle cx="360" cy="270" r="6" fill="#8B7355" opacity="0.5"/>
+  <circle cx="330" cy="310" r="6" fill="#8B7355" opacity="0.9"/>
+  <circle cx="370" cy="240" r="4" fill="#1A1A1A" opacity="0.2"/>
+  <circle cx="300" cy="290" r="4" fill="#1A1A1A" opacity="0.2"/>
+  <!-- Checklist lines -->
+  <rect x="500" y="200" width="160" height="8" rx="4" fill="#1A1A1A" opacity="0.08"/>
+  <rect x="500" y="230" width="120" height="8" rx="4" fill="#1A1A1A" opacity="0.08"/>
+  <rect x="500" y="260" width="140" height="8" rx="4" fill="#1A1A1A" opacity="0.08"/>
+  <rect x="500" y="290" width="100" height="8" rx="4" fill="#8B7355" opacity="0.2"/>
+  <rect x="500" y="320" width="130" height="8" rx="4" fill="#1A1A1A" opacity="0.08"/>
+  <!-- Check marks -->
+  <circle cx="480" cy="204" r="8" fill="#8B7355" opacity="0.15"/>
+  <circle cx="480" cy="234" r="8" fill="#8B7355" opacity="0.15"/>
+  <circle cx="480" cy="264" r="8" fill="#8B7355" opacity="0.3"/>
+</svg>

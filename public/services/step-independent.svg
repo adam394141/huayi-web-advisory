@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#F8F6F2"/>
+  <!-- Solid team circle - self-sustaining -->
+  <circle cx="350" cy="280" r="100" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.2"/>
+  <circle cx="350" cy="280" r="100" fill="#8B7355" opacity="0.04"/>
+  <!-- Team nodes inside - stable -->
+  <circle cx="350" cy="230" r="12" fill="#8B7355" opacity="0.35"/>
+  <circle cx="310" cy="310" r="12" fill="#8B7355" opacity="0.35"/>
+  <circle cx="390" cy="310" r="12" fill="#8B7355" opacity="0.35"/>
+  <circle cx="350" cy="280" r="8" fill="#8B7355" opacity="0.2"/>
+  <!-- Internal connections - team working together -->
+  <line x1="350" y1="242" x2="314" y2="300" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <line x1="350" y1="242" x2="386" y2="300" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <line x1="322" y1="310" x2="378" y2="310" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <!-- Checkmark - mission complete -->
+  <path d="M320 280 L345 300 L385 250" stroke="#8B7355" stroke-width="2.5" fill="none" opacity="0.15" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Consultant departing (arrow going right) -->
+  <circle cx="560" cy="280" r="14" fill="#1A1A1A" opacity="0.1"/>
+  <line x1="490" y1="280" x2="540" y2="280" stroke="#1A1A1A" stroke-width="1.5" opacity="0.12" stroke-dasharray="4 3"/>
+  <path d="M580 280 L610 280" stroke="#1A1A1A" stroke-width="1.5" opacity="0.12"/>
+  <path d="M605 275 L612 280 L605 285" stroke="#1A1A1A" stroke-width="1.5" fill="none" opacity="0.12" stroke-linecap="round"/>
+  <!-- Label: independent -->
+  <rect x="280" y="420" width="140" height="32" rx="16" fill="#8B7355" opacity="0.08"/>
+  <text x="310" y="441" font-family="system-ui" font-size="13" fill="#8B7355" opacity="0.5" letter-spacing="0.1em">INDEPENDENT</text>
+</svg>

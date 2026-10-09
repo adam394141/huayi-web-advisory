@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
+  <rect width="800" height="600" fill="#F8F6F2"/>
+  <!-- People silhouettes forming a team -->
+  <!-- Person 1 - center -->
+  <circle cx="400" cy="240" r="28" fill="#8B7355" opacity="0.25"/>
+  <rect x="375" y="278" width="50" height="60" rx="25" fill="#8B7355" opacity="0.15"/>
+  <!-- Person 2 - left -->
+  <circle cx="290" cy="260" r="24" fill="#1A1A1A" opacity="0.12"/>
+  <rect x="268" y="294" width="44" height="52" rx="22" fill="#1A1A1A" opacity="0.08"/>
+  <!-- Person 3 - right -->
+  <circle cx="510" cy="260" r="24" fill="#1A1A1A" opacity="0.12"/>
+  <rect x="488" y="294" width="44" height="52" rx="22" fill="#1A1A1A" opacity="0.08"/>
+  <!-- Person 4 - far left -->
+  <circle cx="200" cy="280" r="20" fill="#8B7355" opacity="0.12"/>
+  <rect x="182" y="308" width="36" height="44" rx="18" fill="#8B7355" opacity="0.08"/>
+  <!-- Person 5 - far right -->
+  <circle cx="600" cy="280" r="20" fill="#8B7355" opacity="0.12"/>
+  <rect x="582" y="308" width="36" height="44" rx="18" fill="#8B7355" opacity="0.08"/>
+  <!-- Connecting lines -->
+  <line x1="320" y1="270" x2="370" y2="255" stroke="#8B7355" stroke-width="1.5" opacity="0.2"/>
+  <line x1="430" y1="255" x2="480" y2="270" stroke="#8B7355" stroke-width="1.5" opacity="0.2"/>
+  <line x1="230" y1="285" x2="270" y2="270" stroke="#8B7355" stroke-width="1" opacity="0.15"/>
+  <line x1="530" y1="270" x2="570" y2="285" stroke="#8B7355" stroke-width="1" opacity="0.15"/>
+  <!-- Plus signs indicating growth -->
+  <text x="340" y="200" font-family="system-ui" font-size="18" fill="#8B7355" opacity="0.4">+</text>
+  <text x="450" y="210" font-family="system-ui" font-size="14" fill="#8B7355" opacity="0.3">+</text>
+  <text x="550" y="230" font-family="system-ui" font-size="12" fill="#8B7355" opacity="0.2">+</text>
+  <!-- AI chip icon -->
+  <rect x="370" y="380" width="60" height="40" rx="6" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.25"/>
+  <line x1="385" y1="380" x2="385" y2="370" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <line x1="400" y1="380" x2="400" y2="370" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <line x1="415" y1="380" x2="415" y2="370" stroke="#8B7355" stroke-width="1" opacity="0.2"/>
+  <text x="383" y="406" font-family="system-ui" font-size="14" fill="#8B7355" opacity="0.4">AI</text>
+</svg>
