@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Search, Users, Route, LogOut } from "lucide-react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
@@ -98,28 +97,23 @@ export default function ServicesPage() {
           key={step.num}
           className={i % 2 === 1 ? "bg-[var(--color-surface)]" : ""}
         >
-          <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-start">
+          <div className="grid gap-10 md:grid-cols-[200px_1fr] md:items-start">
             <ScrollReveal>
-              <Image
-                src={step.image}
-                alt={step.title}
-                width={400}
-                height={300}
-                className="w-full max-w-[360px] rounded-[var(--radius-card)]"
-              />
+              <div className="flex h-[200px] w-[200px] items-center justify-center rounded-[var(--radius-card)] bg-gradient-to-br from-[var(--color-warm-white)] to-[var(--color-surface)]">
+                <div className="text-center">
+                  <step.icon
+                    className="mx-auto h-14 w-14 text-[var(--color-gold-dark)]"
+                    strokeWidth={1.2}
+                  />
+                  <span className="mt-3 block text-[2.4rem] font-light text-[var(--color-faint)]/30">
+                    {step.num}
+                  </span>
+                </div>
+              </div>
             </ScrollReveal>
             <div>
               <ScrollReveal delay={0.1}>
-                <div className="flex items-start gap-4">
-                  <span className="text-[3rem] font-light leading-none text-[var(--color-faint)]/30">
-                    {step.num}
-                  </span>
-                  <step.icon
-                    className="mt-3 h-8 w-8 text-[var(--color-gold-dark)]"
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <h2 className="mt-6 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">
+                <h2 className="font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">
                   {step.title}
                 </h2>
                 <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">
@@ -127,23 +121,23 @@ export default function ServicesPage() {
                 </p>
               </ScrollReveal>
               <ScrollReveal delay={0.2}>
-              <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
-                <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
-                  主要交付項目
-                </p>
-                <ul className="mt-5 space-y-3">
-                  {step.deliverables.map((d) => (
-                    <li
-                      key={d}
-                      className="flex items-start gap-3 text-[16px] text-[var(--color-body)]"
-                    >
-                      <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />
-                      {d}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </ScrollReveal>
+                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-6">
+                  <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
+                    主要交付項目
+                  </p>
+                  <ul className="mt-4 space-y-2.5">
+                    {step.deliverables.map((d) => (
+                      <li
+                        key={d}
+                        className="flex items-start gap-3 text-[15px] text-[var(--color-body)]"
+                      >
+                        <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollReveal>
             </div>
           </div>
         </Section>

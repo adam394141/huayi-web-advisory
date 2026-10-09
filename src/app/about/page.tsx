@@ -72,7 +72,7 @@ export default function AboutPage() {
         <div className="grid gap-12 md:grid-cols-2">
           <ScrollReveal>
             <h2 className="font-serif text-[1.4rem] font-semibold leading-snug text-[var(--color-fg)] md:text-[1.8rem]">
-              從設計公司
+              從品牌策略
               <br />
               到駐點建置顧問
             </h2>
