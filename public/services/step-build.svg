@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
-  <rect width="800" height="600" fill="#F8F6F2"/>
+  <rect width="800" height="600" fill="none"/>
   <!-- People silhouettes forming a team -->
   <!-- Person 1 - center -->
   <circle cx="400" cy="240" r="28" fill="#8B7355" opacity="0.25"/>

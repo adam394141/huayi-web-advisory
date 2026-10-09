@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
-  <rect width="800" height="600" fill="#F8F6F2"/>
+  <rect width="800" height="600" fill="none"/>
   <!-- Circular process / orbit -->
   <circle cx="400" cy="290" r="130" stroke="#8B7355" stroke-width="1.5" fill="none" opacity="0.15" stroke-dasharray="6 4"/>
   <circle cx="400" cy="290" r="80" stroke="#1A1A1A" stroke-width="1" fill="none" opacity="0.08"/>

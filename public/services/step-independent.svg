@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none">
-  <rect width="800" height="600" fill="#F8F6F2"/>
+  <rect width="800" height="600" fill="none"/>
   <!-- Solid team circle - self-sustaining -->
   <circle cx="350" cy="280" r="100" stroke="#8B7355" stroke-width="2" fill="none" opacity="0.2"/>
   <circle cx="350" cy="280" r="100" fill="#8B7355" opacity="0.04"/>
