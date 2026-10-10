@@ -73,6 +73,16 @@ export default async function HomePage() {
         name: ["關於華翼", "服務項目", "設計作品", "觀點", "聯絡我們"],
         url: [`${site}/about`, `${site}/services`, `${site}/works`, `${site}/blog`, `${site}/contact`],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "行銷到底該外包還是自己養團隊？", acceptedAnswer: { "@type": "Answer", text: "沒有標準答案。如果你的品牌需要長期經營、內容需要深入了解產業，建議自建團隊。外包適合短期專案或技術門檻高的工作（如廣告投放）。華翼可以幫你診斷，告訴你現在最適合哪種配置。" } },
+          { "@type": "Question", name: "中小企業的行銷團隊應該怎麼配置？", acceptedAnswer: { "@type": "Answer", text: "依企業規模，通常從 1-3 人開始：一位企劃／小編負責內容，一位設計師負責視覺，搭配 AI 工具提升效率。華翼會依你的需求逐步建議，不會一次要你請五個人。" } },
+          { "@type": "Question", name: "請了行銷人員但不知道他專不專業，怎麼辦？", acceptedAnswer: { "@type": "Answer", text: "華翼的駐點顧問會協助你建立明確的職能標準與工作流程，讓你能判斷團隊的產出品質，而不是只看他忙不忙。" } },
+          { "@type": "Question", name: "企業導入 AI 要從哪裡開始？", acceptedAnswer: { "@type": "Answer", text: "從痛點最明顯的環節開始。客服回覆太慢？內容產出太慢？華翼會先診斷，找到 AI 真正能省時間的切入點，不賣工具，而是教你的團隊會用。" } },
+          { "@type": "Question", name: "華翼跟一般行銷公司有什麼不同？", acceptedAnswer: { "@type": "Answer", text: "一般行銷公司替你做事，華翼幫你建團隊。我們以駐點顧問方式進入企業，把流程、角色、工具建立好，讓你的團隊能獨立運作後撤離。建好就走，不綁定、不依賴。" } },
+        ],
+      },
     ],
   };
 
@@ -372,7 +382,33 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 9. CTA — 背景圖 + 邀請文字 */}
+      {/* 9. FAQ — 常見問題 */}
+      <Section>
+        <SectionHeader label="FAQ" title="常見問題" />
+        <div className="mt-10 mx-auto max-w-[800px] space-y-6">
+          {[
+            { q: "行銷到底該外包還是自己養團隊？", a: "沒有標準答案。如果你的品牌需要長期經營、內容需要深入了解產業，建議自建團隊。外包適合短期專案或技術門檻高的工作（如廣告投放）。華翼可以幫你診斷，告訴你現在最適合哪種配置。" },
+            { q: "中小企業的行銷團隊應該怎麼配置？", a: "依企業規模，通常從 1-3 人開始：一位企劃／小編負責內容，一位設計師負責視覺，搭配 AI 工具提升效率。華翼會依你的需求逐步建議，不會一次要你請五個人。" },
+            { q: "請了行銷人員但不知道他專不專業，怎麼辦？", a: "這是很多老闆的痛點。華翼的駐點顧問會協助你建立明確的職能標準與工作流程，讓你能判斷團隊的產出品質，而不是只看他忙不忙。" },
+            { q: "企業導入 AI 要從哪裡開始？", a: "從痛點最明顯的環節開始。客服回覆太慢？內容產出太慢？華翼會先診斷，找到 AI 真正能省時間的切入點，不賣工具，而是教你的團隊會用。" },
+            { q: "華翼跟一般行銷公司有什麼不同？", a: "一般行銷公司替你做事，華翼幫你建團隊。我們以駐點顧問方式進入企業，把流程、角色、工具建立好，讓你的團隊能獨立運作後撤離。建好就走，不綁定、不依賴。" },
+          ].map((item, i) => (
+            <ScrollReveal key={i} delay={i * 0.05}>
+              <details className="group rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 px-6 py-5">
+                <summary className="flex cursor-pointer items-center justify-between text-[16px] font-medium text-[var(--color-fg)]">
+                  {item.q}
+                  <span className="ml-4 shrink-0 text-[var(--color-subtle)] transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-body)]">
+                  {item.a}
+                </p>
+              </details>
+            </ScrollReveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* 10. CTA — 背景圖 + 邀請文字 */}
       <section className="relative px-[var(--space-page-x)] py-[var(--space-section-y)]">
         <div className="absolute inset-0 overflow-hidden" style={{ borderRadius: 0 }}>
           <ImagePlaceholder

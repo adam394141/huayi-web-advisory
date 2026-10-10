@@ -178,6 +178,32 @@ export default function ServicesPage() {
         </div>
       </Section>
 
+      {/* FAQ */}
+      <Section>
+        <ScrollReveal>
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">FAQ</p>
+          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">常見問題</h2>
+        </ScrollReveal>
+        <div className="mt-10 mx-auto max-w-[800px] space-y-6">
+          {[
+            { q: "駐點建置顧問是什麼意思？", a: "像設備商派駐廠工程師到工廠一樣——我們進到你的辦公室，在現場完成診斷、團隊組建、教學與陪跑，直到你的團隊能自己運轉，我們才離開。" },
+            { q: "建一個行銷團隊需要多久？", a: "依企業規模，通常 6-12 個月。前期診斷與招募約 1-2 個月，中期建置與陪跑 3-6 個月，後期穩定與移交 2-3 個月。" },
+            { q: "費用大概是多少？", a: "分三段：付費企業體檢（1 小時）→ 駐點建置月費（6-12 個月）→ 移交後季度陪跑年約（選配）。具體費用依企業規模與需求而定，歡迎預約體檢後報價。" },
+            { q: "企業導入 AI 有政府補助嗎？", a: "經濟部持續推出中小企業 AI 與數位轉型相關補助方案，符合資格的企業可以申請。華翼可以協助你評估是否符合條件，並在建置過程中導入符合補助範圍的 AI 工具。建議定期關注經濟部中小及新創企業署的最新公告。" },
+          ].map((item, i) => (
+            <ScrollReveal key={i} delay={i * 0.05}>
+              <details className="group rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 px-6 py-5">
+                <summary className="flex cursor-pointer items-center justify-between text-[16px] font-medium text-[var(--color-fg)]">
+                  {item.q}
+                  <span className="ml-4 shrink-0 text-[var(--color-subtle)] transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-body)]">{item.a}</p>
+              </details>
+            </ScrollReveal>
+          ))}
+        </div>
+      </Section>
+
       {/* CTA */}
       <Section className="text-center">
         <ScrollReveal>
