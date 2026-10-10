@@ -16,7 +16,7 @@ const CORE_STEPS = [
   {
     num: "01",
     icon: Search,
-    image: "/services/step-diagnose.svg",
+    image: "/services/華翼官網001.png",
     title: "診斷現場",
     desc: "進入企業盤點品牌與行銷各環節的真實需求，區分哪些該外包、哪些該內建、哪些可以用 AI 取代。不是給你一份報告就走，而是找出真正要解決的問題。",
     deliverables: [
@@ -29,7 +29,7 @@ const CORE_STEPS = [
   {
     num: "02",
     icon: Users,
-    image: "/services/step-build.svg",
+    image: "/services/官網圖片002.png",
     title: "建立團隊",
     desc: "依優先順序逐步補上對的人——設計師、企劃、小編、電商。不是一次到位，而是跟著企業的節奏一步一步建，同時導入 AI 工具讓新團隊從第一天就能高效運作。",
     deliverables: [
@@ -42,7 +42,7 @@ const CORE_STEPS = [
   {
     num: "03",
     icon: Route,
-    image: "/services/step-coach.svg",
+    image: "/services/官網圖片003.png",
     title: "駐點陪跑",
     desc: "顧問進駐現場，帶著團隊實作、修正、校準，直到流程能被穩定執行。不是遠端下指令，而是在你的辦公室裡一起工作。",
     deliverables: [
@@ -55,7 +55,7 @@ const CORE_STEPS = [
   {
     num: "04",
     icon: LogOut,
-    image: "/services/step-independent.svg",
+    image: "/services/官網圖片004.png",
     title: "獨立運作",
     desc: "團隊具備獨立運作能力後，華翼退場。移交的不只是人和流程，還有判斷問題的能力。建好就走，不綁定、不依賴。",
     deliverables: [
@@ -103,9 +103,9 @@ export default function ServicesPage() {
               <Image
                 src={step.image}
                 alt={step.title}
-                width={400}
-                height={300}
-                className="w-full max-w-[360px] rounded-[var(--radius-card)]"
+                width={600}
+                height={450}
+                className="w-full rounded-[var(--radius-card)] object-cover"
               />
             </ScrollReveal>
             <div>
