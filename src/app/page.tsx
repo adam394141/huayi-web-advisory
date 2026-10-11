@@ -42,15 +42,29 @@ export default async function HomePage() {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": ["Organization", "LocalBusiness", "ProfessionalService"],
         "@id": `${site}/#organization`,
         name: "華翼品牌策略",
         alternateName: "HUAYI Brand Strategy",
         url: site,
         logo: `${site}/brand/huayi-logo.svg`,
-        description: "為台灣中小企業與二代接班人，提供品牌策略定位、企業 AI 導入、品牌行銷與品牌體驗的專業顧問服務。",
+        description: "華翼以駐點顧問方式，協助台灣中小企業建立品牌與行銷團隊。診斷現場、建立團隊、駐點陪跑、獨立運作——讓現場能獨立運作。",
+        telephone: "+886-7-313-1445",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "中正三路25號13樓",
+          addressLocality: "新興區",
+          addressRegion: "高雄市",
+          postalCode: "800",
+          addressCountry: "TW",
+        },
+        openingHoursSpecification: [
+          { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "09:00", closes: "12:00" },
+          { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "13:00", closes: "18:00" },
+        ],
         areaServed: { "@type": "Country", name: "TW" },
         knowsLanguage: "zh-Hant-TW",
+        sameAs: ["https://lin.ee/6r57uKZ"],
       },
       {
         "@type": "WebSite",
