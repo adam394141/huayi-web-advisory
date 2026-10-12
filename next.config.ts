@@ -29,7 +29,9 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   async headers() {
-    return [{ source: "/(.*)", headers: securityHeaders }];
+    return [
+      { source: "/((?!ebook/).*)", headers: securityHeaders },
+    ];
   },
   async redirects() {
     return [
