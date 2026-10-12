@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { MotionProvider } from '@/components/rosie_cpc/motion'
-import { RosieHero } from '@/components/rosie_cpc/hero'
-import { RosieWhoIAm } from '@/components/rosie_cpc/who-i-am'
-import { RosieMethodology } from '@/components/rosie_cpc/methodology'
-import { RosieWhyRosie } from '@/components/rosie_cpc/why-rosie'
-import { RosieResultsInAction } from '@/components/rosie_cpc/results-in-action'
-import { RosieCredentialProof } from '@/components/rosie_cpc/credential-proof'
-import { RosieTeachingInAction } from '@/components/rosie_cpc/teaching-in-action'
-import { RosieCollaboration } from '@/components/rosie_cpc/collaboration'
-import { RosieInvitationForm } from '@/components/rosie_cpc/invitation-form'
+import { MotionProvider } from '@/components/rosie/motion'
+import { RosieHero } from '@/components/rosie/hero'
+import { RosieWhoIAm } from '@/components/rosie/who-i-am'
+import { RosieMethodology } from '@/components/rosie/methodology'
+import { RosieWhyRosie } from '@/components/rosie/why-rosie'
+import { RosieResultsInAction } from '@/components/rosie/results-in-action'
+import { RosieCredentialProof } from '@/components/rosie/credential-proof'
+import { RosieTeachingInAction } from '@/components/rosie/teaching-in-action'
+import { RosieCollaboration } from '@/components/rosie/collaboration'
+import { RosieInvitationForm } from '@/components/rosie/invitation-form'
 
 export const metadata: Metadata = {
   title: '饒芝綺 Rosie｜雙定位品牌顧問｜華翼品牌策略',
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: '饒芝綺 Rosie｜雙定位品牌顧問',
     description:
       '人放對位置，品牌才會對。先定位人，再定位品牌。23年品牌實戰策略顧問、MMT人生策略系統官方講師。',
-    url: 'https://huayi.tw/rosie_cpc',
+    url: 'https://huayi.tw/rosie',
     siteName: '華翼品牌策略',
     locale: 'zh_TW',
     type: 'website',

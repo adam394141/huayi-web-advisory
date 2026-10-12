@@ -114,7 +114,7 @@ export const HOME_IMAGES: HomeImage[] = [
     section: "team",
     alt: "Rosie 雙定位品牌顧問",
     source_type: "real_portrait",
-    file: "/rosie_cpc/rosie-professional.jpg",
+    file: "/rosie/rosie-professional.jpg",
     replacement_status: "final",
     crop_policy: "cover",
     aspect: "3/4",

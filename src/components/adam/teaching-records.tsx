@@ -27,7 +27,7 @@ export function CpcTeachingRecords() {
                 以下是已驗證的授課紀錄，完整紀錄可點進查看。
               </p>
               <Link
-                href="/adam_cpc/teaching-records"
+                href="/adam/teaching-records"
                 className="mt-8 inline-flex items-center gap-2 rounded-[14px] border border-adam-gold/30 px-7 py-3.5 text-[15px] font-semibold text-adam-gold transition-all hover:border-adam-gold hover:bg-adam-gold/10"
               >
                 查看全部授課記錄 →

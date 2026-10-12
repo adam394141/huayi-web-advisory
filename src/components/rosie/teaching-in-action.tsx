@@ -1,19 +1,18 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { FadeUp } from './motion'
 
 const photos = [
-  { src: '/adam_cpc/teaching-v-09.jpg', alt: 'Adam 企業內訓授課現場' },
-  { src: '/adam_cpc/teaching-v-00.jpg', alt: 'Adam 小班實作授課' },
-  { src: '/adam_cpc/teaching-v-01.jpg', alt: 'Adam 正式講座授課' },
-  { src: '/adam_cpc/teaching-v-10.jpg', alt: 'Adam 趨勢演講' },
-  { src: '/adam_cpc/teaching-v-02.jpg', alt: 'Adam 工作坊實作教學' },
-  { src: '/adam_cpc/teaching-v-11.jpg', alt: 'Adam 課程結訓合照' },
+  { src: '/rosie/teaching-v-00.jpg', alt: 'Rosie MMT 天賦課程授課現場' },
+  { src: '/rosie/teaching-v-01.jpg', alt: 'Rosie 小班品牌諮詢工作坊' },
+  { src: '/rosie/teaching-v-02.jpg', alt: 'Rosie MMT 討論互動' },
+  { src: '/rosie/teaching-v-03.jpg', alt: 'Rosie 大場地品牌講座' },
+  { src: '/rosie/teaching-v-04.jpg', alt: 'Rosie 品牌工作坊小組互動' },
+  { src: '/rosie/teaching-v-05.jpg', alt: 'Rosie 品牌定位實戰授課' },
 ]
 
-export function CpcTeachingInAction() {
+export function RosieTeachingInAction() {
   return (
     <section className="bg-adam-navy py-16 md:py-20">
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
@@ -22,10 +21,10 @@ export function CpcTeachingInAction() {
             TEACHING IN ACTION
           </p>
           <h2 className="mt-3 text-[26px] font-bold leading-[1.3] text-white md:text-[36px]">
-            從講台到工作現場，累積真實授課經驗
+            從品牌諮詢到現場授課，累積真實實戰經驗
           </h2>
           <p className="mt-3 max-w-[560px] text-[16px] leading-[1.7] text-white/55">
-            以企業內訓、公開課、工作坊與 AI 實作課的長期授課經驗為基礎，課程以實作與成果為核心。
+            以企業品牌健檢、MMT 天賦工作坊、品牌定位課程的長期實務經驗為基礎，每一場都是落地可用的品牌方案。
           </p>
         </FadeUp>
 
@@ -44,17 +43,6 @@ export function CpcTeachingInAction() {
                 </div>
               </div>
             ))}
-          </div>
-        </FadeUp>
-
-        <FadeUp delay={0.2}>
-          <div className="mt-6 text-right">
-            <Link
-              href="/adam_cpc/teaching-records"
-              className="text-[14px] text-adam-gold/60 transition-colors hover:text-adam-gold"
-            >
-              查看更多授課紀錄 →
-            </Link>
           </div>
         </FadeUp>
       </div>

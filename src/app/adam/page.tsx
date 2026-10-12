@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { MotionProvider } from '@/components/adam_cpc/motion'
-import { CpcHero } from '@/components/adam_cpc/hero'
-import { CpcWhoIAm } from '@/components/adam_cpc/who-i-am'
-import { CpcCredentialProof } from '@/components/adam_cpc/credential-proof'
-import { CpcDepthLadder } from '@/components/adam_cpc/depth-ladder'
-import { CpcWhyAdam } from '@/components/adam_cpc/why-adam'
-import { CpcTeachingInAction } from '@/components/adam_cpc/teaching-in-action'
-import { CpcCollabFormats } from '@/components/adam_cpc/collab-formats'
-import { CpcInvitationForm } from '@/components/adam_cpc/invitation-form'
+import { MotionProvider } from '@/components/adam/motion'
+import { CpcHero } from '@/components/adam/hero'
+import { CpcWhoIAm } from '@/components/adam/who-i-am'
+import { CpcCredentialProof } from '@/components/adam/credential-proof'
+import { CpcDepthLadder } from '@/components/adam/depth-ladder'
+import { CpcWhyAdam } from '@/components/adam/why-adam'
+import { CpcTeachingInAction } from '@/components/adam/teaching-in-action'
+import { CpcCollabFormats } from '@/components/adam/collab-formats'
+import { CpcInvitationForm } from '@/components/adam/invitation-form'
 
 export const metadata: Metadata = {
   title: '陳宗民 Adam｜生成式 AI 全方位實戰講師｜華翼品牌策略',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: '陳宗民 Adam｜生成式 AI 全方位實戰講師',
     description:
       '不是只教一種 AI，更教底層邏輯思考。多種 AI 工具、八層深度、從基礎到轉型。',
-    url: 'https://huayi.tw/adam_cpc',
+    url: 'https://huayi.tw/adam',
     siteName: '華翼品牌策略',
     locale: 'zh_TW',
     type: 'website',
