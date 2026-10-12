@@ -31,6 +31,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/ebook/:path*",
+        destination: "https://rhkmzcyfzemlobznltyz.supabase.co/storage/v1/object/public/ebooks/:path*",
+      },
+    ];
+  },
   async redirects() {
     return [
       // 舊站主要頁面 → 新站（301 永久轉址）
