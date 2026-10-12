@@ -21,17 +21,11 @@ export function RosieWhoIAm() {
           <FadeUp delay={0.1}>
             <div>
               <h2 className="text-[22px] font-bold leading-[1.35] tracking-tight text-adam-navy md:text-[30px]" style={{ letterSpacing: '-0.01em' }}>
-                視傳系畢業，當了 23 年設計師，後來發現傳產品牌推不動，常常不是設計的問題，而是人站錯了位置。
+                準備建立品牌或行銷部門，卻不知道從哪裡開始的企業
               </h2>
               <div className="mt-8 space-y-4 text-[17px] leading-[1.76] text-adam-warm-gray">
                 <p>
-                  饒芝綺 Rosie，華翼品牌策略創辦人，雙定位品牌顧問。視傳系畢業，跨補教、科技、百貨、連鎖餐飲、廣告、印刷、製造與公部門，逐漸從單純的設計執行，走到品牌定位的核心。
-                </p>
-                <p>
-                  她結合品牌設計實戰研發 BGS 系統與整合 MMT 天賦系統，發展出「雙定位」方法：先把老闆、老闆娘與接班人放對位置，再把品牌放到市場上對的位置。
-                </p>
-                <p>
-                  擅長在同質化的傳統產業中，找出同業不敢做、顧客會買單的差異化，讓品牌不用再解釋、提案推得動、對外更有信心。
+                  這類企業通常已經有產品、有營收、有一定的市場基礎，但品牌工作仍然依賴老闆本人，或完全仰賴外包廠商。
                 </p>
               </div>
             </div>

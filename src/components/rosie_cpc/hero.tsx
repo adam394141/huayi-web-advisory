@@ -41,7 +41,7 @@ export function RosieHero() {
 
             <FadeUp delay={0.15}>
               <p className="mt-6 max-w-[480px] text-[16px] leading-[1.7] text-white/60 md:text-[18px]">
-                饒芝綺 Rosie──華翼品牌策略創辦人、雙定位品牌顧問。23 年品牌設計實戰、跨八大產業。用 BGS 企業成長診斷系統與 MMT 天賦系統，先把人放對位置，再把品牌放到市場上對的位置。
+                饒芝綺 Rosie──華翼品牌策略創辦人、雙定位品牌顧問。23年品牌實戰策略顧問、MMT人生策略系統官方講師。用 BGS 企業成長診斷系統與 MMT 天賦系統，先把人放對位置，再把品牌放到市場上對的位置。
               </p>
             </FadeUp>
 

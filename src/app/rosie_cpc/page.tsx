@@ -15,11 +15,11 @@ import { RosieInvitationForm } from '@/components/rosie_cpc/invitation-form'
 export const metadata: Metadata = {
   title: '饒芝綺 Rosie｜雙定位品牌顧問｜華翼品牌策略',
   description:
-    '人放對位置，品牌才會對。先定位人，再定位品牌。23 年設計實戰、300+ 品牌專案、50+ 企業定位。MMT 人才天賦系統官方講師。預約企業健檢。',
+    '人放對位置，品牌才會對。先定位人，再定位品牌。23年品牌實戰策略顧問、MMT人生策略系統官方講師。預約企業健檢。',
   openGraph: {
     title: '饒芝綺 Rosie｜雙定位品牌顧問',
     description:
-      '人放對位置，品牌才會對。先定位人，再定位品牌。23 年品牌設計實戰、MMT 官方講師。',
+      '人放對位置，品牌才會對。先定位人，再定位品牌。23年品牌實戰策略顧問、MMT人生策略系統官方講師。',
     url: 'https://huayi.tw/rosie_cpc',
     siteName: '華翼品牌策略',
     locale: 'zh_TW',
