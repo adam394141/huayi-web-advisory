@@ -166,7 +166,8 @@ export default async function HomePage() {
             <div className="mt-8 mx-auto max-w-[520px] space-y-4 text-center text-[15px] leading-relaxed text-[var(--color-body)]">
               <p>外包團隊有磨合期、溝通問題，甚至擺爛風險。</p>
               <p>建立自己的團隊，溝通成本更低、更好掌控。</p>
-              <p>你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。如果需要建團隊，我們以駐點顧問方式，陪你從零開始。</p>
+              <p>你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。</p>
+              <p>如果需要建團隊，我們以駐點顧問方式，陪你從零開始。</p>
             </div>
           </ScrollReveal>
         </div>
