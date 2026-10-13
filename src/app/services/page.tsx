@@ -69,7 +69,7 @@ const CORE_STEPS = [
 
 const ADDON_MODULES = [
   { title: "品牌策略", desc: "品牌定位、市場競品分析、差異化策略、品牌金字塔建構" },
-  { title: "企業 AI 導入", desc: "AI 導入評估、企業內訓、流程自動化、MVP 系統開發" },
+  { title: "企業 AI 導入", desc: "AI 導入評估、企業內訓" },
   { title: "品牌行銷", desc: "Facebook / Google 廣告投放、社群經營、內容行銷" },
   { title: "品牌設計", desc: "CIS 識別系統、包裝設計、活動主視覺、品牌周邊" },
 ];
