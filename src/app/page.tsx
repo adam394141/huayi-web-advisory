@@ -95,6 +95,7 @@ export default async function HomePage() {
           { "@type": "Question", name: "請了行銷人員但不知道他專不專業，怎麼辦？", acceptedAnswer: { "@type": "Answer", text: "華翼的駐點顧問會協助你建立明確的職能標準與工作流程，讓你能判斷團隊的產出品質，而不是只看他忙不忙。" } },
           { "@type": "Question", name: "企業導入 AI 要從哪裡開始？", acceptedAnswer: { "@type": "Answer", text: "從痛點最明顯的環節開始。客服回覆太慢？內容產出太慢？華翼會先診斷，找到 AI 真正能省時間的切入點，不賣工具，而是教你的團隊會用。" } },
           { "@type": "Question", name: "華翼跟一般行銷公司有什麼不同？", acceptedAnswer: { "@type": "Answer", text: "一般行銷公司替你做事，華翼幫你建團隊。我們以駐點顧問方式進入企業，把流程、角色、工具建立好，讓你的團隊能獨立運作後撤離。建好就走，不綁定、不依賴。" } },
+          { "@type": "Question", name: "華翼不做什麼？", acceptedAnswer: { "@type": "Answer", text: "ERP 系統、勞資管理、法務、ISO 認證不在我們的範圍。但如果診斷過程中發現你需要，我們會幫你轉介對的專業廠商。我們只做自己最專業的事。" } },
         ],
       },
     ],
@@ -168,6 +169,7 @@ export default async function HomePage() {
               <p>建立自己的團隊，溝通成本更低、更好掌控。</p>
               <p>你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。</p>
               <p>如果需要建團隊，我們以駐點顧問方式，陪你從零開始。</p>
+              <p>華翼服務的，是卡在中間的成長型企業——不是草創期，也不是已經有行銷長的大公司。你已經有產品、有營收、有市場基礎，只是品牌與行銷這塊，一直沒有自己的團隊。</p>
             </div>
           </ScrollReveal>
         </div>
@@ -397,7 +399,32 @@ export default async function HomePage() {
         </div>
       </Section>
 
-      {/* 9. FAQ — 常見問題 */}
+      {/* 9. 你是不是這樣？ */}
+      <Section className="bg-[var(--color-surface)]">
+        <SectionHeader label="IS THIS YOU?" title="你是不是這樣？" />
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          <ScrollReveal>
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] p-8">
+              <p className="text-[12px] tracking-[0.15em] text-[var(--color-gold-dark)]">場景 A</p>
+              <h3 className="mt-3 font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">接班二代</h3>
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-body)]">
+                父親做了 30 年的食品代工，兒子回來想做自有品牌。公司有技術、有產能，但沒有品牌、沒有行銷部門、不知道從哪開始。
+              </p>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal delay={0.1}>
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] p-8">
+              <p className="text-[12px] tracking-[0.15em] text-[var(--color-gold-dark)]">場景 B</p>
+              <h3 className="mt-3 font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">外包疲勞</h3>
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-body)]">
+                工廠換了三家行銷外包，每次都要重新溝通品牌方向。老闆想自己養團隊，但請了一個行銷人員什麼都叫他做，半年就走了。
+              </p>
+            </div>
+          </ScrollReveal>
+        </div>
+      </Section>
+
+      {/* 10. FAQ — 常見問題 */}
       <Section>
         <SectionHeader label="FAQ" title="常見問題" />
         <div className="mt-10 mx-auto max-w-[800px] space-y-6">
@@ -407,6 +434,7 @@ export default async function HomePage() {
             { q: "請了行銷人員但不知道他專不專業，怎麼辦？", a: "這是很多老闆的痛點。華翼的駐點顧問會協助你建立明確的職能標準與工作流程，讓你能判斷團隊的產出品質，而不是只看他忙不忙。" },
             { q: "企業導入 AI 要從哪裡開始？", a: "從痛點最明顯的環節開始。客服回覆太慢？內容產出太慢？華翼會先診斷，找到 AI 真正能省時間的切入點，不賣工具，而是教你的團隊會用。" },
             { q: "華翼跟一般行銷公司有什麼不同？", a: "一般行銷公司替你做事，華翼幫你建團隊。我們以駐點顧問方式進入企業，把流程、角色、工具建立好，讓你的團隊能獨立運作後撤離。建好就走，不綁定、不依賴。" },
+            { q: "華翼不做什麼？", a: "ERP 系統、勞資管理、法務、ISO 認證不在我們的範圍。但如果診斷過程中發現你需要，我們會幫你轉介對的專業廠商。我們只做自己最專業的事。" },
           ].map((item, i) => (
             <ScrollReveal key={i} delay={i * 0.05}>
               <details className="group rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 px-6 py-5">
