@@ -16,10 +16,10 @@ export const revalidate = 60;
 const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "請了高階主管也不知道專不專業", "有方向但落不了地", "關鍵人物離開就斷"];
 
 const SERVICES_CARDS = [
-  { imageId: "service-strategy", title: "品牌策略", desc: "市場研究到品牌定位，建立差異化資產" },
-  { imageId: "service-ai", title: "AI 導入", desc: "找到 AI 創造價值的切入點，快速驗證" },
-  { imageId: "service-marketing", title: "行銷成長", desc: "整合廣告與內容，聚焦轉換與成長" },
-  { imageId: "service-design", title: "品牌體驗", desc: "品牌識別到包裝設計，打造一致體驗" },
+  { imageId: "service-strategy", title: "品牌策略", desc: "市場研究到品牌定位，建立差異化資產", href: "/services/brand-strategy" },
+  { imageId: "service-ai", title: "AI 導入", desc: "找到 AI 創造價值的切入點，快速驗證", href: "/services/ai" },
+  { imageId: "service-marketing", title: "行銷成長", desc: "整合廣告與內容，聚焦轉換與成長", href: "/services/marketing" },
+  { imageId: "service-design", title: "品牌體驗", desc: "品牌識別到包裝設計，打造一致體驗", href: "/services/design" },
 ];
 
 export default async function HomePage() {
@@ -182,7 +182,7 @@ export default async function HomePage() {
             const isDesign = svc.imageId === "service-design";
             return (
               <ScrollReveal key={svc.imageId} delay={i * 0.08}>
-                <Link href="/services" className="group block">
+                <Link href={svc.href} className="group block">
                   <ImagePlaceholder
                     src={img?.file}
                     alt={img?.alt ?? svc.title}
