@@ -438,7 +438,7 @@ export default async function HomePage() {
         <div className="relative z-10 mx-auto max-w-[1280px] text-center">
           <ScrollReveal>
             <h2 className="mx-auto max-w-[480px] font-serif text-[1.4rem] leading-relaxed text-[var(--color-fg)] md:text-[1.8rem]">
-              先花一小時做企業體檢，我們直接告訴你現在該外包還是該建團隊
+              先花 30 分鐘做企業體檢，我們直接告訴你現在該外包還是該建團隊
             </h2>
             <p className="mt-8">
               <Link
