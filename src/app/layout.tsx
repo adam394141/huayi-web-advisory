@@ -23,7 +23,6 @@ const notoSerifTC = Noto_Serif_TC({
 export const metadata: Metadata = {
   metadataBase: new URL(getCanonicalSiteUrl()),
   alternates: { canonical: "/" },
-  icons: { icon: "/brand/huayi-logo.svg" },
   title: "華翼品牌策略 HUAYI｜駐點建置，建好就走",
   description:
     "華翼以駐點顧問方式，協助台灣中小企業建立品牌與行銷團隊。診斷現場、建立團隊、駐點陪跑、移交撤離——讓現場能獨立運作。",
