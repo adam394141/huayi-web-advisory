@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
       { source: "/online-class.asp", destination: "/services", permanent: true },
       { source: "/contact_updateCnt.asp", destination: "/contact", permanent: true },
       { source: "/index.php", destination: "/", permanent: true },
+      { source: "/home", destination: "/", permanent: true },
+      { source: "/home/", destination: "/", permanent: true },
+      { source: "/works_visual", destination: "/works", permanent: true },
+      { source: "/works_visual/", destination: "/works", permanent: true },
+      { source: "/works_package", destination: "/works", permanent: true },
+      { source: "/works_package/", destination: "/works", permanent: true },
       { source: "/adam_cpc", destination: "/adam", permanent: true },
       { source: "/rosie_cpc", destination: "/rosie", permanent: true },
     ];
