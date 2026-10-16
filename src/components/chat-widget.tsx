@@ -2,6 +2,17 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
+const GREETINGS = [
+  "有什麼想了解的嗎？",
+  "需要幫忙嗎？😊",
+  "外包一直講不通？",
+  "想建自己的行銷團隊？",
+  "30 分鐘企業體檢，免費預約中",
+  "品牌定位卡住了？",
+  "歡迎隨時問我 👋",
+  "AI 怎麼導入？問我就對了",
+];
+
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
 function renderWithLinks(text: string) {
@@ -29,6 +40,9 @@ export function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [greeting, setGreeting] = useState("");
+  const [showGreeting, setShowGreeting] = useState(false);
+  const greetingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStart = useRef<{ x: number; y: number; bx: number; by: number } | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -98,12 +112,22 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* 浮動按鈕 */}
+      {/* 浮動按鈕 + 招呼語 */}
       {!open && (
         <div
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
+          onMouseEnter={() => {
+            setGreeting(GREETINGS[Math.floor(Math.random() * GREETINGS.length)]);
+            setShowGreeting(true);
+            if (greetingTimer.current) clearTimeout(greetingTimer.current);
+            greetingTimer.current = setTimeout(() => setShowGreeting(false), 3000);
+          }}
+          onMouseLeave={() => {
+            if (greetingTimer.current) clearTimeout(greetingTimer.current);
+            greetingTimer.current = setTimeout(() => setShowGreeting(false), 1000);
+          }}
           style={{
             position: "fixed",
             right: dragPos ? "auto" : "24px",
@@ -114,14 +138,26 @@ export function ChatWidget() {
             ...btnStyle,
           }}
         >
+          {showGreeting && (
+            <div
+              className="absolute bottom-[62px] right-0 whitespace-nowrap rounded-xl bg-white px-4 py-2 text-[13px] text-[#1A1A1A] shadow-md"
+              style={{ animation: "fadeIn 0.2s ease" }}
+            >
+              {greeting}
+              <div className="absolute -bottom-1.5 right-5 h-3 w-3 rotate-45 bg-white" />
+            </div>
+          )}
           <button
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] shadow-lg transition-transform hover:scale-105 active:scale-95"
+            style={{ animation: "breathe 3s ease-in-out infinite" }}
             aria-label="開啟聊天"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
+            <img src="/brand/huayi-logo.svg" alt="華翼" width="32" height="32" className="h-7 w-auto" />
           </button>
+          <style>{`
+            @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+          `}</style>
         </div>
       )}
 
