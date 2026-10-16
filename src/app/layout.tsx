@@ -3,6 +3,7 @@ import { Noto_Sans_TC, Noto_Serif_TC } from "next/font/google";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CookieNotice } from "@/components/cookie-notice";
+import { ChatWidget } from "@/components/chat-widget";
 import { getCanonicalSiteUrl, isIndexableEnvironment } from "@/lib/site-url";
 import "./globals.css";
 
@@ -84,6 +85,7 @@ export default function RootLayout({
         <main className="pt-[60px] md:pt-[72px]">{children}</main>
         <Footer />
         <CookieNotice />
+        <ChatWidget />
       </body>
     </html>
   );
