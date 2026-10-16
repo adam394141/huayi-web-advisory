@@ -30,7 +30,7 @@ export async function POST(request: Request) {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 300,
+            maxOutputTokens: 1024,
             topP: 0.8,
           },
           safetySettings: [
