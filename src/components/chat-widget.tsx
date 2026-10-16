@@ -2,6 +2,21 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+function renderWithLinks(text: string) {
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) =>
+    URL_REGEX.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="underline text-[#8B7355] hover:text-[#6d5a3e]">
+        {part}
+      </a>
+    ) : (
+      <span key={i}>{part}</span>
+    )
+  );
+}
+
 interface Message {
   role: "user" | "assistant";
   text: string;
@@ -148,7 +163,7 @@ export function ChatWidget() {
                   }`}
                   style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
                 >
-                  {msg.text}
+                  {renderWithLinks(msg.text)}
                 </div>
               </div>
             ))}

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const prompt = `${SYSTEM_PROMPT}\n\n以下是華翼的完整資訊：\n${HUAYI_KNOWLEDGE}\n\n${recentHistory ? `對話紀錄：\n${recentHistory}\n\n` : ""}訪客的問題：${message}\n\n請回答：`;
 
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
