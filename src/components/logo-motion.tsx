@@ -51,16 +51,7 @@ export function LogoMotion() {
 
   return (
     <>
-      <div className="motion-controls">
-        <button type="button" onClick={play} className="motion-replay">
-          {reduced ? "播放完整動態" : "重播品牌開場"} <span aria-hidden="true">↺</span>
-        </button>
-        {!reduced && <button type="button" className="motion-reduce" onClick={() => {
-          document.documentElement.dataset.motion = "reduce";
-          setReduced(true);
-          finish();
-        }}>減少動態</button>}
-      </div>
+      {/* 動態控制按鈕已移除 */}
       {phase !== "off" && (
         <div className="brand-intro" data-phase={phase}>
           <div className="brand-intro-mark">
