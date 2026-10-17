@@ -113,7 +113,7 @@ export function ChatWidget() {
             <img src="/brand/huayi-logo.svg" alt="華翼" width="32" height="32" className="h-7 w-auto" />
           </button>
           <style>{`
-            @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); } 50% { transform: scale(1.15); box-shadow: 0 8px 25px rgba(0,0,0,0.3); } }
+            @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); } 50% { transform: scale(1.4); box-shadow: 0 10px 30px rgba(0,0,0,0.35); } }
             @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
           `}</style>
         </div>
