@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const GREETINGS = [
   "有什麼想了解的嗎？",
@@ -39,12 +39,9 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
-  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
-  const [dragging, setDragging] = useState(false);
   const [greeting, setGreeting] = useState("");
   const [showGreeting, setShowGreeting] = useState(false);
   const greetingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dragStart = useRef<{ x: number; y: number; bx: number; by: number } | null>(null);
   const messagesEnd = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,32 +52,6 @@ export function ChatWidget() {
   useEffect(() => {
     if (open && inputRef.current) inputRef.current.focus();
   }, [open]);
-
-  const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    if (open) return;
-    const el = e.currentTarget as HTMLElement;
-    el.setPointerCapture(e.pointerId);
-    const rect = el.getBoundingClientRect();
-    dragStart.current = { x: e.clientX, y: e.clientY, bx: rect.left, by: rect.top };
-    setDragging(false);
-  }, [open]);
-
-  const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragStart.current || open) return;
-    const dx = e.clientX - dragStart.current.x;
-    const dy = e.clientY - dragStart.current.y;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) setDragging(true);
-    setDragPos({
-      x: Math.max(0, Math.min(window.innerWidth - 60, dragStart.current.bx + dx)),
-      y: Math.max(0, Math.min(window.innerHeight - 60, dragStart.current.by + dy)),
-    });
-  }, [open]);
-
-  const handlePointerUp = useCallback(() => {
-    if (!dragging && !open) setOpen(true);
-    dragStart.current = null;
-    setTimeout(() => setDragging(false), 0);
-  }, [dragging, open]);
 
   async function send() {
     const text = input.trim();
@@ -107,18 +78,12 @@ export function ChatWidget() {
     setLoading(false);
   }
 
-  const btnStyle: React.CSSProperties = dragPos && !open
-    ? { position: "fixed", left: dragPos.x, top: dragPos.y, right: "auto", bottom: "auto" }
-    : {};
-
   return (
     <>
       {/* 浮動按鈕 + 招呼語 */}
       {!open && (
         <div
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
+          className="fixed right-6 bottom-[90px] z-[9999]"
           onMouseEnter={() => {
             setGreeting(GREETINGS[Math.floor(Math.random() * GREETINGS.length)]);
             setShowGreeting(true);
@@ -128,15 +93,6 @@ export function ChatWidget() {
           onMouseLeave={() => {
             if (greetingTimer.current) clearTimeout(greetingTimer.current);
             greetingTimer.current = setTimeout(() => setShowGreeting(false), 1000);
-          }}
-          style={{
-            position: "fixed",
-            right: dragPos ? "auto" : "24px",
-            bottom: dragPos ? "auto" : "90px",
-            zIndex: 9999,
-            touchAction: "none",
-            cursor: "grab",
-            ...btnStyle,
           }}
         >
           {showGreeting && (
@@ -149,14 +105,15 @@ export function ChatWidget() {
             </div>
           )}
           <button
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] shadow-lg transition-transform hover:scale-105 active:scale-95"
-            style={{ animation: "breathe 3s ease-in-out infinite" }}
+            onClick={() => setOpen(true)}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] shadow-lg"
+            style={{ animation: "breathe 2s ease-in-out infinite" }}
             aria-label="開啟聊天"
           >
             <img src="/brand/huayi-logo.svg" alt="華翼" width="32" height="32" className="h-7 w-auto" />
           </button>
           <style>{`
-            @keyframes breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+            @keyframes breathe { 0%,100% { transform: scale(1); box-shadow: 0 4px 15px rgba(0,0,0,0.2); } 50% { transform: scale(1.15); box-shadow: 0 8px 25px rgba(0,0,0,0.3); } }
             @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
           `}</style>
         </div>
