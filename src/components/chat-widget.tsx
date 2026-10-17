@@ -132,7 +132,7 @@ export function ChatWidget() {
           style={{
             position: "fixed",
             right: dragPos ? "auto" : "24px",
-            bottom: dragPos ? "auto" : "24px",
+            bottom: dragPos ? "auto" : "90px",
             zIndex: 9999,
             touchAction: "none",
             cursor: "grab",
