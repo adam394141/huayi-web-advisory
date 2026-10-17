@@ -164,8 +164,9 @@ export function ChatWidget() {
       {/* 聊天視窗 */}
       {open && (
         <div
-          className="fixed bottom-4 right-4 z-[9999] flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-[#e5e2dd] bg-white shadow-2xl"
-          style={{ height: "min(680px, calc(100vh - 32px))" }}
+          className="fixed inset-x-0 bottom-0 z-[9999] flex flex-col overflow-hidden bg-white shadow-2xl md:inset-x-auto md:bottom-4 md:right-4 md:w-[380px] md:rounded-2xl md:border md:border-[#e5e2dd]"
+          style={{ height: "min(100dvh, 100vh)", maxHeight: "100dvh" }}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between bg-[#1A1A1A] px-5 py-3.5">
@@ -218,7 +219,7 @@ export function ChatWidget() {
           </div>
 
           {/* Input */}
-          <div className="border-t border-[#e5e2dd] px-4 py-3">
+          <div className="shrink-0 border-t border-[#e5e2dd] px-4 py-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)]">
             <form
               onSubmit={(e) => { e.preventDefault(); send(); }}
               className="flex items-center gap-2"
