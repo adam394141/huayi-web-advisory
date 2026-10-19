@@ -168,9 +168,11 @@ export default async function HomePage() {
               </MotionReveal>
             ))}
           </div>
-          <MotionReveal type="fade-up" delay={1.2} duration={900}>
+          <MotionReveal type="fade-up" delay={0.4} duration={900}>
             <div className="relative mt-10 mx-auto max-w-[520px] space-y-4 text-center text-[15px] leading-relaxed text-[var(--color-body)]">
-              <div className="mx-auto mb-6 h-[1px] w-0 bg-[var(--color-gold)]" style={{ animation: "goldLineExpand 800ms cubic-bezier(0.23,1,0.32,1) 1.4s forwards" }} />
+              <MotionReveal type="gold-line" delay={0.6} duration={800}>
+                <div className="mx-auto mb-6 h-[1px] bg-[var(--color-gold)]" />
+              </MotionReveal>
               <p>外包團隊有磨合期、溝通問題，甚至擺爛風險。</p>
               <p>建立自己的團隊，溝通成本更低、更好掌控。</p>
               <p>你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。</p>
@@ -227,7 +229,9 @@ export default async function HomePage() {
           <div className="mt-10 grid gap-8 md:grid-cols-3 relative">
             {/* Progress line connecting steps */}
             <div className="absolute top-[28px] left-[16.5%] right-[16.5%] hidden md:block">
-              <div className="h-[2px] w-0 bg-[var(--color-gold)] opacity-30" style={{ animation: "goldLineExpand 1200ms cubic-bezier(0.23,1,0.32,1) 0.6s forwards" }} />
+              <MotionReveal type="gold-line" delay={0.3} duration={1200}>
+                <div className="h-[2px] bg-[var(--color-gold)] opacity-30" />
+              </MotionReveal>
             </div>
             {[
               { title: "診斷", desc: "找出真正要解決的問題，區分該外包、該內建、還是用 AI 取代" },

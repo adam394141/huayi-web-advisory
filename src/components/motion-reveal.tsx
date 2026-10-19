@@ -82,8 +82,23 @@ export function MotionReveal({
     setReady(true);
 
     if (trigger === "load") {
-      const timer = setTimeout(() => setActive(true), delay * 1000);
-      return () => clearTimeout(timer);
+      const waitForIntro = () => {
+        const introState = document.documentElement.dataset.intro;
+        if (introState === "done" || introState === undefined) {
+          const timer = setTimeout(() => setActive(true), delay * 1000);
+          return () => clearTimeout(timer);
+        }
+        const observer = new MutationObserver(() => {
+          if (document.documentElement.dataset.intro === "done") {
+            observer.disconnect();
+            setTimeout(() => setActive(true), delay * 1000);
+          }
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-intro"] });
+        return () => observer.disconnect();
+      };
+      const cleanup = waitForIntro();
+      return cleanup;
     }
 
     const el = ref.current;
