@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { MotionReveal } from "@/components/motion-reveal";
 import { SectionHeader } from "@/components/section-header";
 import { ImagePlaceholder } from "@/components/image-placeholder";
 import { getPublishedWorks, getHomepagePosts } from "@/lib/content";
@@ -111,7 +112,7 @@ export default async function HomePage() {
       <LogoMotion />
       <section className="home-hero px-[var(--space-page-x)] pt-8 md:pt-12">
         <div className="mx-auto max-w-[1280px]">
-          <ScrollReveal className="hero-entrance">
+          <MotionReveal type="fade-up" trigger="load" delay={0.2} duration={900}>
             <ImagePlaceholder
               src={heroImg?.file}
               alt={heroImg?.alt ?? ""}
@@ -120,14 +121,18 @@ export default async function HomePage() {
               priority
               className="hero-image"
             />
-          </ScrollReveal>
-          <ScrollReveal delay={0.1} className="hero-entrance">
+          </MotionReveal>
+          <MotionReveal type="mask-reveal" trigger="load" delay={0.6} duration={1200}>
             <h1 className="mt-7 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
               品牌決定方向，AI 決定速度。
             </h1>
+          </MotionReveal>
+          <MotionReveal type="fade-up" trigger="load" delay={1.2} duration={800}>
             <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
               駐點顧問，建立團隊，直到可以獨立運作
             </p>
+          </MotionReveal>
+          <MotionReveal type="fade-up" trigger="load" delay={1.8} duration={600}>
             <p className="mt-6">
               <Link
                 href="/contact"
@@ -136,7 +141,7 @@ export default async function HomePage() {
                 開始合作
               </Link>
             </p>
-          </ScrollReveal>
+          </MotionReveal>
         </div>
       </section>
 
@@ -156,22 +161,23 @@ export default async function HomePage() {
           </ScrollReveal>
           <div className="mt-8 flex flex-wrap justify-center gap-3 md:gap-4">
             {CHALLENGE_TAGS.map((tag, i) => (
-              <ScrollReveal key={tag} delay={i * 0.06}>
+              <MotionReveal key={tag} type="fade-left" delay={i * 0.2} duration={500}>
                 <span className="inline-block rounded-full border border-[var(--color-faint)]/50 px-5 py-2 text-[15px] tracking-wider text-[var(--color-body)]">
                   {tag}
                 </span>
-              </ScrollReveal>
+              </MotionReveal>
             ))}
           </div>
-          <ScrollReveal delay={0.3}>
-            <div className="mt-8 mx-auto max-w-[520px] space-y-4 text-center text-[15px] leading-relaxed text-[var(--color-body)]">
+          <MotionReveal type="fade-up" delay={1.2} duration={900}>
+            <div className="relative mt-10 mx-auto max-w-[520px] space-y-4 text-center text-[15px] leading-relaxed text-[var(--color-body)]">
+              <div className="mx-auto mb-6 h-[1px] w-0 bg-[var(--color-gold)]" style={{ animation: "goldLineExpand 800ms cubic-bezier(0.23,1,0.32,1) 1.4s forwards" }} />
               <p>外包團隊有磨合期、溝通問題，甚至擺爛風險。</p>
               <p>建立自己的團隊，溝通成本更低、更好掌控。</p>
               <p>你的企業該繼續外包，還是建立自己的團隊？讓華翼來診斷。</p>
               <p>如果需要建團隊，我們以駐點顧問方式，陪你從零開始。</p>
               <p>華翼服務的，是卡在中間的成長型企業——不是草創期，也不是已經有行銷長的大公司。你已經有產品、有營收、有市場基礎，只是品牌與行銷這塊，一直沒有自己的團隊。</p>
             </div>
-          </ScrollReveal>
+          </MotionReveal>
         </div>
       </Section>
 
@@ -218,27 +224,33 @@ export default async function HomePage() {
               rounded="var(--radius-module)"
             />
           </ScrollReveal>
-          <div className="mt-10 grid gap-8 md:grid-cols-3">
+          <div className="mt-10 grid gap-8 md:grid-cols-3 relative">
+            {/* Progress line connecting steps */}
+            <div className="absolute top-[28px] left-[16.5%] right-[16.5%] hidden md:block">
+              <div className="h-[2px] w-0 bg-[var(--color-gold)] opacity-30" style={{ animation: "goldLineExpand 1200ms cubic-bezier(0.23,1,0.32,1) 0.6s forwards" }} />
+            </div>
             {[
               { title: "診斷", desc: "找出真正要解決的問題，區分該外包、該內建、還是用 AI 取代" },
               { title: "策略", desc: "設計可執行的方案，包含團隊編制、流程規劃與優先順序" },
               { title: "執行", desc: "進場建置，帶著團隊實作與修正，直到能獨立運作" },
             ].map((step, i) => (
-              <ScrollReveal key={step.title} delay={i * 0.1}>
-                <div className="text-center">
-                  <div className="flex items-center justify-center gap-3">
-                    <span className="text-[2rem] font-light text-[var(--color-faint)]/40">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-serif text-[1.2rem] font-semibold text-[var(--color-fg)] md:text-[1.4rem]">
-                      {step.title}
-                    </span>
-                  </div>
+              <MotionReveal key={step.title} type="fade-up" delay={i * 0.25} duration={700}>
+                <div className="text-center relative">
+                  <MotionReveal type="scale-up" delay={i * 0.25 + 0.1} duration={500}>
+                    <div className="flex items-center justify-center gap-3">
+                      <span className="text-[2rem] font-light text-[var(--color-faint)]/40">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="font-serif text-[1.2rem] font-semibold text-[var(--color-fg)] md:text-[1.4rem]">
+                        {step.title}
+                      </span>
+                    </div>
+                  </MotionReveal>
                   <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-body)]">
                     {step.desc}
                   </p>
                 </div>
-              </ScrollReveal>
+              </MotionReveal>
             ))}
           </div>
         </div>
