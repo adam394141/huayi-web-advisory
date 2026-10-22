@@ -137,26 +137,28 @@ export default function ServicesPage() {
         <div className="mt-10 flex flex-col gap-6">
           {DELIVERY_MODES.map((mode, i) => (
             <ScrollReveal key={mode.num} delay={i * 0.1}>
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)]">
-                <Image src={mode.image} alt={mode.title} width={600} height={450} className="w-full object-cover" style={{ maxHeight: "280px" }} />
-                <div className="p-8">
-                <div className="flex items-start gap-4">
-                  <span className="text-[2.4rem] font-light text-[var(--color-faint)]/30">{mode.num}</span>
-                  <mode.icon className="mt-2 h-7 w-7 text-[var(--color-gold-dark)]" strokeWidth={1.5} />
+              <div className={`overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] grid md:grid-cols-[1fr_1.2fr] ${i % 2 === 1 ? "md:direction-rtl" : ""}`}>
+                <div className={`${i % 2 === 1 ? "md:order-2" : ""}`}>
+                  <Image src={mode.image} alt={mode.title} width={600} height={450} className="h-full w-full object-cover" />
                 </div>
-                <h3 className="mt-4 font-serif text-[1.3rem] font-semibold text-[var(--color-fg)]">{mode.title}</h3>
-                <p className="mt-1 text-[13px] text-[var(--color-gold-dark)]">{mode.subtitle}</p>
-                <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">{mode.desc}</p>
-                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-faint)]/20 p-6">
-                  <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">主要交付項目</p>
-                  <ul className="mt-4 space-y-2.5">
-                    {mode.deliverables.map((d) => (
-                      <li key={d} className="flex items-start gap-3 text-[15px] text-[var(--color-body)]">
-                        <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />{d}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <div className={`p-8 ${i % 2 === 1 ? "md:order-1" : ""}`}>
+                  <div className="flex items-start gap-4">
+                    <span className="text-[2.4rem] font-light text-[var(--color-faint)]/30">{mode.num}</span>
+                    <mode.icon className="mt-2 h-7 w-7 text-[var(--color-gold-dark)]" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="mt-4 font-serif text-[1.3rem] font-semibold text-[var(--color-fg)]">{mode.title}</h3>
+                  <p className="mt-1 text-[13px] text-[var(--color-gold-dark)]">{mode.subtitle}</p>
+                  <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">{mode.desc}</p>
+                  <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-faint)]/20 p-6">
+                    <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">主要交付項目</p>
+                    <ul className="mt-4 space-y-2.5">
+                      {mode.deliverables.map((d) => (
+                        <li key={d} className="flex items-start gap-3 text-[15px] text-[var(--color-body)]">
+                          <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />{d}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
