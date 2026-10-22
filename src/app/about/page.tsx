@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { ImagePlaceholder } from "@/components/image-placeholder";
@@ -48,8 +49,8 @@ const CAPABILITIES = [
 ];
 
 const TEAM = [
-  { name: "Adam", title: "品牌顧問" },
-  { name: "Rosie", title: "品牌顧問" },
+  { name: "Adam", title: "品牌顧問", href: "/adam", photo: "/home/adam.jpg" },
+  { name: "Rosie", title: "品牌顧問", href: "/rosie", photo: "/rosie/rosie-professional.jpg" },
 ];
 
 export default function AboutPage() {
@@ -165,13 +166,15 @@ export default function AboutPage() {
         <div className="mt-10 grid max-w-[720px] gap-10 md:grid-cols-2">
           {TEAM.map((member, i) => (
             <ScrollReveal key={member.name} delay={i * 0.1}>
-              <ImagePlaceholder src={member.name === "Adam" ? "/home/adam.jpg" : "/rosie/rosie-professional.jpg"} alt={member.name + " 品牌顧問"} aspect="3/4" />
-              <h3 className="mt-5 text-[18px] font-medium text-[var(--color-fg)]">
-                {member.name}
-              </h3>
-              <p className="mt-1 text-[16px] text-[var(--color-body)]">
-                {member.title}
-              </p>
+              <Link href={member.href} className="group block">
+                <ImagePlaceholder src={member.photo} alt={member.name + " " + member.title} aspect="3/4" />
+                <h3 className="mt-5 text-[18px] font-medium text-[var(--color-fg)] group-hover:text-[var(--color-gold-dark)] transition-colors">
+                  {member.name}
+                </h3>
+                <p className="mt-1 text-[16px] text-[var(--color-body)]">
+                  {member.title}
+                </p>
+              </Link>
             </ScrollReveal>
           ))}
         </div>
