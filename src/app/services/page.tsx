@@ -30,6 +30,7 @@ const DELIVERY_MODES = [
   {
     num: "A",
     icon: Users,
+    image: "/services/官網圖片002.png",
     title: "建立自己的團隊",
     subtitle: "適合有長期人才預算的企業",
     desc: "華翼協助策略規劃、人才招募、職能定義、制度建立、SOP 與培訓。帶著團隊實作與修正，直到能自主運作後交接撤場。",
@@ -44,6 +45,7 @@ const DELIVERY_MODES = [
   {
     num: "B",
     icon: Briefcase,
+    image: "/services/官網圖片003.png",
     title: "外部專業團隊支援",
     subtitle: "適合暫時不需要或養不起完整內部團隊的企業",
     desc: "由華翼整合既有合作的外部專業團隊，依約負責策略、專案管理、品質與成效追蹤。企業不需要自己找人、管人，華翼幫你把事情做好。",
@@ -57,6 +59,7 @@ const DELIVERY_MODES = [
   {
     num: "C",
     icon: Handshake,
+    image: "/services/官網圖片004.png",
     title: "內外混合協作",
     subtitle: "適合有少數內部窗口但需要額外專業支援的企業",
     desc: "華翼協助確立內部窗口與外部夥伴的分工，讓兩邊能有效協作。內部負責最了解產品的部分，外部補上專業技能的缺口。",
@@ -134,7 +137,9 @@ export default function ServicesPage() {
         <div className="mt-10 flex flex-col gap-6">
           {DELIVERY_MODES.map((mode, i) => (
             <ScrollReveal key={mode.num} delay={i * 0.1}>
-              <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] p-8">
+              <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)]">
+                <Image src={mode.image} alt={mode.title} width={600} height={450} className="w-full object-cover" style={{ maxHeight: "280px" }} />
+                <div className="p-8">
                 <div className="flex items-start gap-4">
                   <span className="text-[2.4rem] font-light text-[var(--color-faint)]/30">{mode.num}</span>
                   <mode.icon className="mt-2 h-7 w-7 text-[var(--color-gold-dark)]" strokeWidth={1.5} />
@@ -151,6 +156,7 @@ export default function ServicesPage() {
                       </li>
                     ))}
                   </ul>
+                </div>
                 </div>
               </div>
             </ScrollReveal>
