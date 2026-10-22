@@ -107,6 +107,7 @@ export function ChatWidget() {
           <button
             onClick={() => setOpen(true)}
             className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1A1A1A] shadow-lg"
+            data-chat-btn
             style={{ animation: "breathe 2s ease-in-out infinite" }}
             aria-label="開啟聊天"
           >

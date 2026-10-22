@@ -148,7 +148,7 @@ html[data-intro="playing"] .home-hero .hero-entrance { opacity: 0 !important; tr
 .motion-reduce { border-left: 1px solid #E0DDD5; }
 .motion-replay:hover { border-color: var(--color-gold-dark); }
 html[data-motion="reduce"] [data-scroll-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
-html[data-motion="reduce"] *, html[data-motion="reduce"] *::before, html[data-motion="reduce"] *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+html[data-motion="reduce"] *:not([data-chat-btn]), html[data-motion="reduce"] *:not([data-chat-btn])::before, html[data-motion="reduce"] *:not([data-chat-btn])::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 @media (max-width: 767px) {
   .hero-image { aspect-ratio: 4 / 3 !important; }
   .hero-image img { object-position: 48% 50%; }
