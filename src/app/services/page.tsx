@@ -1,77 +1,79 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Search, Users, Route, LogOut } from "lucide-react";
+import { Search, Users, Briefcase, Handshake } from "lucide-react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
 
 export const metadata: Metadata = {
   title: "服務項目｜華翼品牌策略",
   description:
-    "華翼以駐點顧問方式協助企業建立品牌與行銷團隊：診斷現場、建立團隊、駐點陪跑、獨立運作。",
+    "華翼從企業經營痛點出發，透過 AI 導入、流程改善與品牌行銷，提供內部建置、外部專業支援或混合協作三種模式。",
   alternates: { canonical: "/services" },
 };
 
-const CORE_STEPS = [
+const DIAGNOSIS = {
+  num: "00",
+  icon: Search,
+  image: "/services/華翼官網001.png",
+  title: "先診斷，再決定路徑",
+  desc: "每家企業的狀況不同，不應該只有一種解法。華翼先進入企業了解經營痛點、團隊現況與資源條件，再建議最適合的交付模式——不是每家都該自建團隊，也不是每家都適合外包。",
+  deliverables: [
+    "企業經營與流程體檢",
+    "團隊能力缺口分析",
+    "AI 導入機會評估",
+    "內建 vs. 外包 vs. 混合決策建議",
+  ],
+};
+
+const DELIVERY_MODES = [
   {
-    num: "01",
-    icon: Search,
-    image: "/services/華翼官網001.png",
-    title: "診斷現場",
-    desc: "進入企業盤點品牌與行銷各環節的真實需求，區分哪些該外包、哪些該內建、哪些可以用 AI 取代。不是給你一份報告就走，而是找出真正要解決的問題。",
-    deliverables: [
-      "企業品牌與行銷體檢",
-      "團隊能力缺口分析",
-      "外包 vs. 內建決策建議",
-      "建置優先順序規劃",
-    ],
-  },
-  {
-    num: "02",
+    num: "A",
     icon: Users,
-    image: "/services/官網圖片002.png",
-    title: "建立團隊",
-    desc: "依優先順序逐步補上對的人——設計師、企劃、小編、電商。不是一次到位，而是跟著企業的節奏一步一步建，同時導入 AI 工具讓新團隊從第一天就能高效運作。",
+    title: "建立自己的團隊",
+    subtitle: "適合有長期人才預算的企業",
+    desc: "華翼協助策略規劃、人才招募、職能定義、制度建立、SOP 與培訓。帶著團隊實作與修正，直到能自主運作後交接撤場。",
     deliverables: [
-      "職能需求與人才規格",
+      "組織架構與職能規劃",
       "招募與面試協助",
       "AI 工具導入與內訓",
-      "工作流程建立",
+      "SOP 與工作流程建立",
+      "獨立運作驗收與交接",
     ],
   },
   {
-    num: "03",
-    icon: Route,
-    image: "/services/官網圖片003.png",
-    title: "駐點陪跑",
-    desc: "顧問進駐現場，帶著團隊實作、修正、校準，直到流程能被穩定執行。不是遠端下指令，而是在你的辦公室裡一起工作。",
+    num: "B",
+    icon: Briefcase,
+    title: "外部專業團隊支援",
+    subtitle: "適合暫時不需要或養不起完整內部團隊的企業",
+    desc: "由華翼整合既有合作的外部專業團隊，依約負責策略、專案管理、品質與成效追蹤。企業不需要自己找人、管人，華翼幫你把事情做好。",
     deliverables: [
-      "每週現場指導",
-      "實戰演練與修正",
-      "品質標準建立",
-      "跨部門協作流程",
+      "外部團隊組建與管理",
+      "專案目標與 KPI 設定",
+      "品質監控與成效報告",
+      "廠商協調與進度追蹤",
     ],
   },
   {
-    num: "04",
-    icon: LogOut,
-    image: "/services/官網圖片004.png",
-    title: "獨立運作",
-    desc: "團隊具備獨立運作能力後，華翼退場。移交的不只是人和流程，還有判斷問題的能力。建好就走，不綁定、不依賴。",
+    num: "C",
+    icon: Handshake,
+    title: "內外混合協作",
+    subtitle: "適合有少數內部窗口但需要額外專業支援的企業",
+    desc: "華翼協助確立內部窗口與外部夥伴的分工，讓兩邊能有效協作。內部負責最了解產品的部分，外部補上專業技能的缺口。",
     deliverables: [
-      "獨立運作驗收",
-      "SOP 與操作手冊",
-      "季度回訪（選配）",
-      "深度問題支援（選配）",
+      "內外分工架構設計",
+      "協作流程與溝通機制",
+      "內部人員培訓與賦能",
+      "階段性檢視與調整",
     ],
   },
 ];
 
-const ADDON_MODULES = [
-  { title: "品牌策略", desc: "品牌定位、市場競品分析、差異化策略、品牌金字塔建構" },
-  { title: "企業 AI 導入", desc: "AI 導入評估、企業內訓" },
-  { title: "品牌行銷", desc: "Facebook / Google 廣告投放、社群經營、內容行銷" },
-  { title: "品牌設計", desc: "CIS 識別系統、包裝設計、活動主視覺、品牌周邊" },
+const EXPERTISE = [
+  { title: "AI 導入與流程改善", desc: "AI 導入評估、企業內訓、重複流程盤點與自動化" },
+  { title: "品牌策略與行銷", desc: "品牌定位、廣告投放、社群經營、內容行銷" },
+  { title: "品牌設計", desc: "CIS 識別系統、包裝設計、活動主視覺" },
+  { title: "組織管理與人才發展", desc: "角色定義、制度建立、培訓規劃" },
 ];
 
 export default function ServicesPage() {
@@ -84,94 +86,91 @@ export default function ServicesPage() {
             SERVICES
           </p>
           <h1 className="mt-4 font-serif text-[2rem] font-semibold text-[var(--color-fg)] md:text-[3rem]">
-            駐點建置，建好就走。
+            先搞清楚問題，再決定怎麼做。
           </h1>
           <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
-            華翼像設備進場的駐點工程師——進到現場完成診斷、建置、教學與陪跑，直到團隊能自己運作，再把方法複製到下一個場域。
+            華翼從企業的經營痛點出發，先診斷再建議路徑。不是每家都該自建團隊，也不是每家都適合外包——依你的資源和狀況，選擇最合理的方式。
           </p>
         </ScrollReveal>
       </Section>
 
-      {/* Core Process */}
-      {CORE_STEPS.map((step, i) => (
-        <Section
-          key={step.num}
-          className={i % 2 === 1 ? "bg-[var(--color-surface)]" : ""}
-        >
-          <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-start">
-            <ScrollReveal>
-              <Image
-                src={step.image}
-                alt={step.title}
-                width={600}
-                height={450}
-                className="w-full rounded-[var(--radius-card)] object-cover"
-              />
+      {/* Step 0: Diagnosis */}
+      <Section>
+        <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:items-start">
+          <ScrollReveal>
+            <Image src={DIAGNOSIS.image} alt={DIAGNOSIS.title} width={600} height={450} className="w-full rounded-[var(--radius-card)] object-cover" />
+          </ScrollReveal>
+          <div>
+            <ScrollReveal delay={0.1}>
+              <div className="flex items-start gap-4">
+                <DIAGNOSIS.icon className="mt-1 h-8 w-8 text-[var(--color-gold-dark)]" strokeWidth={1.5} />
+              </div>
+              <h2 className="mt-4 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">{DIAGNOSIS.title}</h2>
+              <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">{DIAGNOSIS.desc}</p>
             </ScrollReveal>
-            <div>
-              <ScrollReveal delay={0.1}>
-                <div className="flex items-start gap-4">
-                  <span className="text-[3rem] font-light leading-none text-[var(--color-faint)]/30">
-                    {step.num}
-                  </span>
-                  <step.icon
-                    className="mt-3 h-8 w-8 text-[var(--color-gold-dark)]"
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <h2 className="mt-6 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2rem]">
-                  {step.title}
-                </h2>
-                <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">
-                  {step.desc}
-                </p>
-              </ScrollReveal>
-              <ScrollReveal delay={0.2}>
-              <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
-                <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">
-                  主要交付項目
-                </p>
+            <ScrollReveal delay={0.2}>
+              <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
+                <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">診斷項目</p>
                 <ul className="mt-5 space-y-3">
-                  {step.deliverables.map((d) => (
-                    <li
-                      key={d}
-                      className="flex items-start gap-3 text-[16px] text-[var(--color-body)]"
-                    >
-                      <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />
-                      {d}
+                  {DIAGNOSIS.deliverables.map((d) => (
+                    <li key={d} className="flex items-start gap-3 text-[16px] text-[var(--color-body)]">
+                      <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />{d}
                     </li>
                   ))}
                 </ul>
               </div>
             </ScrollReveal>
-            </div>
           </div>
-        </Section>
-      ))}
+        </div>
+      </Section>
 
-      {/* Add-on Modules */}
+      {/* Three Delivery Modes */}
       <Section className="bg-[var(--color-surface)]">
         <ScrollReveal>
-          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">
-            ADD-ON MODULES
-          </p>
-          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">
-            建置完成後的選配服務
-          </h2>
-          <p className="mt-4 max-w-[480px] text-[16px] leading-relaxed text-[var(--color-body)]">
-            團隊建好後，如有額外需求，華翼也能承接以下模組。
-          </p>
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">DELIVERY MODES</p>
+          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">三種交付模式，依你的狀況選擇</h2>
+          <p className="mt-4 max-w-[520px] text-[16px] leading-relaxed text-[var(--color-body)]">不是每家公司都該自建團隊，也不是每家都適合外包。華翼先診斷，再建議最合理的路徑。</p>
+        </ScrollReveal>
+        <div className="mt-10 flex flex-col gap-6">
+          {DELIVERY_MODES.map((mode, i) => (
+            <ScrollReveal key={mode.num} delay={i * 0.1}>
+              <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] p-8">
+                <div className="flex items-start gap-4">
+                  <span className="text-[2.4rem] font-light text-[var(--color-faint)]/30">{mode.num}</span>
+                  <mode.icon className="mt-2 h-7 w-7 text-[var(--color-gold-dark)]" strokeWidth={1.5} />
+                </div>
+                <h3 className="mt-4 font-serif text-[1.3rem] font-semibold text-[var(--color-fg)]">{mode.title}</h3>
+                <p className="mt-1 text-[13px] text-[var(--color-gold-dark)]">{mode.subtitle}</p>
+                <p className="mt-4 text-[16px] leading-[1.9] text-[var(--color-body)]">{mode.desc}</p>
+                <div className="mt-6 rounded-[var(--radius-card)] border border-[var(--color-faint)]/20 p-6">
+                  <p className="text-[12px] tracking-[0.15em] text-[var(--color-subtle)]">主要交付項目</p>
+                  <ul className="mt-4 space-y-2.5">
+                    {mode.deliverables.map((d) => (
+                      <li key={d} className="flex items-start gap-3 text-[15px] text-[var(--color-body)]">
+                        <span className="mt-1.5 block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" />{d}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* Expertise */}
+      <Section>
+        <ScrollReveal>
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">OUR EXPERTISE</p>
+          <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">華翼的核心專業</h2>
+          <p className="mt-4 max-w-[480px] text-[16px] leading-relaxed text-[var(--color-body)]">不管選擇哪種交付模式，這些是華翼能直接提供的專業能力。</p>
         </ScrollReveal>
         <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {ADDON_MODULES.map((mod, i) => (
-            <ScrollReveal key={mod.title} delay={i * 0.06}>
+          {EXPERTISE.map((ex, i) => (
+            <ScrollReveal key={ex.title} delay={i * 0.06}>
               <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 bg-[var(--color-warm-white)] p-6">
-                <h3 className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
-                  {mod.title}
-                </h3>
-                <p className="mt-2 text-[15px] text-[var(--color-body)]">
-                  {mod.desc}
-                </p>
+                <h3 className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">{ex.title}</h3>
+                <p className="mt-2 text-[15px] text-[var(--color-body)]">{ex.desc}</p>
               </div>
             </ScrollReveal>
           ))}
@@ -186,9 +185,9 @@ export default function ServicesPage() {
         </ScrollReveal>
         <div className="mt-10 mx-auto max-w-[800px] space-y-6">
           {[
-            { q: "駐點建置顧問是什麼意思？", a: "像設備商派駐廠工程師到工廠一樣——我們進到你的辦公室，在現場完成診斷、團隊組建、教學與陪跑，直到你的團隊能自己運轉，我們才離開。" },
-            { q: "建一個行銷團隊需要多久？", a: "依企業規模，通常 6-12 個月。前期診斷與招募約 1-2 個月，中期建置與陪跑 3-6 個月，後期穩定與移交 2-3 個月。" },
-            { q: "費用大概是多少？", a: "分三段：付費企業體檢（30 分鐘）→ 駐點建置月費（6-12 個月）→ 移交後季度陪跑年約（選配）。具體費用依企業規模與需求而定，歡迎預約體檢後報價。" },
+            { q: "華翼跟一般顧問公司有什麼不同？", a: "我們不會一開始就推方案。先花時間了解你的企業痛點，再建議該自建團隊、找外部支援，還是混合協作。不綁定單一模式，依你的資源和狀況選擇最合理的路徑。" },
+            { q: "我的公司養不起行銷團隊，華翼能幫什麼？", a: "不是每家公司都需要自己養團隊。華翼可以幫你整合外部專業團隊，由我們負責策略、管理和品質追蹤，你只需要一個內部窗口對接。" },
+            { q: "費用大概是多少？", a: "依服務模式不同。可以先預約 30 分鐘企業體檢，我們了解你的狀況後再建議適合的方案和費用範圍。" },
             { q: "企業導入 AI 有政府補助嗎？", a: "經濟部持續推出中小企業 AI 與數位轉型相關補助方案，符合資格的企業可以申請。華翼可以協助你評估是否符合條件，並在建置過程中導入符合補助範圍的 AI 工具。建議定期關注經濟部中小及新創企業署的最新公告。" },
             { q: "華翼不做什麼？", a: "ERP 系統、勞資管理、法務、ISO 認證不在我們的範圍。但如果診斷過程中發現你需要，我們會幫你轉介對的專業廠商。我們只做自己最專業的事。" },
           ].map((item, i) => (
@@ -212,7 +211,7 @@ export default function ServicesPage() {
             先花 30 分鐘做企業體檢
           </h2>
           <p className="mt-4 max-w-[400px] mx-auto text-[15px] text-[var(--color-body)]">
-            我們會直接告訴你，現在該外包還是該建團隊。
+            我們會直接告訴你，現在最該解決什麼、怎麼做最合理。
           </p>
           <p className="mt-8">
             <Link

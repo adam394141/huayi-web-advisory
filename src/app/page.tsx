@@ -13,13 +13,13 @@ import { getCanonicalSiteUrl } from "@/lib/site-url";
 
 export const revalidate = 60;
 
-const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "請了高階主管也不知道專不專業", "有方向但落不了地", "關鍵人物離開就斷"];
+const CHALLENGE_TAGS = ["外包換了三家都講不通", "請了行銷半年就走", "流程全靠老闆一個人扛", "想導入 AI 但不知道從哪開始", "請了高階主管也不知道專不專業"];
 
 const SERVICES_CARDS = [
-  { imageId: "service-strategy", title: "品牌策略", desc: "市場研究到品牌定位，建立差異化資產", href: "/services/brand-strategy" },
-  { imageId: "service-ai", title: "AI 導入", desc: "找到 AI 創造價值的切入點，快速驗證", href: "/services/ai" },
-  { imageId: "service-marketing", title: "行銷成長", desc: "整合廣告與內容，聚焦轉換與成長", href: "/services/marketing" },
-  { imageId: "service-design", title: "品牌體驗", desc: "品牌識別到包裝設計，打造一致體驗", href: "/services/design" },
+  { imageId: "service-ai", title: "AI 導入與流程改善", desc: "找到 AI 真正能省時間的切入點，改善重複工作與流程瓶頸", href: "/services/ai" },
+  { imageId: "service-strategy", title: "品牌策略與行銷成長", desc: "從品牌定位到廣告投放，建立差異化與可執行的行銷系統", href: "/services/brand-strategy" },
+  { imageId: "service-design", title: "組織管理與人才發展", desc: "協助企業建立角色、制度與培訓，讓團隊能穩定運作", href: "/services" },
+  { imageId: "service-marketing", title: "企業專業團隊整合", desc: "內部建置、外部專業支援或混合協作，依企業資源選擇最適路徑", href: "/services" },
 ];
 
 export default async function HomePage() {
@@ -123,10 +123,10 @@ export default async function HomePage() {
           </ScrollReveal>
           <ScrollReveal delay={0.1} className="hero-entrance">
             <h1 className="mt-7 font-serif text-[2rem] font-semibold leading-[1.4] text-[var(--color-fg)] md:text-[3rem] lg:text-[3.6rem]">
-              品牌決定方向，AI 決定速度。
+              從你最頭痛的那件事開始。
             </h1>
             <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">
-              駐點顧問，建立團隊，直到可以獨立運作
+              華翼從企業的經營痛點出發，透過 AI 導入、流程改善與品牌行銷，協助你找到最適合的解決路徑。
             </p>
             <p className="mt-6">
               <Link
@@ -177,7 +177,7 @@ export default async function HomePage() {
 
       {/* 3. Services — 2×2 大圖片卡 */}
       <Section className="bg-[var(--color-surface)]">
-        <SectionHeader label="SERVICES" title="四大服務" />
+        <SectionHeader label="WHAT WE DO" title="我們能幫你什麼" />
         <div className="mt-10 grid gap-6 md:grid-cols-2">
           {SERVICES_CARDS.map((svc, i) => {
             const img = getImageById(svc.imageId);
