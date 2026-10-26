@@ -23,6 +23,44 @@ async function saveChat(sessionId: string, role: "user" | "assistant", message: 
   }
 }
 
+async function getRelevantArticles(question: string): Promise<string> {
+  try {
+    const supabase = getSupabase();
+    if (!supabase) return "";
+
+    const { data: articles } = await supabase
+      .from("blog_posts")
+      .select("title, slug, excerpt, category, tags, content")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .limit(20);
+
+    if (!articles || articles.length === 0) return "";
+
+    const q = question.toLowerCase();
+    const matched = articles.filter((a) => {
+      const searchText = `${a.title} ${a.excerpt || ""} ${a.category || ""} ${(a.tags || []).join(" ")}`.toLowerCase();
+      const words = q.split(/\s+/).filter((w) => w.length > 1);
+      return words.some((w) => searchText.includes(w));
+    });
+
+    if (matched.length === 0) return "";
+
+    const summaries = matched.slice(0, 3).map((a) => {
+      const plainContent = (a.content || "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .substring(0, 500);
+      return `【${a.title}】（${a.category}）\n網址：https://huayi.tw/blog/${a.slug}\n摘要：${a.excerpt || ""}\n內容節錄：${plainContent}`;
+    });
+
+    return "\n\n## 華翼的相關文章（可引用觀點並推薦連結）\n" + summaries.join("\n\n");
+  } catch {
+    return "";
+  }
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -38,14 +76,18 @@ export async function POST(request: Request) {
 
     const sid = sessionId || crypto.randomUUID();
 
-    // 存訪客提問
     await saveChat(sid, "user", message);
 
-    const recentHistory = (history || []).slice(-6).map((h: { role: string; text: string }) =>
-      `${h.role === "user" ? "訪客" : "助理"}：${h.text}`
-    ).join("\n");
+    const [articleContext, recentHistory] = await Promise.all([
+      getRelevantArticles(message),
+      Promise.resolve(
+        (history || []).slice(-6).map((h: { role: string; text: string }) =>
+          `${h.role === "user" ? "訪客" : "助理"}：${h.text}`
+        ).join("\n")
+      ),
+    ]);
 
-    const prompt = `${SYSTEM_PROMPT}\n\n以下是華翼的完整資訊：\n${HUAYI_KNOWLEDGE}\n\n${recentHistory ? `對話紀錄：\n${recentHistory}\n\n` : ""}訪客的問題：${message}\n\n請回答：`;
+    const prompt = `${SYSTEM_PROMPT}\n\n以下是華翼的完整資訊：\n${HUAYI_KNOWLEDGE}${articleContext}\n\n${recentHistory ? `對話紀錄：\n${recentHistory}\n\n` : ""}訪客的問題：${message}\n\n請回答：`;
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
@@ -82,7 +124,6 @@ export async function POST(request: Request) {
       return Response.json({ reply: fallback, sessionId: sid });
     }
 
-    // 存 AI 回覆
     await saveChat(sid, "assistant", reply);
 
     return Response.json({ reply, sessionId: sid });
