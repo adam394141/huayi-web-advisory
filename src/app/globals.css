@@ -66,9 +66,9 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html:not([data-motion="force"]) *,
-  html:not([data-motion="force"]) *::before,
-  html:not([data-motion="force"]) *::after {
+  html:not([data-motion="force"]) *:not([data-chat-btn]),
+  html:not([data-motion="force"]) *:not([data-chat-btn])::before,
+  html:not([data-motion="force"]) *:not([data-chat-btn])::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
