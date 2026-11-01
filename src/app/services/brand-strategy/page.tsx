@@ -107,7 +107,20 @@ export default function BrandStrategyPage() {
         </div>
       </Section>
 
-      <Section className="bg-[var(--color-surface)] text-center">
+      {/* Case Study */}
+      <Section className="bg-[var(--color-surface)]">
+        <ScrollReveal>
+          <p className="text-[12px] tracking-[0.3em] text-[var(--color-subtle)]">CASE STUDY</p>
+          <h2 className="mt-3 font-serif text-[1.4rem] font-semibold text-[var(--color-fg)] md:text-[1.8rem]">從品牌定位到設計落地｜高大牧場</h2>
+          <p className="mt-4 max-w-[560px] text-[16px] leading-relaxed text-[var(--color-body)]">走過 80 年的高大牧場，面對市場辨識度與差異化挑戰，華翼從牧場真正的價值出發，重新建立品牌定位、識別與產品系列視覺，獲得 2026 MUSE Creative Awards 銀獎肯定。</p>
+          <p className="mt-6">
+            <Link href="/works/gaoda-farm" className="text-[15px] text-[var(--color-gold-dark)] hover:underline">閱讀高大牧場完整案例 →</Link>
+          </p>
+        </ScrollReveal>
+      </Section>
+
+      {/* CTA */}
+      <Section className="text-center">
         <ScrollReveal>
           <h2 className="font-serif text-[1.4rem] text-[var(--color-fg)] md:text-[1.8rem]">先預約企業體檢，讓我們了解你的現況</h2>
           <p className="mt-8">
