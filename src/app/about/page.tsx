@@ -160,7 +160,7 @@ export default function AboutPage() {
           <h2 className="mt-3 font-serif text-[1.6rem] font-semibold text-[var(--color-fg)] md:text-[2.2rem]">專業肯定</h2>
         </ScrollReveal>
         <ScrollReveal delay={0.1}>
-          <div className="mt-8 rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
+          <div className="mt-8 rounded-[var(--radius-card)] border-2 border-[var(--color-gold)]/40 bg-[var(--color-warm-white)] p-8 shadow-sm">
             <p className="text-[12px] tracking-[0.15em] text-[var(--color-gold-dark)]">2026 MUSE Creative Awards · Silver Winner</p>
             <h3 className="mt-2 font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">企業識別重新設計</h3>
             <p className="mt-4 text-[16px] leading-relaxed text-[var(--color-body)]">華翼品牌策略以高大牧場企業識別重塑專案，榮獲 2026 MUSE Creative Awards 銀獎。這份肯定來自將品牌經營課題轉化為可落實的定位與識別系統，也支持我們持續以企業價值為出發點的顧問理念。</p>
