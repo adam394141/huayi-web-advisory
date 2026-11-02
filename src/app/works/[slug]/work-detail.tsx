@@ -88,27 +88,14 @@ export function WorkDetail({
 }
 
 function GalleryImage({ url, alt }: { url: string; alt: string }) {
-  const [error, setError] = useState(false);
-
-  if (error) {
-    return (
-      <div className="flex h-40 items-center justify-center rounded-[var(--radius-image)] bg-[var(--color-surface)] text-[15px] text-[var(--color-subtle)]">
-        圖片載入失敗
-      </div>
-    );
-  }
-
   return (
     <div className="overflow-hidden rounded-[var(--radius-image)] bg-[var(--color-surface)]">
-      <Image
+      <img
         src={url}
         alt={alt}
-        width={1280}
-        height={800}
-        sizes="(max-width: 1312px) 100vw, 1280px"
-        quality={82}
+        loading="lazy"
+        decoding="async"
         className="w-full object-contain"
-        onError={() => setError(true)}
       />
     </div>
   );
