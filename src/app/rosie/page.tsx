@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { MotionProvider } from '@/components/rosie/motion'
 import { RosieHero } from '@/components/rosie/hero'
 import { RosieWhoIAm } from '@/components/rosie/who-i-am'
@@ -38,9 +36,8 @@ export default function RosieCpcPage() {
           }}
         />
       </noscript>
-      <Header />
       <MotionProvider>
-        <main>
+        <div>
           <RosieHero />
           <RosieWhoIAm />
           <RosieCredentialProof />
@@ -50,9 +47,8 @@ export default function RosieCpcPage() {
           <RosieResultsInAction />
           <RosieCollaboration />
           <RosieInvitationForm />
-        </main>
+        </div>
       </MotionProvider>
-      <Footer />
     </>
   )
 }

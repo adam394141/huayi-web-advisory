@@ -141,10 +141,10 @@ export default function AboutPage() {
           {CAPABILITIES.map((c, i) => (
             <ScrollReveal key={c.title} delay={i * 0.08}>
               <div className="rounded-[var(--radius-card)] border border-[var(--color-faint)]/30 p-8">
-                <h3 className="font-serif text-[1.1rem] font-semibold text-[var(--color-fg)]">
+                <h3 className="font-serif text-[1.4rem] font-semibold text-[var(--color-fg)] md:text-[1.6rem]">
                   {c.title}
                 </h3>
-                <p className="mt-2 text-[16px] text-[var(--color-body)]">
+                <p className="mt-3 text-[16px] text-[var(--color-body)]">
                   {c.desc}
                 </p>
               </div>
