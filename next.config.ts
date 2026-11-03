@@ -51,7 +51,7 @@ const nextConfig: NextConfig = {
       { source: "/works_package/", destination: "/works", permanent: true },
       { source: "/adam_cpc", destination: "/adam", permanent: true },
       { source: "/rosie_cpc", destination: "/rosie", permanent: true },
-      { source: "/works/honestnut", destination: "/works/chengshi-nuts", permanent: true },
+      { source: "/works/chengshi-nuts", destination: "/works/honestnut", permanent: true },
     ];
   },
   images: {
