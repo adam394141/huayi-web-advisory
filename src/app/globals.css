@@ -158,3 +158,117 @@ html[data-motion="reduce"] *:not([data-chat-btn]), html[data-motion="reduce"] *:
   html:not([data-motion="force"]) .brand-intro { display: none; }
   html:not([data-motion="force"]) .hero-entrance { opacity: 1 !important; transform: none !important; }
 }
+
+/* ── 作品案例內文排版 ── */
+.work-prose {
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--color-body);
+}
+
+.work-prose h2 {
+  margin: 3.5rem auto 1.25rem;
+  max-width: 800px;
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-fg);
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-gold);
+}
+.work-prose h3 {
+  margin: 2.5rem auto 0.75rem;
+  max-width: 800px;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-fg);
+}
+.work-prose h4 {
+  margin: 1.75rem auto 0.5rem;
+  max-width: 800px;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+.work-prose p {
+  margin: 0 auto 1.25rem;
+  max-width: 800px;
+}
+.work-prose strong {
+  color: var(--color-fg);
+  font-weight: 700;
+}
+.work-prose em {
+  color: var(--color-fg);
+}
+.work-prose a { text-decoration: underline; }
+
+.work-prose blockquote {
+  margin: 2rem auto;
+  max-width: 800px;
+  border-left: 3px solid var(--color-gold);
+  padding-left: 1.25rem;
+  color: var(--color-body);
+}
+.work-prose ul {
+  margin: 0 auto 1.25rem;
+  max-width: 800px;
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.work-prose ol {
+  margin: 0 auto 1.25rem;
+  max-width: 800px;
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.work-prose li { margin: 0 auto; max-width: 760px; }
+
+.work-prose img {
+  display: block;
+  margin: 2.5rem auto;
+  max-width: 800px;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-image);
+}
+.work-prose figure { margin: 2.5rem 0; overflow: hidden; border-radius: var(--radius-image); }
+.work-prose figure img { width: 100%; height: auto; object-fit: contain; }
+.work-prose figcaption {
+  margin: 0.75rem auto 0;
+  max-width: 800px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-subtle);
+}
+
+.work-prose table { margin: 1.75rem auto; display: block; width: 100%; max-width: 800px; overflow-x: auto; }
+.work-prose th { border: 1px solid var(--color-surface-alt); background: var(--color-surface); padding: 0.75rem; text-align: left; }
+.work-prose td { border: 1px solid var(--color-surface-alt); padding: 0.75rem; }
+
+.work-prose details {
+  margin: 0 auto 0.75rem;
+  max-width: 800px;
+  border-radius: var(--radius-card);
+  border: 1px solid rgb(204 204 204 / .3);
+  overflow: hidden;
+}
+.work-prose summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1.25rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  transition: background-color 0.2s;
+}
+.work-prose summary:hover { background: var(--color-surface); }
+.work-prose summary::-webkit-details-marker { display: none; }
+.work-prose details[open] > summary { border-bottom: 1px solid rgb(204 204 204 / .3); }
+.work-prose details > div { padding: 1.25rem; }
+
+@media (min-width: 768px) {
+  .work-prose h2 { font-size: 1.65rem; }
+  .work-prose h3 { font-size: 1.25rem; }
+}
