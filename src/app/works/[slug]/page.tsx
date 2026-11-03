@@ -62,6 +62,7 @@ export default async function WorkDetailPage({
     .map((img) => img.url);
 
   const site = getCanonicalSiteUrl();
+  const canonical = `${site}/works/${work.slug}`;
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -72,12 +73,32 @@ export default async function WorkDetailPage({
     ],
   };
 
+  const creativeWorkLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: work.title,
+    description: work.seo_description || work.description || "",
+    url: canonical,
+    ...(work.cover_image ? { image: work.cover_image } : {}),
+    creator: {
+      "@type": "Organization",
+      name: "華翼品牌策略",
+      url: site,
+    },
+    ...(work.client ? { about: { "@type": "Organization", name: work.client } } : {}),
+  };
+
+  const jsonLdScripts = [breadcrumbLd, creativeWorkLd];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbLd) }}
-      />
+      {jsonLdScripts.map((ld, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(ld) }}
+        />
+      ))}
       <WorkDetail work={work} galleryUrls={galleryUrls} />
     </>
   );
