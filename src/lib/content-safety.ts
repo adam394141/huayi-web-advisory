@@ -12,7 +12,7 @@ export function isTrustedImageSource(src: string): boolean {
 /** 僅在伺服器資料出口使用：保留圖文，移除腳本、事件、表單及嵌入頁面。 */
 export function cleanContent(html: string): string {
   return sanitizeHtml(html, {
-    allowedTags: ["p", "br", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "s", "ul", "ol", "li", "blockquote", "a", "img", "figure", "figcaption", "hr", "table", "thead", "tbody", "tr", "th", "td", "div", "span"],
+    allowedTags: ["p", "br", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "s", "ul", "ol", "li", "blockquote", "a", "img", "figure", "figcaption", "hr", "table", "thead", "tbody", "tr", "th", "td", "div", "span", "details", "summary"],
     allowedAttributes: {
       a: ["href", "title"],
       img: ["src", "alt", "width", "height", "loading", "decoding", "data-original-width", "data-original-height", "data-original-bytes", "data-optimized-bytes"],
