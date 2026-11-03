@@ -34,7 +34,7 @@ export function WorkDetail({
               height={800}
               sizes="(max-width: 1312px) 100vw, 1280px"
               quality={82}
-              className="aspect-[16/10] w-full object-cover"
+              className="w-full h-auto"
               preload
             />
           </div>
@@ -95,7 +95,7 @@ function GalleryImage({ url, alt }: { url: string; alt: string }) {
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="aspect-square w-full object-cover"
+        className="w-full h-auto"
       />
     </div>
   );

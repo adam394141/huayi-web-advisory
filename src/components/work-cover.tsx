@@ -12,7 +12,7 @@ export function WorkCover({ src, title }: { src?: string; title: string }) {
           height={450}
           sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
           quality={82}
-          className="aspect-[4/3] w-full object-cover"
+          className="aspect-[4/3] w-full object-contain"
         />
       ) : (
         <span className="pb-4 text-sm text-[var(--color-subtle)]">作品圖片待補</span>
