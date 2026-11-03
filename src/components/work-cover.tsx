@@ -3,7 +3,7 @@ import Image from "next/image";
 /** 圖片與文字同寬；同列圖片區伸展並靠底對齊，不裁切、不加底框。 */
 export function WorkCover({ src, title }: { src?: string; title: string }) {
   return (
-    <div className="w-full overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-surface)]">
+    <div className="w-full overflow-hidden rounded-[var(--radius-card)]">
       {src ? (
         <Image
           src={src}
