@@ -14,8 +14,10 @@ export function cleanContent(html: string): string {
   return sanitizeHtml(html, {
     allowedTags: ["p", "br", "h2", "h3", "h4", "strong", "b", "em", "i", "u", "s", "ul", "ol", "li", "blockquote", "a", "img", "figure", "figcaption", "hr", "table", "thead", "tbody", "tr", "th", "td", "div", "span", "details", "summary"],
     allowedAttributes: {
-      a: ["href", "title"],
+      a: ["href", "title", "style", "target", "rel"],
       img: ["src", "alt", "width", "height", "loading", "decoding", "data-original-width", "data-original-height", "data-original-bytes", "data-optimized-bytes"],
+      div: ["style"],
+      figure: ["style"],
       th: ["colspan", "rowspan"],
       td: ["colspan", "rowspan"],
     },
