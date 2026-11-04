@@ -244,6 +244,19 @@ html[data-motion="reduce"] *:not([data-chat-btn]), html[data-motion="reduce"] *:
   color: var(--color-subtle);
 }
 
+.work-prose .img-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2.5rem auto;
+  max-width: 800px;
+}
+.work-prose .img-pair figure { margin: 0; }
+.work-prose .img-pair img { margin: 0; }
+@media (max-width: 640px) {
+  .work-prose .img-pair { grid-template-columns: 1fr; }
+}
+
 .work-prose table { margin: 1.75rem auto; display: block; width: 100%; max-width: 800px; overflow-x: auto; }
 .work-prose th { border: 1px solid var(--color-surface-alt); background: var(--color-surface); padding: 0.75rem; text-align: left; }
 .work-prose td { border: 1px solid var(--color-surface-alt); padding: 0.75rem; }

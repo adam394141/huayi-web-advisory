@@ -16,7 +16,7 @@ export function cleanContent(html: string): string {
     allowedAttributes: {
       a: ["href", "title", "style", "target", "rel"],
       img: ["src", "alt", "width", "height", "loading", "decoding", "data-original-width", "data-original-height", "data-original-bytes", "data-optimized-bytes"],
-      div: ["style"],
+      div: ["style", "class"],
       figure: ["style"],
       th: ["colspan", "rowspan"],
       td: ["colspan", "rowspan"],
