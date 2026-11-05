@@ -58,19 +58,23 @@ export default async function WorkDetailPage({
     ? work.cover_image.split("/").pop()
     : null;
 
-  // 從內文 HTML 提取已使用的圖片檔名，避免底部圖片牆重複顯示
+  // 從內文 HTML 提取已使用的圖片檔名（去副檔名），避免底部圖片牆重複顯示
   const usedInContent = new Set<string>();
   if (work.content) {
     const srcRegex = /src=["']([^"']+)["']/g;
     let m;
     while ((m = srcRegex.exec(work.content)) !== null) {
       const filename = m[1].split("/").pop();
-      if (filename) usedInContent.add(filename);
+      if (filename) {
+        usedInContent.add(filename);
+        usedInContent.add(filename.replace(/\.[^.]+$/, ""));
+      }
     }
   }
 
+  const stripExt = (name: string) => name.replace(/\.[^.]+$/, "");
   const galleryUrls = storageImages
-    .filter((img) => img.name !== coverFilename && !usedInContent.has(img.name))
+    .filter((img) => img.name !== coverFilename && !usedInContent.has(img.name) && !usedInContent.has(stripExt(img.name)))
     .map((img) => img.url);
 
   const site = getCanonicalSiteUrl();
