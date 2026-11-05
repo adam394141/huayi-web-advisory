@@ -54,9 +54,8 @@ export default async function WorkDetailPage({
   ]);
   if (!work) notFound();
 
-  const coverFilename = work.cover_image
-    ? work.cover_image.split("/").pop()
-    : null;
+  const coverRaw = work.cover_image ? work.cover_image.split("/").pop() : null;
+  const coverBase = coverRaw ? coverRaw.replace(/\.[^.]+$/, "") : null;
 
   // 從內文 HTML 提取已使用的圖片檔名（去副檔名），避免底部圖片牆重複顯示
   const usedInContent = new Set<string>();
@@ -74,7 +73,7 @@ export default async function WorkDetailPage({
 
   const stripExt = (name: string) => name.replace(/\.[^.]+$/, "");
   const galleryUrls = storageImages
-    .filter((img) => img.name !== coverFilename && !usedInContent.has(img.name) && !usedInContent.has(stripExt(img.name)))
+    .filter((img) => stripExt(img.name) !== coverBase && !usedInContent.has(img.name) && !usedInContent.has(stripExt(img.name)))
     .map((img) => img.url);
 
   const site = getCanonicalSiteUrl();

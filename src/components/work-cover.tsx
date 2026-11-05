@@ -1,4 +1,4 @@
-/** 固定 4:3 容器，object-contain 完整顯示，不裁切、不加底框。 */
+/** 固定 4:3 容器，object-cover 統一填滿，不加底框。 */
 export function WorkCover({ src, title }: { src?: string; title: string }) {
   return (
     <div className="aspect-[4/3] w-full overflow-hidden rounded-[var(--radius-card)]">
@@ -8,7 +8,7 @@ export function WorkCover({ src, title }: { src?: string; title: string }) {
           alt={title}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-contain"
+          className="h-full w-full object-cover"
         />
       ) : (
         <div className="flex h-full items-center justify-center">
