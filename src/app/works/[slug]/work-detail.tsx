@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import type { Work } from "@/lib/content";
@@ -26,16 +24,13 @@ export function WorkDetail({
         </Link>
 
         {heroSrc && (
-          <div className="overflow-hidden rounded-[var(--radius-module)] bg-[var(--color-surface)]">
-            <Image
+          <div className="overflow-hidden rounded-[var(--radius-module)]">
+            <img
               src={heroSrc}
               alt={work.title}
-              width={1280}
-              height={800}
-              sizes="(max-width: 1312px) 100vw, 1280px"
-              quality={82}
+              loading="eager"
+              decoding="async"
               className="w-full h-auto"
-              preload
             />
           </div>
         )}
