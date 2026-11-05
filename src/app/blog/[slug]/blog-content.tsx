@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { BlogPost } from "@/lib/content";
@@ -59,14 +58,12 @@ export function BlogContent({ post }: { post: BlogPost }) {
             transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
             className="overflow-hidden rounded-[var(--radius-module)]"
           >
-            <Image
+            <img
               src={post.cover_image}
               alt={post.title}
-              width={800}
-              height={450}
-              sizes="(max-width: 832px) 100vw, 800px"
+              loading="eager"
+              decoding="async"
               className="w-full object-cover"
-              preload
             />
           </motion.div>
         )}

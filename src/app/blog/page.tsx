@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/content";
 
@@ -51,12 +50,11 @@ export default async function BlogPage() {
                 >
                   <div className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-surface)]">
                     {post.cover_image ? (
-                      <Image
+                      <img
                         src={post.cover_image}
                         alt={post.title}
-                        width={600}
-                        height={338}
-                        sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                        loading="lazy"
+                        decoding="async"
                         className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                       />
                     ) : (
