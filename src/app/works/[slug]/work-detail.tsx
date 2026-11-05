@@ -6,18 +6,6 @@ import Link from "next/link";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import type { Work } from "@/lib/content";
 
-const SUPABASE_HOST = "rhkmzcyfzemlobznltyz.supabase.co";
-
-function optimizeContentImages(html: string): string {
-  return html.replace(
-    /(<img\b[^>]*)\ssrc="(https:\/\/rhkmzcyfzemlobznltyz\.supabase\.co\/storage\/v1\/object\/public\/[^"]+)"/g,
-    (_match, prefix, url) => {
-      const optimized = `/_next/image?url=${encodeURIComponent(url)}&w=828&q=82`;
-      return `${prefix} src="${optimized}" data-original="${url}"`;
-    },
-  );
-}
-
 export function WorkDetail({
   work,
   galleryUrls,
@@ -72,7 +60,7 @@ export function WorkDetail({
         {work.content && (
           <div
             className="work-prose mt-10"
-            dangerouslySetInnerHTML={{ __html: optimizeContentImages(work.content) }}
+            dangerouslySetInnerHTML={{ __html: work.content }}
           />
         )}
 
