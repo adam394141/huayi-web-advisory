@@ -234,13 +234,14 @@ html[data-motion="reduce"] *:not([data-chat-btn]), html[data-motion="reduce"] *:
   height: auto;
   border-radius: var(--radius-image);
 }
-.work-prose figure { margin: 2.5rem 0; overflow: hidden; border-radius: var(--radius-image); }
-.work-prose figure img { width: 100%; height: auto; object-fit: contain; }
+.work-prose figure { margin: 2.5rem auto; max-width: 800px; overflow: hidden; border-radius: var(--radius-image); }
+.work-prose figure img { width: 100%; height: auto; object-fit: contain; margin: 0; border-radius: 0; }
 .work-prose figcaption {
-  margin: 0.75rem auto 0;
-  max-width: 800px;
+  margin: 0.5rem 0 0;
+  padding: 0 0.25rem;
   text-align: center;
   font-size: 0.875rem;
+  line-height: 1.6;
   color: var(--color-subtle);
 }
 
