@@ -42,13 +42,15 @@ Editorial 2.0 是呈現層，不取代內容規範。衝突時以 SEO/AEO/GEO St
 
 用途：凸顯本篇最重要的一句判斷。
 條件：文章有明確的核心論點時使用。
-實作：在 `blog-content.tsx` 的 `EDITORIAL_EXTRAS` 中以 slug 為 key 設定 `insight` 欄位。
+實作：在 `src/app/blog/[slug]/editorial-extras.json` 中以 slug 為 key 設定 `insight` 欄位。新增文章只需編輯此 JSON 檔案，不需修改元件程式碼。
 
 ### 雙欄比較（Compare）
 
 用途：兩種立場、做法或方案的對照。
 條件：文章討論兩個可並列的概念時使用。
-實作：在 `EDITORIAL_EXTRAS` 中設定 `compare` 欄位，含 `title` 和 `items` 陣列。
+實作：在 `editorial-extras.json` 中設定 `compare` 欄位，含 `title` 和 `items` 陣列。
+
+> 未來如果 extras 類型增加，建議評估將資料移至 Supabase `blog_posts` 表的 JSONB 欄位，實現免部署更新。目前使用 JSON 檔案是最小安全方案。
 
 ### 章節側欄導覽（Rail）
 
@@ -63,7 +65,7 @@ Editorial 2.0 是呈現層，不取代內容規範。衝突時以 SEO/AEO/GEO St
 ### 參考資料
 
 用途：新聞、官方來源的連結清單。
-條件：正文 HTML 中有 `<h3>參考資料` 或 `<h3>資料來源` 時自動分離到獨立區塊。
+資料來源：優先使用 Supabase `sources` JSONB 欄位（`[{title, url}]`）。若 `sources` 為空，則 fallback 到正文 HTML 中的 `<h3>參考資料` 標題。新文章建議使用 JSON 欄位。
 
 ### CTA
 
@@ -78,7 +80,7 @@ Editorial 2.0 是呈現層，不取代內容規範。衝突時以 SEO/AEO/GEO St
 | 封面圖 | 1600×900（16:9） |
 | OG 圖 | 1200×630 |
 | 內文圖 | 寬度 1600px 以內，品質 80 |
-| 存放位置 | `public/blog/{slug}/` |
+| 存放位置 | 新文章：`public/blog/{slug}/`；舊文章可保留 Supabase Storage URL |
 | 載入方式 | 原生 `<img>`（不走 Vercel Image Optimization） |
 | Alt | 描述實際畫面內容，不堆砌關鍵字 |
 | 圖說 | `<figure>` + `<figcaption>`，緊接圖片下方 |
@@ -103,7 +105,7 @@ Editorial 2.0 是呈現層，不取代內容規範。衝突時以 SEO/AEO/GEO St
 | 橫向溢出 | 不允許 |
 | 手機正文字級 | 16-17px |
 | 桌機正文寬度 | 720-790px |
-| 側欄 | ≤1024px 隱藏，≥1100px 顯示 |
+| 側欄 | ≤1024px 隱藏（`@media max-width:1024px`），≥1025px 顯示 |
 | 比較區塊 | 手機自動單欄 |
 | 圖片 | 保持原始比例，不裁切 |
 | CTA | 足夠觸控區域 |
@@ -146,7 +148,9 @@ ChatGPT 完成文章後，應提供：
 
 Claude Code 收到後：
 1. 圖片放入 `public/blog/{slug}/`
-2. INSERT 或 UPDATE `blog_posts` 表
-3. Build + RWD 測試
-4. 提供 Preview + 截圖
-5. 等待 Adam 核准後合併
+2. 在開發分支上 INSERT 或 UPDATE `blog_posts`（共用 Supabase 時注意正式站影響）
+3. 新文章建議先以 `status = 'draft'` 上稿，Adam 核准後改 `published`
+4. Build + RWD 測試
+5. 提供 Preview + 截圖
+6. 等待 Adam 核准後合併到 main
+7. **不得將 README 中的流程視為直接寫入 Production 的授權**

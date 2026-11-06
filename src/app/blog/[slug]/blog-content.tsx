@@ -11,6 +11,8 @@ function formatDate(dateStr: string) {
   });
 }
 
+import editorialExtrasData from "./editorial-extras.json";
+
 interface EditorialExtra {
   insight?: string;
   compare?: {
@@ -19,18 +21,7 @@ interface EditorialExtra {
   };
 }
 
-const EDITORIAL_EXTRAS: Record<string, EditorialExtra> = {
-  "starbucks-promotion-brand-pricing-strategy": {
-    insight: "如果顧客只願意等折扣，企業就應該重新檢查原價的吸引力。",
-    compare: {
-      title: "同一品牌，兩種價格訊號",
-      items: [
-        { mark: "促銷優惠", heading: "「這次買得划算」", desc: "提供購買誘因，適合用於特定日期、會員及產品活動。" },
-        { mark: "客製化收費", heading: "「以前不是免費嗎？」", desc: "反映額外成本，也需要處理原有顧客的服務期待。" },
-      ],
-    },
-  },
-};
+const EDITORIAL_EXTRAS = editorialExtrasData as Record<string, EditorialExtra>;
 
 function partitionContent(content: string) {
   const ctaPatterns = ["<h2>你的企業", "<h2>你的餐廳"];
@@ -41,7 +32,8 @@ function partitionContent(content: string) {
   let sourcesIndex = -1;
   for (const p of sourcesPatterns) { const i = content.indexOf(p); if (i >= 0 && (sourcesIndex < 0 || i < sourcesIndex)) sourcesIndex = i; }
 
-  const mainEnd = ctaIndex >= 0 ? ctaIndex : (sourcesIndex >= 0 ? sourcesIndex : content.length);
+  const validIndexes = [ctaIndex, sourcesIndex].filter((i) => i >= 0);
+  const mainEnd = validIndexes.length > 0 ? Math.min(...validIndexes) : content.length;
   const mainContent = content.slice(0, mainEnd);
 
   let ctaContent = "";
@@ -165,9 +157,18 @@ export function BlogContent({ post }: { post: BlogPost }) {
               </section>
             )}
 
-            {article?.sourcesContent && (
+            {post.sources && post.sources.length > 0 ? (
+              <div className={styles.sources}>
+                <h3>參考資料</h3>
+                <ol>
+                  {post.sources.map((s) => (
+                    <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
+                  ))}
+                </ol>
+              </div>
+            ) : article?.sourcesContent ? (
               <div className={styles.sources} dangerouslySetInnerHTML={{ __html: article.sourcesContent }} />
-            )}
+            ) : null}
 
             {article?.ctaContent ? (
               <section className={styles.cta} aria-label="聯絡華翼">
