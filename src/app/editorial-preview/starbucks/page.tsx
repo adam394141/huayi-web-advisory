@@ -138,7 +138,7 @@ export default async function StarbucksEditorialPreview() {
                 <div dangerouslySetInnerHTML={{ __html: article.ctaContent }} />
               </section>
             )}
-            {/* 底部備註連結移除 */}
+            <p className={styles["disclaimer"]}>本文為華翼品牌策略的獨立企業經營觀點，不代表星巴克官方立場。優惠及客製化收費資訊以星巴克最新公告為準。</p>
           </div>
         </div>
       </article>
