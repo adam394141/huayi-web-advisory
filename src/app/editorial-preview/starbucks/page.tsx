@@ -52,8 +52,7 @@ function partitionContent(content: string) {
 }
 
 export default async function StarbucksEditorialPreview() {
-  // 防止測試頁在生產環境被存取；部署 Preview 才能查看。
-  if (process.env.VERCEL_ENV === "production") notFound();
+  // Production 開放存取
   const post = await getPostBySlug(SLUG);
   if (!post || !post.content) notFound();
 
