@@ -11,14 +11,39 @@ function formatDate(dateStr: string) {
   });
 }
 
-const SOURCES_MARKER = "<h3>參考資料";
-const CTA_MARKER = "<h2>你的企業";
+interface EditorialExtra {
+  insight?: string;
+  compare?: {
+    title: string;
+    items: Array<{ mark: string; heading: string; desc: string }>;
+  };
+}
+
+const EDITORIAL_EXTRAS: Record<string, EditorialExtra> = {
+  "starbucks-promotion-brand-pricing-strategy": {
+    insight: "如果顧客只願意等折扣，企業就應該重新檢查原價的吸引力。",
+    compare: {
+      title: "同一品牌，兩種價格訊號",
+      items: [
+        { mark: "促銷優惠", heading: "「這次買得划算」", desc: "提供購買誘因，適合用於特定日期、會員及產品活動。" },
+        { mark: "客製化收費", heading: "「以前不是免費嗎？」", desc: "反映額外成本，也需要處理原有顧客的服務期待。" },
+      ],
+    },
+  },
+};
 
 function partitionContent(content: string) {
-  const ctaIndex = content.indexOf(CTA_MARKER);
-  const sourcesIndex = content.indexOf(SOURCES_MARKER);
+  const ctaPatterns = ["<h2>你的企業", "<h2>你的餐廳"];
+  const sourcesPatterns = ["<h3>參考資料", "<h3>資料來源"];
+
+  let ctaIndex = -1;
+  for (const p of ctaPatterns) { const i = content.indexOf(p); if (i >= 0 && (ctaIndex < 0 || i < ctaIndex)) ctaIndex = i; }
+  let sourcesIndex = -1;
+  for (const p of sourcesPatterns) { const i = content.indexOf(p); if (i >= 0 && (sourcesIndex < 0 || i < sourcesIndex)) sourcesIndex = i; }
+
   const mainEnd = ctaIndex >= 0 ? ctaIndex : (sourcesIndex >= 0 ? sourcesIndex : content.length);
   const mainContent = content.slice(0, mainEnd);
+
   const ctaContent = ctaIndex >= 0
     ? content.slice(ctaIndex, sourcesIndex > ctaIndex ? sourcesIndex : content.length)
     : "";
@@ -29,15 +54,23 @@ function partitionContent(content: string) {
     const index = sections.push(title.replace(/<[^>]+>/g, ""));
     return `<h2 id="section-${index}">${title}</h2>`;
   });
+
   const h2Start = withAnchors.search(/<h2\b/i);
   const intro = h2Start >= 0 ? withAnchors.slice(0, h2Start) : withAnchors;
   const body = h2Start >= 0 ? withAnchors.slice(h2Start) : "";
-  return { intro, body, ctaContent, sourcesContent, sections };
+
+  const secondH2 = body.indexOf("<h2", 4);
+  const firstChapter = secondH2 >= 0 ? body.slice(0, secondH2) : body;
+  const laterChapters = secondH2 >= 0 ? body.slice(secondH2) : "";
+
+  return { intro, firstChapter, laterChapters, ctaContent, sourcesContent, sections };
 }
 
 export function BlogContent({ post }: { post: BlogPost }) {
   const article = post.content ? partitionContent(post.content) : null;
   const dateLabel = post.published_at ? formatDate(post.published_at) : "";
+  const extras = EDITORIAL_EXTRAS[post.slug];
+  const hasSections = article ? article.sections.length > 0 : false;
 
   return (
     <div className={styles.page}>
@@ -61,8 +94,8 @@ export function BlogContent({ post }: { post: BlogPost }) {
           </div>
         </header>
 
-        <div className={styles["body-grid"]}>
-          {article && article.sections.length > 0 && (
+        <div className={hasSections ? styles["body-grid"] : styles["body-single"]}>
+          {hasSections && article && (
             <aside className={styles.rail} aria-label="文章章節導覽">
               <p className={styles["rail-label"]}>IN THIS ARTICLE</p>
               <nav>
@@ -78,7 +111,34 @@ export function BlogContent({ post }: { post: BlogPost }) {
               <>
                 <div className={styles["lead-rule"]} aria-hidden="true" />
                 <div className={styles.intro} dangerouslySetInnerHTML={{ __html: article.intro }} />
-                <div className={styles.prose} dangerouslySetInnerHTML={{ __html: article.body }} />
+
+                {extras?.insight && (
+                  <aside className={styles.insight} aria-label="本篇核心觀點">
+                    <p className={styles["insight-label"]}>本篇核心觀點</p>
+                    <p>{extras.insight}</p>
+                  </aside>
+                )}
+
+                <div className={styles.prose} dangerouslySetInnerHTML={{ __html: article.firstChapter }} />
+
+                {extras?.compare && (
+                  <aside className={styles.compare} aria-label={extras.compare.title}>
+                    <p className={styles["compare-title"]}>{extras.compare.title}</p>
+                    <div className={styles["compare-grid"]}>
+                      {extras.compare.items.map((item) => (
+                        <div key={item.mark} className={styles["compare-item"]}>
+                          <p className={styles.mark}>{item.mark}</p>
+                          <h3>{item.heading}</h3>
+                          <p>{item.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </aside>
+                )}
+
+                {article.laterChapters && (
+                  <div className={styles.prose} dangerouslySetInnerHTML={{ __html: article.laterChapters }} />
+                )}
               </>
             )}
 
@@ -98,12 +158,12 @@ export function BlogContent({ post }: { post: BlogPost }) {
               <div className={styles.sources} dangerouslySetInnerHTML={{ __html: article.sourcesContent }} />
             )}
 
-            {article?.ctaContent && (
+            {article?.ctaContent ? (
               <section className={styles.cta} aria-label="聯絡華翼">
                 <p className={styles["cta-label"]}>HUAYI / ADVISORY</p>
                 <div dangerouslySetInnerHTML={{ __html: article.ctaContent }} />
               </section>
-            )}
+            ) : null}
 
             <div className={styles.endline}>
               <Link href="/blog">← 返回觀點</Link>
