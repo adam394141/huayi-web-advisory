@@ -15,6 +15,14 @@
           "desc": "反映額外成本，也需要處理原有顧客的服務期待。"
         }
       ]
-    }
+    },
+    "featuredSourceUrls": [
+      "https://www.starbucks.com.tw/stores/allevent/show.jspx?n=5404",
+      "https://www.cna.com.tw/news/afe/202610250038.aspx"
+    ],
+    "relatedLinks": [
+      { "title": "華翼品牌策略服務", "url": "/services/brand-strategy", "desc": "從企業經營問題出發，協助釐清市場定位與品牌溝通方向。" },
+      { "title": "高大牧場｜80 年酪農品牌重塑", "url": "/works/gaoda-farm", "desc": "傳統產業如何透過品牌識別建立差異化？MUSE 銀獎案例。" }
+    ]
   }
 }

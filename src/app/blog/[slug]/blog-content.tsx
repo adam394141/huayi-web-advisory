@@ -20,6 +20,8 @@ interface EditorialExtra {
     title: string;
     items: Array<{ mark: string; heading: string; desc: string }>;
   };
+  featuredSourceUrls?: string[];
+  relatedLinks?: Array<{ title: string; url: string; desc: string }>;
 }
 
 const EDITORIAL_EXTRAS = editorialExtrasData as Record<string, EditorialExtra>;
@@ -112,18 +114,52 @@ export function BlogContent({ post }: { post: BlogPost }) {
               </section>
             )}
 
-            {post.sources && post.sources.length > 0 ? (
-              <div className={styles.sources}>
-                <h3>參考資料</h3>
-                <ol>
-                  {post.sources.map((s) => (
-                    <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
-                  ))}
-                </ol>
-              </div>
-            ) : article?.sourcesContent ? (
-              <div className={styles.sources} dangerouslySetInnerHTML={{ __html: article.sourcesContent }} />
-            ) : null}
+            {extras?.relatedLinks && extras.relatedLinks.length > 0 && (
+              <section className={styles.related} aria-label="延伸閱讀">
+                <p className={styles["related-label"]}>延伸閱讀｜華翼品牌策略</p>
+                {extras.relatedLinks.map((link) => (
+                  <Link key={link.url} href={link.url} className={styles["related-item"]}>
+                    <span className={styles["related-title"]}>{link.title}</span>
+                    <span className={styles["related-desc"]}>{link.desc}</span>
+                  </Link>
+                ))}
+              </section>
+            )}
+
+            {(() => {
+              const featured = extras?.featuredSourceUrls;
+              const allSources = post.sources && post.sources.length > 0 ? post.sources : null;
+              const displaySources = allSources && featured
+                ? allSources.filter((s) => featured.includes(s.url))
+                : allSources;
+              const extraSources = allSources && featured
+                ? allSources.filter((s) => !featured.includes(s.url))
+                : null;
+              const totalCount = allSources ? allSources.length : 0;
+
+              if (!displaySources && !article?.sourcesContent) return null;
+
+              return displaySources ? (
+                <details className={styles["sources-collapsible"]}>
+                  <summary>資料依據與查證來源（{totalCount}）</summary>
+                  <div className={styles["sources-body"]}>
+                    <ol>
+                      {displaySources.map((s) => (
+                        <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
+                      ))}
+                      {extraSources && extraSources.map((s) => (
+                        <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
+                      ))}
+                    </ol>
+                  </div>
+                </details>
+              ) : (
+                <details className={styles["sources-collapsible"]}>
+                  <summary>資料依據與查證來源</summary>
+                  <div className={styles["sources-body"]} dangerouslySetInnerHTML={{ __html: article!.sourcesContent }} />
+                </details>
+              );
+            })()}
 
             {article?.ctaContent ? (
               <section className={styles.cta} aria-label="聯絡華翼">
