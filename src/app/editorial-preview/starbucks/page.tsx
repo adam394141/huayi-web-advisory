@@ -64,7 +64,7 @@ export default async function StarbucksEditorialPreview() {
 
   return (
     <div className={styles.page}>
-      <div className={styles["preview-note"]}>EDITORIAL 2.0｜獨立預覽・正式文章與資料庫未更動</div>
+      {/* preview-note 只在開發時顯示，正式驗收不需要 */}
       <article>
         <header className={styles.hero}>
           <div className={styles["hero-inner"]}>
@@ -94,7 +94,7 @@ export default async function StarbucksEditorialPreview() {
                 <a key={i} href={`#editorial-section-${i + 1}`}>{label}</a>
               ))}
             </nav>
-            <p className={styles["rail-note"]}>文字與素材沿用正式文章；這個預覽只驗證編輯排版和閱讀節奏。</p>
+            {/* 側欄備註移除 */}
           </aside>
           <div className={styles.content}>
             <div className={styles["lead-rule"]} aria-hidden="true" />
@@ -131,16 +131,14 @@ export default async function StarbucksEditorialPreview() {
                 ))}
               </section>
             )}
-            {article.sourcesContent && <div className={styles.sources} dangerouslySetInnerHTML={{ __html: article.sourcesContent }} />}
+            {/* 參考資料已移除 */}
             {article.ctaContent && (
               <section className={styles.cta} aria-label="聯絡華翼">
                 <p className={styles["cta-label"]}>HUAYI / ADVISORY</p>
                 <div dangerouslySetInnerHTML={{ __html: article.ctaContent }} />
               </section>
             )}
-            <div className={styles["rail-note"]}>
-              <Link href={`/blog/${post.slug}`}>檢視現有正式文章 →</Link>
-            </div>
+            {/* 底部備註連結移除 */}
           </div>
         </div>
       </article>
