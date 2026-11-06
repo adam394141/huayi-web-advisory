@@ -52,6 +52,7 @@ const nextConfig: NextConfig = {
       { source: "/adam_cpc", destination: "/adam", permanent: true },
       { source: "/rosie_cpc", destination: "/rosie", permanent: true },
       { source: "/works/chengshi-nuts", destination: "/works/honestnut", permanent: true },
+      { source: "/blog/starbucks-promotion-brand-pricing-strategy", destination: "/blog/starbucks-brand-pricing", permanent: true },
     ];
   },
   images: {
