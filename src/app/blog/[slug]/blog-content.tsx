@@ -129,25 +129,20 @@ export function BlogContent({ post }: { post: BlogPost }) {
             {(() => {
               const featured = extras?.featuredSourceUrls;
               const allSources = post.sources && post.sources.length > 0 ? post.sources : null;
-              const displaySources = allSources && featured
+              const displaySources = allSources && featured && featured.length > 0
                 ? allSources.filter((s) => featured.includes(s.url))
                 : allSources;
-              const extraSources = allSources && featured
-                ? allSources.filter((s) => !featured.includes(s.url))
-                : null;
-              const totalCount = allSources ? allSources.length : 0;
 
               if (!displaySources && !article?.sourcesContent) return null;
 
+              const count = displaySources ? displaySources.length : 0;
+
               return displaySources ? (
                 <details className={styles["sources-collapsible"]}>
-                  <summary>資料依據與查證來源（{totalCount}）</summary>
+                  <summary>資料依據與查證來源（{count}）</summary>
                   <div className={styles["sources-body"]}>
                     <ol>
                       {displaySources.map((s) => (
-                        <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
-                      ))}
-                      {extraSources && extraSources.map((s) => (
                         <li key={s.url}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a></li>
                       ))}
                     </ol>
