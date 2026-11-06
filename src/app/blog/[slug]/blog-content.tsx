@@ -44,10 +44,21 @@ function partitionContent(content: string) {
   const mainEnd = ctaIndex >= 0 ? ctaIndex : (sourcesIndex >= 0 ? sourcesIndex : content.length);
   const mainContent = content.slice(0, mainEnd);
 
-  const ctaContent = ctaIndex >= 0
-    ? content.slice(ctaIndex, sourcesIndex > ctaIndex ? sourcesIndex : content.length)
-    : "";
-  const sourcesContent = sourcesIndex >= 0 ? content.slice(sourcesIndex) : "";
+  let ctaContent = "";
+  let sourcesContent = "";
+  if (ctaIndex >= 0 && sourcesIndex >= 0) {
+    if (sourcesIndex < ctaIndex) {
+      sourcesContent = content.slice(sourcesIndex, ctaIndex);
+      ctaContent = content.slice(ctaIndex);
+    } else {
+      ctaContent = content.slice(ctaIndex, sourcesIndex);
+      sourcesContent = content.slice(sourcesIndex);
+    }
+  } else if (ctaIndex >= 0) {
+    ctaContent = content.slice(ctaIndex);
+  } else if (sourcesIndex >= 0) {
+    sourcesContent = content.slice(sourcesIndex);
+  }
 
   const sections: string[] = [];
   const withAnchors = mainContent.replace(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi, (_, title: string) => {
