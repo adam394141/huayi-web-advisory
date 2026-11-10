@@ -58,7 +58,7 @@ export default function BusinessSurvivalPreview() {
         <header className={styles.hero}>
           <div className={styles["hero-inner"]}>
             <p className={styles.overline}>HUAYI / BUSINESS INSIGHTS</p>
-            <h1>{MOCK_POST.title}</h1>
+            <h1>「再撐一年看看」，<br />可能是做生意最貴的一句安慰話</h1>
             <p className={styles.dek}>{MOCK_POST.excerpt}</p>
             <div className={styles.meta}>
               <span className={styles.pill}>{MOCK_POST.category}</span>

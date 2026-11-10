@@ -67,15 +67,14 @@ Unsplash License 允許免費商業使用，不需要署名（但建議）。
 - 原始照片（Claire/WILBECK）因品牌名稱+現金流困難段落組合風險過高，已淘汰
 - 狀態：已下載、裁切、WebP（1400×933, 101KB）
 
-### body-06｜business-sunk-cost-storefront.webp ✅（已替換）
-- 攝影：Mihály Köles / Unsplash
-- 來源：https://unsplash.com/photos/LOyBYl-8dOU
-- 地點：臺北市信義區
+### body-06｜business-sunk-cost-storefront.webp ✅（AI 生成）
+- 來源：GPT-4 / DALL-E 生成，由 Adam 提供
+- 原始檔：雨夜老街店門與綠意.png
+- 主題：台灣巷弄鐵捲門店面、折疊椅、盆栽、微濕地面、暖色路燈
 - 人物：無
-- 商標：便當店招牌與菜單可見，但為一般街邊小店，非知名連鎖
-- 風險：低～中。圖說已標示「店面當下未營業，不代表已倒閉或有財務困難」
-- 原始照片（De an Sun）已從 Unsplash 下架（404），以此替代
-- 狀態：已下載、裁切、WebP（1400×933, 178KB）
+- 商標：無任何可辨識店名、電話或商業文字
+- 風險：無（AI 生成，不涉及真實店家）
+- 狀態：已裁切、WebP（1400×933, 138KB）
 
 ### body-07｜business-operating-decisions.webp ✅（需留意）
 - 攝影：Raymond Yeung / Unsplash
