@@ -57,24 +57,25 @@ Unsplash License 允許免費商業使用，不需要署名（但建議）。
 - 風險：低。純靜物（帳本、計算機、眼鏡）
 - 狀態：已下載、裁切、WebP（1400×933, 53KB）
 
-### body-05｜business-cash-counter.webp ⚠️ 需要 Adam 確認
-- 攝影：Claire / Unsplash
-- 來源：https://unsplash.com/photos/coffee-shop-counter-with-menu-and-portrait-z_tDVmj9Jsc
-- 地點：臺北
+### body-05｜business-cash-counter.webp ✅（已替換）
+- 攝影：inni w / Unsplash
+- 來源：https://unsplash.com/photos/5WK2RTjj_yE
+- 地點：臺灣（東門市場）
 - 人物：無
-- 商標：**「WILBECK」品牌名稱與 LOGO 清晰可見**（Wilbeck Coffee 為臺北連鎖咖啡品牌）
-- ⚠️ 風險：**中高**
-  - 此照片放在「房租不會因為這個月生意不好就不用繳」段落後
-  - 可能讓讀者誤以為 Wilbeck Coffee 有經營困難
-  - 違反任務指示：「避免將真實台灣咖啡廳的照片與生意不好、準備關店直接連結」
-- 建議：更換為無可辨識品牌的櫃檯照片，或裁切掉 WILBECK 字樣
-- 狀態：已下載，但建議不使用
+- 商標：黑板手繪菜單（手拍漢堡）、「東門市場」標示，非大型商業品牌
+- 風險：低。文章此處語境為「固定營運成本」的中性觀察，非負面描述
+- 原始照片（Claire/WILBECK）因品牌名稱+現金流困難段落組合風險過高，已淘汰
+- 狀態：已下載、裁切、WebP（1400×933, 101KB）
 
-### body-06｜business-sunk-cost-storefront.webp ❌ 無法取得
-- 攝影：De an Sun / Unsplash
-- 來源：https://unsplash.com/photos/closed-storefront-with-green-awning-and-various-items-outside-_din1sqx9wc
-- 狀態：**Unsplash 回傳 404，照片已下架或移除**
-- 需要：尋找替代來源（台灣街邊鐵捲門店面）
+### body-06｜business-sunk-cost-storefront.webp ✅（已替換）
+- 攝影：Mihály Köles / Unsplash
+- 來源：https://unsplash.com/photos/LOyBYl-8dOU
+- 地點：臺北市信義區
+- 人物：無
+- 商標：便當店招牌與菜單可見，但為一般街邊小店，非知名連鎖
+- 風險：低～中。圖說已標示「店面當下未營業，不代表已倒閉或有財務困難」
+- 原始照片（De an Sun）已從 Unsplash 下架（404），以此替代
+- 狀態：已下載、裁切、WebP（1400×933, 178KB）
 
 ### body-07｜business-operating-decisions.webp ✅（需留意）
 - 攝影：Raymond Yeung / Unsplash
@@ -85,8 +86,12 @@ Unsplash License 允許免費商業使用，不需要署名（但建議）。
 - 風險：低～中。文章此處語境正面（「回購率持續提高」），不會讓人聯想到經營困難。攤位名稱可見但非大型商標。
 - 狀態：已下載、裁切、WebP（1400×933, 158KB）
 
-## 需要 Adam 決定的事項
+## 已解決的問題
 
-1. **body-05**：是否更換？Wilbeck 品牌名稱+現金流困難段落＝高風險組合
-2. **body-06**：原圖已下架，需提供替代來源或由 Adam 另選
-3. **body-07**：價目表上有攤位名稱，但語境正面，是否可接受？
+1. **body-05**：已替換。原 WILBECK 照片淘汰，改用東門市場手拍漢堡攤（無大型商業品牌）
+2. **body-06**：已替換。原照片已下架，改用台北信義區便當店鐵門街景
+
+## 仍需 Adam 確認
+
+1. **body-06 替換照片**：便當店招牌可見，配合「沉沒成本」段落與圖說聲明，是否可接受？
+2. **body-07**：價目表上有攤位名稱，但語境正面（「回購率持續提高」），是否可接受？
