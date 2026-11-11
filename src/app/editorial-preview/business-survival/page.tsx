@@ -22,20 +22,20 @@ interface EditorialExtra {
   };
   relatedLinks?: Array<{ title: string; url: string; desc: string }>;
 }
-const EXTRAS = (editorialExtrasData as Record<string, EditorialExtra>)["business-survival-cashflow-decisions"];
+const EXTRAS = (editorialExtrasData as Record<string, EditorialExtra>)["business-survival"];
 
 const MOCK_POST = {
   title: "「再撐一年看看」，可能是做生意最貴的一句安慰話",
-  slug: "business-survival-cashflow-decisions",
+  slug: "business-survival",
   excerpt: "開店不如預期，究竟該再撐一年，還是及早停損？從營業額、損益平衡、現金流與沉沒成本出發，重新思考企業經營最重要的決策。",
   category: "企業經營與成長",
   author: "華翼品牌策略",
-  cover_image: "/blog/business-survival-cashflow-decisions/business-survival-cover.webp",
+  cover_image: "/blog/business-survival/business-survival-cover.webp",
   published_at: "2026-11-10T08:00:00+08:00",
 };
 
 function getContent(): string {
-  const filePath = join(process.cwd(), "public/blog/business-survival-cashflow-decisions/content.html");
+  const filePath = join(process.cwd(), "public/blog/business-survival/content.html");
   const raw = readFileSync(filePath, "utf-8");
   return cleanContent(raw);
 }

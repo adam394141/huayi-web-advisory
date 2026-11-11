@@ -1,7 +1,7 @@
 # 照片來源與授權清單
 
 文章：「再撐一年看看」，可能是做生意最貴的一句安慰話
-Slug：business-survival-cashflow-decisions
+Slug：business-survival
 整理日期：2026-11-10
 
 ## 授權基礎

@@ -2,12 +2,12 @@
   "_note": "CMS 上稿準備資料，等文章定稿後搭配 content 欄位一起寫入 blog_posts",
   "_status": "DRAFT — 不要直接寫入正式 Supabase",
   "title": "「再撐一年看看」，可能是做生意最貴的一句安慰話",
-  "slug": "business-survival-cashflow-decisions",
+  "slug": "business-survival",
   "category": "企業經營與成長",
   "author": "華翼品牌策略",
   "status": "draft",
   "show_on_homepage": true,
-  "cover_image": "/blog/business-survival-cashflow-decisions/business-survival-cover.webp",
+  "cover_image": "/blog/business-survival/business-survival-cover.webp",
   "excerpt": "開店不如預期，究竟該再撐一年，還是及早停損？從營業額、損益平衡、現金流與沉沒成本出發，重新思考企業經營最重要的決策。",
   "seo_title": "生意不好該繼續撐嗎？企業現金流與停損的經營判斷｜華翼品牌策略",
   "seo_description": "開店不如預期，究竟該再撐一年，還是及早停損？從營業額、損益平衡、現金流與沉沒成本出發，重新思考企業經營最重要的決策。",
@@ -16,7 +16,7 @@
   "faq": null,
   "sources": null,
   "ai_summary": null,
-  "og_image": "/blog/business-survival-cashflow-decisions/business-survival-cover.webp",
+  "og_image": "/blog/business-survival/business-survival-cover.webp",
   "image_manifest": {
     "cover": {
       "file": "business-survival-cover.webp",
