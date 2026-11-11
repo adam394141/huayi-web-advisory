@@ -1,0 +1,85 @@
+{
+  "_note": "CMS 上稿準備資料，等文章定稿後搭配 content 欄位一起寫入 blog_posts",
+  "_status": "DRAFT — 不要直接寫入正式 Supabase",
+  "title": "「再撐一年看看」，可能是做生意最貴的一句安慰話",
+  "slug": "business-survival-cashflow-decisions",
+  "category": "企業經營與成長",
+  "author": "華翼品牌策略",
+  "status": "draft",
+  "show_on_homepage": true,
+  "cover_image": "/blog/business-survival-cashflow-decisions/business-survival-cover.webp",
+  "excerpt": "開店不如預期，究竟該再撐一年，還是及早停損？從營業額、損益平衡、現金流與沉沒成本出發，重新思考企業經營最重要的決策。",
+  "seo_title": "生意不好該繼續撐嗎？企業現金流與停損的經營判斷｜華翼品牌策略",
+  "seo_description": "開店不如預期，究竟該再撐一年，還是及早停損？從營業額、損益平衡、現金流與沉沒成本出發，重新思考企業經營最重要的決策。",
+  "tags": ["企業經營", "現金流", "停損決策", "損益平衡", "沉沒成本", "企業顧問"],
+  "content": null,
+  "faq": null,
+  "sources": null,
+  "ai_summary": null,
+  "og_image": "/blog/business-survival-cashflow-decisions/business-survival-cover.webp",
+  "image_manifest": {
+    "cover": {
+      "file": "business-survival-cover.webp",
+      "alt": "台北咖啡館窗邊擺放木桌與椅子，呈現店家日常經營空間",
+      "caption": "一間店能撐多久，不該只靠期待判斷。",
+      "dimensions": "1600×900",
+      "size_kb": 114
+    },
+    "body_01": {
+      "file": "business-opening-expectation.webp",
+      "placement": "「店面找好了、裝潢完成了、設備也買齊了。」段落後",
+      "alt": "台東池上咖啡廳內的磚牆、木桌椅與自然生活陳設",
+      "caption": "開店前，每一項投入都承載著期待。",
+      "dimensions": "1400×933",
+      "size_kb": 125
+    },
+    "body_02": {
+      "file": "business-empty-seats.webp",
+      "placement": "「至少撐滿一年再說」段落後",
+      "alt": "台北咖啡館裡整齊擺放的木桌與藍色椅子",
+      "caption": "現場安靜，不等於店家經營失敗；照片僅作為敘事氛圍。",
+      "dimensions": "1400×933",
+      "size_kb": 170
+    },
+    "body_03": {
+      "file": "business-daily-work.webp",
+      "placement": "「每天工作十二個小時」段落後",
+      "alt": "台中咖啡烘焙店的工作人員在櫃檯備製飲品，前方陳列甜點",
+      "caption": "每天忙碌，不代表每一項工作都在改善經營成果。",
+      "dimensions": "1400×933",
+      "size_kb": 139
+    },
+    "body_04": {
+      "file": "business-profit-calculation.webp",
+      "placement": "「每個月需要五十萬元才能損益平衡」段落後",
+      "alt": "桌面上擺著計算機、文件與文具，象徵經營者檢查收入和支出",
+      "caption": "營業額與獲利不是同一件事。",
+      "dimensions": "1400×933",
+      "size_kb": 53
+    },
+    "body_05": {
+      "file": "business-cash-counter.webp",
+      "placement": "「房租不會因為這個月生意不好就不用繳」段落後",
+      "alt": "台北咖啡廳櫃檯擺放咖啡器具與菜單，呈現每天的營業日常",
+      "caption": "無論來客多少，店家每天都有固定的營運責任。",
+      "dimensions": "1400×933",
+      "size_kb": 84,
+      "⚠️_risk": "照片中 WILBECK 品牌名清晰可見，與現金流困難段落並列有風險，建議更換"
+    },
+    "body_06": {
+      "file": null,
+      "placement": "「那些已經無法收回的投入」段落後",
+      "alt": "台北街頭一間鐵捲門拉下的店面，門口放著日常用品",
+      "caption": "情境配圖：店面當下未營業，不代表已倒閉或有財務困難。",
+      "❌_status": "原照片已從 Unsplash 下架（404），需替代來源"
+    },
+    "body_07": {
+      "file": "business-operating-decisions.webp",
+      "placement": "「回購率持續提高」段落後",
+      "alt": "台中第二市場的料理工作者在攤位忙著備餐，呈現真實餐飲營運",
+      "caption": "能持續改善的經營方式，來自實際測試與調整。",
+      "dimensions": "1400×933",
+      "size_kb": 158
+    }
+  }
+}

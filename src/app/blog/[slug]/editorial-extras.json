@@ -1,4 +1,11 @@
 {
+  "business-survival-cashflow-decisions": {
+    "insight": "不是每一間店都值得無限期撐下去。真正該保護的，是經營者還有餘力做下一次選擇。",
+    "relatedLinks": [
+      { "title": "華翼企業經營與品牌策略服務", "url": "/services/brand-strategy", "desc": "從經營問題出發，協助企業釐清方向，再決定品牌、行銷與 AI 應用如何發揮價值。" },
+      { "title": "星巴克品牌定價權的警訊", "url": "/blog/starbucks-brand-pricing", "desc": "促銷與收費並行，品牌溢價還撐得住嗎？" }
+    ]
+  },
   "starbucks-promotion-brand-pricing-strategy": {
     "insight": "如果顧客只願意等折扣，企業就應該重新檢查原價的吸引力。",
     "compare": {
