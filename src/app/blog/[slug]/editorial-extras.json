@@ -1,4 +1,11 @@
 {
+  "payment": {
+    "insight": "選擇金流不只比手續費。撥款速度、物流配合、團隊操作流程，才是影響日常經營的關鍵。",
+    "relatedLinks": [
+      { "title": "「再撐一年看看」，可能是做生意最貴的一句安慰話", "url": "/blog/business-survival", "desc": "從營業額、損益平衡、現金流與沉沒成本，重新思考企業經營決策。" },
+      { "title": "華翼企業經營與品牌策略服務", "url": "/services/brand-strategy", "desc": "從經營問題出發，協助企業選擇適合的工具與流程。" }
+    ]
+  },
   "business-survival": {
     "insight": "不是每一間店都值得無限期撐下去。真正該保護的，是經營者還有餘力做下一次選擇。",
     "relatedLinks": [
