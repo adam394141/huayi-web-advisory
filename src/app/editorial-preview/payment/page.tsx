@@ -23,7 +23,7 @@ const EXTRAS = (editorialExtrasData as Record<string, EditorialExtra>)["payment"
 const MOCK_POST = {
   title: "替客戶挑選金流，我為什麼最後選擇統一金流？",
   slug: "payment",
-  excerpt: "選擇金流沒有適合所有企業的答案。本文從一次匿名客戶案例出發，分享華翼如何比較申請經驗、撥款、物流與管理成本，做出符合現階段需求的主觀選擇。",
+  excerpt: "替客戶比較綠界、藍新與統一金流——從撥款速度、物流、申請經驗到營運流程的實際思考。",
   category: "品牌經營／電商實務",
   author: "華翼品牌策略",
   cover_image: "/blog/payment/payment-gateway-cover.webp",
@@ -54,7 +54,7 @@ export default function PaymentPreview() {
         <header className={styles.hero}>
           <div className={styles["hero-inner"]}>
             <p className={styles.overline}>HUAYI / BUSINESS INSIGHTS</p>
-            <h1>{MOCK_POST.title}</h1>
+            <h1>替客戶挑選金流，<br />我為什麼最後選擇統一金流？</h1>
             <p className={styles.dek}>{MOCK_POST.excerpt}</p>
             <div className={styles.meta}>
               <span className={styles.pill}>{MOCK_POST.category}</span>
