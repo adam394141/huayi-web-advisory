@@ -42,14 +42,23 @@ export function CpcWhoIAm() {
               </div>
 
               {/* 證照 */}
-              <div className="mt-8 rounded-[16px] border border-adam-gold-line bg-white p-5">
-                <div className="flex items-center gap-3">
+              <div className="mt-8 overflow-hidden rounded-[16px] border border-adam-gold-line bg-white">
+                <div className="relative aspect-[4/3] bg-adam-blue-gray">
+                  <img
+                    src="/adam/cert-iqcs.webp"
+                    alt="ISO/IEC 17024 IQCS AI Instructor 認證證書 — TW0005247"
+                    className="size-full object-contain"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <div className="flex items-center gap-3 p-5">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-adam-gold/15">
                     <span className="font-mono text-[11px] font-bold text-adam-gold">ISO</span>
                   </div>
                   <div>
                     <p className="text-[14px] font-semibold text-adam-navy">ISO/IEC 17024 IQCS 認證講師</p>
-                    <p className="mt-0.5 text-[12px] text-adam-warm-gray">AI Instructor · TW0005247</p>
+                    <p className="mt-0.5 text-[12px] text-adam-warm-gray">AI Instructor · TW0005247（2025–2028）</p>
                   </div>
                 </div>
               </div>

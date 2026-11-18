@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { MotionProvider } from '@/components/adam/motion'
 import { CpcHero } from '@/components/adam/hero'
 import { CpcBrandCase } from '@/components/adam/brand-case'
@@ -47,7 +46,6 @@ export default function AdamPage() {
           <CpcInvitationForm />
         </main>
       </MotionProvider>
-      <Footer />
     </>
   )
 }
