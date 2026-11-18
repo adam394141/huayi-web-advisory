@@ -106,23 +106,6 @@ export function CpcWhoIAm() {
           </div>
         </FadeUp>
 
-        {/* 雙 CTA */}
-        <FadeUp delay={0.3}>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <Link
-              href="/contact"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-adam-gold px-6 py-[14px] text-[14px] font-bold text-adam-navy transition-all hover:brightness-110"
-            >
-              聊品牌與經營
-            </Link>
-            <a
-              href="#invitation"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-adam-gold/30 px-6 py-[14px] text-[14px] font-medium text-adam-navy transition-all hover:border-adam-gold hover:text-adam-gold"
-            >
-              洽詢 AI 內訓
-            </a>
-          </div>
-        </FadeUp>
       </div>
     </section>
   )
