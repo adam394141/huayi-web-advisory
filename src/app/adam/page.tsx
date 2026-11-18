@@ -2,16 +2,18 @@ import type { Metadata } from 'next'
 import { Header } from '@/components/header'
 import { MotionProvider } from '@/components/adam/motion'
 import { CpcHero } from '@/components/adam/hero'
+import { CpcWhenToFindMe } from '@/components/adam/when-to-find-me'
 import { CpcBrandCase } from '@/components/adam/brand-case'
 import { CpcAiTraining } from '@/components/adam/ai-training'
-import { CpcWhoIAm } from '@/components/adam/who-i-am'
 import { CpcTeachingInAction } from '@/components/adam/teaching-in-action'
+import { CpcWhoIAm } from '@/components/adam/who-i-am'
 import { CpcInvitationForm } from '@/components/adam/invitation-form'
 
 export const metadata: Metadata = {
   title: '陳宗民 Adam｜品牌策略顧問・企業 AI 內訓｜華翼品牌策略',
   description:
     '陳宗民 Adam 協助中小企業與接班團隊釐清品牌方向，也提供企業 AI 導入與內訓。查看華翼品牌案例、課綱與合作方式。',
+  alternates: { canonical: 'https://huayi.tw/adam' },
   openGraph: {
     title: '陳宗民 Adam｜品牌策略顧問・企業 AI 內訓｜華翼品牌策略',
     description:
@@ -39,6 +41,7 @@ export default function AdamPage() {
       <MotionProvider>
         <main>
           <CpcHero />
+          <CpcWhenToFindMe />
           <CpcBrandCase />
           <CpcAiTraining />
           <CpcTeachingInAction />

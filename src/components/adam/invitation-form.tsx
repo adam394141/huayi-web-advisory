@@ -95,7 +95,7 @@ export function CpcInvitationForm() {
                 INVITATION
               </p>
               <h2 className="mt-4 font-serif text-[30px] font-semibold leading-tight text-white md:text-[36px]">
-                邀請 Adam 授課
+                洽詢 AI 內訓與導入
               </h2>
               <p className="mt-4 max-w-[420px] text-[16px] leading-[1.75] text-white/60">
                 不論是一場 AI 趨勢講座、主題實作課或企業內訓規劃，歡迎告訴我你的需求。我會依學員背景、產業與工作場景，設計最適合的課程內容。
@@ -269,7 +269,7 @@ export function CpcInvitationForm() {
                   disabled={status === 'submitting'}
                   className="mt-2 w-full rounded-2xl bg-adam-gold px-7 py-4 text-[16px] font-semibold tracking-wider text-adam-navy transition-all hover:brightness-110 disabled:opacity-50"
                 >
-                  {status === 'submitting' ? '送出中⋯' : '送出邀課需求 →'}
+                  {status === 'submitting' ? '送出中⋯' : '送出合作需求 →'}
                 </button>
               </div>
             </form>
