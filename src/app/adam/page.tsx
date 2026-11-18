@@ -3,30 +3,29 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { MotionProvider } from '@/components/adam/motion'
 import { CpcHero } from '@/components/adam/hero'
+import { CpcBrandCase } from '@/components/adam/brand-case'
+import { CpcAiTraining } from '@/components/adam/ai-training'
 import { CpcWhoIAm } from '@/components/adam/who-i-am'
-import { CpcCredentialProof } from '@/components/adam/credential-proof'
-import { CpcDepthLadder } from '@/components/adam/depth-ladder'
-import { CpcWhyAdam } from '@/components/adam/why-adam'
 import { CpcTeachingInAction } from '@/components/adam/teaching-in-action'
-import { CpcCollabFormats } from '@/components/adam/collab-formats'
 import { CpcInvitationForm } from '@/components/adam/invitation-form'
 
 export const metadata: Metadata = {
-  title: '陳宗民 Adam｜生成式 AI 全方位實戰講師｜華翼品牌策略',
+  title: '陳宗民 Adam｜品牌策略顧問・企業 AI 內訓｜華翼品牌策略',
   description:
-    '不是只教一種 AI，更教底層邏輯思考。多種 AI 工具、八層深度、從基礎到轉型。品牌設計與策略 20 年、跨產業企業顧問經驗、生成式 AI 實務教學。邀請 Adam 授課。',
+    '陳宗民 Adam 協助中小企業與接班團隊釐清品牌方向，也提供企業 AI 導入與內訓。查看華翼品牌案例、課綱與合作方式。',
   openGraph: {
-    title: '陳宗民 Adam｜生成式 AI 全方位實戰講師',
+    title: '陳宗民 Adam｜品牌策略顧問・企業 AI 內訓｜華翼品牌策略',
     description:
-      '不是只教一種 AI，更教底層邏輯思考。多種 AI 工具、八層深度、從基礎到轉型。',
+      '陳宗民 Adam 協助中小企業與接班團隊釐清品牌方向，也提供企業 AI 導入與內訓。查看華翼品牌案例、課綱與合作方式。',
     url: 'https://huayi.tw/adam',
     siteName: '華翼品牌策略',
     locale: 'zh_TW',
     type: 'website',
+    images: [{ url: '/adam/adam-professional.jpg', width: 1200, height: 630, alt: '陳宗民 Adam｜品牌策略顧問・企業 AI 內訓' }],
   },
 }
 
-export default function AdamCpcPage() {
+export default function AdamPage() {
   return (
     <>
       <noscript>
@@ -41,12 +40,10 @@ export default function AdamCpcPage() {
       <MotionProvider>
         <main>
           <CpcHero />
-          <CpcWhoIAm />
-          <CpcCredentialProof />
-          <CpcDepthLadder />
-          <CpcWhyAdam />
+          <CpcBrandCase />
+          <CpcAiTraining />
           <CpcTeachingInAction />
-          <CpcCollabFormats />
+          <CpcWhoIAm />
           <CpcInvitationForm />
         </main>
       </MotionProvider>

@@ -1,17 +1,11 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
 import { FadeUp, FadeIn } from './motion'
-
-const tools = [
-  'ChatGPT', 'Gemini', 'Claude', 'NotebookLM', 'AI Studio',
-  'Gamma', 'AI 圖像', 'AI 影片', 'Notion', 'n8n', 'Agent', 'Vibe Coding',
-]
 
 export function CpcHero() {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-adam-navy pt-24">
+    <section className="relative flex min-h-[85vh] items-center overflow-hidden bg-adam-navy pt-24 md:min-h-screen">
       <div
         className="pointer-events-none absolute -right-[10%] -top-[20%] size-[800px] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(196,164,100,0.12) 0%, transparent 65%)' }}
@@ -23,84 +17,61 @@ export function CpcHero() {
           <div className="order-2 md:order-1">
             <FadeUp>
               <p className="text-[13px] font-semibold tracking-[0.15em] text-adam-gold">
-                ADAM · AI INSTRUCTOR
+                HUAYI / BRAND & AI
               </p>
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <h1 className="mt-6 text-[28px] font-black leading-[1.2] tracking-tight text-white sm:text-[36px] lg:text-[48px]" style={{ letterSpacing: '-0.03em' }}>
-                不是只教一種 AI，
-                <br className="hidden sm:block" />
-                <span className="text-adam-gold">更教底層邏輯思考。</span>
-                <br />
-                多種 AI 工具、八層深度、
-                <br className="hidden sm:block" />
-                從基礎到轉型。
+              <h1 className="mt-6 text-[32px] font-black leading-[1.15] tracking-tight text-white sm:text-[40px] lg:text-[52px]" style={{ letterSpacing: '-0.03em' }}>
+                陳宗民 Adam
               </h1>
+              <p className="mt-3 text-[17px] font-medium leading-relaxed text-white/70 md:text-[20px]">
+                品牌策略顧問｜企業 AI 導入與內訓
+              </p>
             </FadeUp>
 
             <FadeUp delay={0.15}>
-              <p className="mt-6 max-w-[480px] text-[16px] leading-[1.7] text-white/60 md:text-[18px]">
-                陳宗民 Adam──品牌設計與策略 20 年、跨產業企業顧問經驗、生成式 AI 實務教學。把「會做」的經驗，變成你「學得會」的課程。
+              <p className="mt-6 max-w-[480px] text-[16px] leading-[1.75] text-white/55 md:text-[17px]">
+                我協助中小企業和接班團隊釐清客群、產品差異和品牌方向。想從代工走向自有品牌，或想讓團隊把 AI 用進文件整理、知識交接和日常工作，都可以從你現在最卡的那一步談起。
               </p>
             </FadeUp>
 
             <FadeUp delay={0.2}>
-              <div className="mt-8 flex max-w-[480px] flex-wrap gap-2">
-                {tools.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full bg-adam-gold/[0.12] px-3.5 py-1 text-[13px] font-medium text-adam-gold"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
+              <p className="mt-5 text-[14px] font-semibold tracking-wide text-adam-gold/80">
+                品牌決定方向，AI 決定速度
+              </p>
             </FadeUp>
 
             <FadeUp delay={0.3}>
-              <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Link
-                  href="#invitation"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-adam-gold px-9 py-[18px] text-[16px] font-bold tracking-wide text-adam-navy transition-all hover:brightness-110"
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+                <a
+                  href="#brand-case"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-adam-gold px-8 py-[16px] text-[15px] font-bold tracking-wide text-adam-navy transition-all hover:brightness-110"
                 >
-                  邀請 Adam 授課 →
-                </Link>
-                <Link
-                  href="#levels"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 px-9 py-[18px] text-[16px] font-medium text-white transition-all hover:border-adam-gold hover:text-adam-gold"
+                  看品牌案例 ↓
+                </a>
+                <a
+                  href="#ai-training"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 px-8 py-[16px] text-[15px] font-medium text-white transition-all hover:border-adam-gold hover:text-adam-gold"
                 >
-                  看完整能力 ↓
-                </Link>
+                  詢問 AI 內訓 ↓
+                </a>
               </div>
             </FadeUp>
           </div>
 
           <FadeIn delay={0.1} className="order-1 md:order-2">
-            <div className="relative mx-auto w-full max-w-[400px] md:max-w-none">
+            <div className="relative mx-auto w-full max-w-[340px] md:max-w-none">
               <div className="relative aspect-[3/4] overflow-hidden rounded-[28px]">
                 <Image
                   src="/adam/adam-professional.jpg"
-                  alt="陳宗民 Adam — 生成式 AI 全方位實戰講師"
+                  alt="陳宗民 Adam — 品牌策略顧問・企業 AI 內訓"
                   fill
-                  sizes="(max-width: 768px) 80vw, 40vw"
+                  sizes="(max-width: 768px) 70vw, 40vw"
                   className="object-cover object-top"
                   priority
                 />
                 <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-adam-navy to-transparent" />
-              </div>
-              <div className="absolute -bottom-5 left-6 right-6 flex items-center gap-3.5 rounded-2xl border border-adam-gold/20 bg-adam-navy-light px-5 py-4 backdrop-blur-xl">
-                <div className="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-adam-gold/15">
-                  <span className="font-mono text-[11px] font-bold text-adam-gold">ISO</span>
-                </div>
-                <div>
-                  <p className="text-[14px] font-semibold text-white">
-                    ISO/IEC 17024 IQCS 認證講師
-                  </p>
-                  <p className="mt-0.5 text-[12px] text-white/50">
-                    AI Instructor · TW0005247
-                  </p>
-                </div>
               </div>
             </div>
           </FadeIn>
