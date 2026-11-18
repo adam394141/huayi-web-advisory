@@ -20,6 +20,7 @@ export function CpcWhoIAm() {
         </FadeUp>
 
         <div className="mt-6 grid gap-12 md:grid-cols-2 md:gap-16">
+          {/* 左欄：經歷 + 跨域路徑 */}
           <FadeUp delay={0.1}>
             <div>
               <h2 className="text-[22px] font-bold leading-[1.35] tracking-tight text-adam-navy md:text-[28px]" style={{ letterSpacing: '-0.01em' }}>
@@ -28,8 +29,6 @@ export function CpcWhoIAm() {
               <p className="mt-5 text-[16px] leading-[1.8] text-adam-warm-gray md:text-[17px]">
                 我從資料庫設計與資訊工作起步，之後投入品牌設計、品牌策略與數位廣告投放，長期協助不同產業整合品牌、行銷與商業需求。現在把多年跨域實務整合到企業 AI 內訓與品牌顧問服務。
               </p>
-
-              {/* 跨域路徑 */}
               <div className="mt-6 flex flex-wrap items-center gap-2">
                 {['資料庫設計', '品牌設計', '廣告投放', '整合行銷', '生成式 AI', 'AI 數位轉型'].map((step, i, arr) => (
                   <span key={step} className="flex items-center gap-2">
@@ -40,34 +39,12 @@ export function CpcWhoIAm() {
                   </span>
                 ))}
               </div>
-
-              {/* 證照 */}
-              <div className="mt-8 overflow-hidden rounded-[16px] border border-adam-gold-line bg-white">
-                <div className="relative aspect-[4/3] bg-adam-blue-gray">
-                  <img
-                    src="/adam/cert-iqcs.webp"
-                    alt="ISO/IEC 17024 IQCS AI Instructor 認證證書 — TW0005247"
-                    className="size-full object-contain"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                <div className="flex items-center gap-3 p-5">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] bg-adam-gold/15">
-                    <span className="font-mono text-[11px] font-bold text-adam-gold">ISO</span>
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-semibold text-adam-navy">ISO/IEC 17024 IQCS 認證講師</p>
-                    <p className="mt-0.5 text-[12px] text-adam-warm-gray">AI Instructor · TW0005247（2025–2028）</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </FadeUp>
 
+          {/* 右欄：數字 + 客戶 */}
           <FadeUp delay={0.2}>
             <div className="flex flex-col gap-5">
-              {/* 數字 */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-[16px] border border-adam-gold-line bg-white p-5 text-center">
                   <p className="text-[32px] font-black tracking-tight text-adam-navy" style={{ letterSpacing: '-0.03em' }}>
@@ -89,7 +66,6 @@ export function CpcWhoIAm() {
                 </div>
               </div>
 
-              {/* 客戶 */}
               <div className="rounded-[16px] border border-adam-gold-line bg-white p-5">
                 <p className="text-[13px] font-semibold tracking-[0.08em] text-adam-gold">
                   代表性客戶與合作單位
@@ -102,25 +78,51 @@ export function CpcWhoIAm() {
                   ))}
                 </div>
               </div>
-
-              {/* 頁尾雙 CTA */}
-              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-adam-gold px-6 py-[14px] text-[14px] font-bold text-adam-navy transition-all hover:brightness-110"
-                >
-                  聊品牌與經營
-                </Link>
-                <a
-                  href="#invitation"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-adam-gold/30 px-6 py-[14px] text-[14px] font-medium text-adam-navy transition-all hover:border-adam-gold hover:text-adam-gold"
-                >
-                  洽詢 AI 內訓
-                </a>
-              </div>
             </div>
           </FadeUp>
         </div>
+
+        {/* 證照：獨立橫幅，兩欄外 */}
+        <FadeUp delay={0.25}>
+          <div className="mt-10 grid items-center gap-6 overflow-hidden rounded-[20px] border border-adam-gold-line bg-white md:grid-cols-[200px_1fr]">
+            <div className="bg-adam-blue-gray p-4 md:p-0">
+              <img
+                src="/adam/cert-iqcs.webp"
+                alt="ISO/IEC 17024 IQCS AI Instructor 認證證書 — TW0005247"
+                className="mx-auto max-h-[180px] object-contain md:max-h-[160px]"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="flex items-center gap-4 px-6 pb-5 md:py-5">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-[10px] bg-adam-gold/15">
+                <span className="font-mono text-[11px] font-bold text-adam-gold">ISO</span>
+              </div>
+              <div>
+                <p className="text-[15px] font-semibold text-adam-navy">ISO/IEC 17024 IQCS 認證講師</p>
+                <p className="mt-0.5 text-[13px] text-adam-warm-gray">AI Instructor · TW0005247（2025–2028）</p>
+              </div>
+            </div>
+          </div>
+        </FadeUp>
+
+        {/* 雙 CTA */}
+        <FadeUp delay={0.3}>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <Link
+              href="/contact"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-adam-gold px-6 py-[14px] text-[14px] font-bold text-adam-navy transition-all hover:brightness-110"
+            >
+              聊品牌與經營
+            </Link>
+            <a
+              href="#invitation"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl border border-adam-gold/30 px-6 py-[14px] text-[14px] font-medium text-adam-navy transition-all hover:border-adam-gold hover:text-adam-gold"
+            >
+              洽詢 AI 內訓
+            </a>
+          </div>
+        </FadeUp>
       </div>
     </section>
   )

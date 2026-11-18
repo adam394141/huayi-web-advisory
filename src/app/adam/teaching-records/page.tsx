@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { PhotoGallery } from './gallery'
 
 export const metadata: Metadata = {
@@ -50,7 +49,6 @@ export default function TeachingRecordsPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }
