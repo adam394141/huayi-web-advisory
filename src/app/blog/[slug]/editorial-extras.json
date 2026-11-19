@@ -1,4 +1,11 @@
 {
+  "startup-award-2026": {
+    "insight": "兩年一次的微型創業楷模，肯定的不只是某個作品，而是一個創業者怎麼經營自己的事業。",
+    "relatedLinks": [
+      { "title": "高大牧場｜80 年酪農品牌重塑", "url": "/works/gaoda-farm", "desc": "華翼從品牌定位到包裝設計的完整案例，2026 MUSE 銀獎。" },
+      { "title": "華翼企業經營與品牌策略服務", "url": "/services/brand-strategy", "desc": "從經營問題出發，協助企業釐清方向。" }
+    ]
+  },
   "payment": {
     "insight": "選擇金流不只比手續費。撥款速度、物流配合、團隊操作流程，才是影響日常經營的關鍵。",
     "relatedLinks": [
