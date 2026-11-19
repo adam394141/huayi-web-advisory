@@ -24,7 +24,7 @@ const EXTRAS = (editorialExtrasData as Record<string, EditorialExtra>)["startup-
 const MOCK_POST = {
   title: "華翼獲選2026年勞動部微型創業楷模，這份肯定對我們意義重大",
   slug: "startup-award-2026",
-  excerpt: "華翼國際行銷創辦人饒芝綺獲選2026年勞動部微型創業楷模。兩年一次的珍貴肯定，記錄華翼從品牌設計、企業顧問到AI應用的發展歷程，以及受邀投入創業顧問工作的下一步。",
+  excerpt: "華翼國際行銷創辦人饒芝綺獲選2026年勞動部微型創業楷模。記錄華翼從品牌設計到AI應用的發展歷程，以及受邀投入創業顧問工作的下一步。",
   category: "華翼動態",
   author: "華翼品牌策略",
   cover_image: "/blog/startup-award-2026/award-group-cover-2026.webp",
@@ -60,7 +60,7 @@ export default function StartupAwardPreview() {
         <header className={styles.hero}>
           <div className={styles["hero-inner"]}>
             <p className={styles.overline}>HUAYI / BUSINESS INSIGHTS</p>
-            <h1>{MOCK_POST.title}</h1>
+            <h1>華翼獲選2026年勞動部微型創業楷模，<br />這份肯定對我們意義重大</h1>
             <p className={styles.dek}>{MOCK_POST.excerpt}</p>
             <div className={styles.meta}>
               <span className={styles.pill}>{MOCK_POST.category}</span>
