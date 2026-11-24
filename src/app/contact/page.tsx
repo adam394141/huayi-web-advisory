@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { Mail as MailStatic } from "lucide-react";
 import { Mail, Clock } from "pulsoicon-react";
 import Link from "next/link";
 import { CONTACT_INQUIRY_TYPES } from "@/lib/contact-inquiry";
@@ -68,7 +69,7 @@ export default function ContactPage() {
               <div className="flex min-h-[400px] items-center justify-center rounded-[var(--radius-module)] bg-[var(--color-surface)] p-12">
                 <div className="text-center">
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-gold)]/10">
-                    <Mail className="h-7 w-7 text-[var(--color-gold-dark)]" />
+                    <MailStatic className="h-7 w-7 text-[var(--color-gold-dark)]" />
                   </div>
                   <h2 className="mt-6 font-serif text-[1.4rem] font-semibold text-[var(--color-fg)]">
                     已收到您的訊息
@@ -229,7 +230,7 @@ export default function ContactPage() {
           {/* Side Info */}
           <ScrollReveal delay={0.1}>
             <div className="space-y-8">
-              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-6">
+              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-6" data-icon-trigger>
                 <Mail
                   className="h-5 w-5 text-[var(--color-gold-dark)]"
                   strokeWidth={1.5}
@@ -245,7 +246,7 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-6">
+              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface)] p-6" data-icon-trigger>
                 <Clock
                   className="h-5 w-5 text-[var(--color-gold-dark)]"
                   strokeWidth={1.5}
