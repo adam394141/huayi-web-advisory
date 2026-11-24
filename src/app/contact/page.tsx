@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { Section } from "@/components/section";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { Mail, Clock } from "lucide-react";
+import { Mail, Clock } from "pulsoicon-react";
 import Link from "next/link";
 import { CONTACT_INQUIRY_TYPES } from "@/lib/contact-inquiry";
 

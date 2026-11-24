@@ -10,6 +10,7 @@ import { LogoMotion } from "@/components/logo-motion";
 import { WorkCover } from "@/components/work-cover";
 import { safeJsonLd } from "@/lib/content-safety";
 import { getCanonicalSiteUrl } from "@/lib/site-url";
+import { CtaArrowIcon } from "@/components/cta-arrow-icon";
 
 export const revalidate = 60;
 
@@ -471,9 +472,10 @@ export default async function HomePage() {
             <p className="mt-8">
               <Link
                 href="/contact"
-                className="inline-block rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[15px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
+                className="inline-flex items-center gap-2 rounded-[var(--radius-button)] bg-[var(--color-fg)] px-8 py-3.5 text-[15px] tracking-wider text-white transition-colors hover:bg-[var(--color-gold-dark)]"
               >
                 聯絡我們
+                <CtaArrowIcon className="text-white" />
               </Link>
             </p>
           </ScrollReveal>
