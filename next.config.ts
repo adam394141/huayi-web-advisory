@@ -28,6 +28,23 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // pulsoicon-react imports `motion`/`motion/react`, whose React API (motion.*, useAnimation)
+  // is a superset already present in the already-installed framer-motion. Aliasing avoids
+  // bundling a second animation runtime just to satisfy that peer dependency.
+  turbopack: {
+    resolveAlias: {
+      "motion/react": "framer-motion",
+      motion: "framer-motion",
+    },
+  },
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "motion/react": "framer-motion",
+      motion: "framer-motion",
+    };
+    return config;
+  },
   async headers() {
     return [
       { source: "/((?!ebook/).*)", headers: securityHeaders },
