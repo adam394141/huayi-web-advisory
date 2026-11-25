@@ -59,12 +59,6 @@ export function Footer() {
           >
             隱私權政策
           </Link>
-          <Link
-            href="/legal/third-party-notices"
-            className="mt-2 inline-block text-[12px] text-[var(--color-subtle)] underline underline-offset-4 transition-colors hover:text-[var(--color-fg)]"
-          >
-            第三方軟體授權聲明
-          </Link>
         </div>
       </div>
     </footer>
