@@ -101,6 +101,12 @@ export function AdvisoryForm() {
     setStatus('submitting')
     setErrorMsg('')
 
+    const area = answers.area || ''
+    const duration = answers.duration || ''
+    const impact = answers.impact || ''
+    const pace = answers.pace || ''
+    const screenFlag = answers.screen || '否'
+
     const payload = {
       submitted_at: new Date().toISOString(),
       name: name.trim(),
@@ -109,8 +115,8 @@ export function AdvisoryForm() {
       referral: referral.trim(),
       birth_date: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`,
       note: note.trim(),
-      ...answers,
-      screen_flag: answers.screen || '否',
+      area, duration, impact, pace,
+      screen_flag: screenFlag,
       suggested_path: suggestPath(answers),
       page: typeof window !== 'undefined' ? window.location.href : '',
       lang: typeof navigator !== 'undefined' ? navigator.language : '',
