@@ -1,0 +1,395 @@
+<title>華翼企業轉型體檢</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: one question per screen, mobile-first column; result = stacked dashboard panels, gold reserved for the one thing to act on. */
+:root{
+  --bg:#F6F4F0; --surface:#FFFFFF; --ink:#1D1B17; --muted:#6B655A; --line:#E4DFD5;
+  --gold:#F5C400; --gold-ink:#8A6A00; --panel:#1D1B17; --on-panel:#F6F4F0; --on-panel-muted:#B9B2A4;
+  --good:#2F7D4F; --warn:#B7791F; --bad:#B5412E; --track:#ECE8E0;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141310; --surface:#1E1C18; --ink:#EFEBE3; --muted:#A39B8C; --line:#34302A;
+  --gold:#F5C400; --gold-ink:#E6C02A; --panel:#0B0A08; --on-panel:#EFEBE3; --on-panel-muted:#A39B8C;
+  --good:#5DB384; --warn:#E0A84A; --bad:#E07560; --track:#2A2722; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141310; --surface:#1E1C18; --ink:#EFEBE3; --muted:#A39B8C; --line:#34302A;
+  --gold:#F5C400; --gold-ink:#E6C02A; --panel:#0B0A08; --on-panel:#EFEBE3; --on-panel-muted:#A39B8C;
+  --good:#5DB384; --warn:#E0A84A; --bad:#E07560; --track:#2A2722; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 48px}
+.eyebrow{font-size:12px;letter-spacing:.28em;color:var(--gold-ink);font-weight:500;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:28px;height:3px;background:var(--gold);border-radius:2px}
+h1{font-size:clamp(30px,8vw,40px);font-weight:900;line-height:1.25;margin:14px 0 10px;text-wrap:balance}
+h2{font-size:22px;font-weight:700;line-height:1.45;margin:0;text-wrap:balance}
+h3{font-size:17px;font-weight:700;margin:0}
+p{margin:0}
+.muted{color:var(--muted)}
+.btn{appearance:none;border:0;border-radius:12px;font:inherit;font-weight:700;font-size:16px;padding:15px 20px;cursor:pointer;width:100%}
+.btn-primary{background:var(--ink);color:var(--bg)}
+.btn-gold{background:var(--gold);color:#1D1B17}
+.btn-ghost{background:transparent;color:var(--muted);font-weight:500;padding:10px 4px;width:auto}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+/* intro */
+.intro{display:flex;flex-direction:column;gap:22px;padding-top:12px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.fact{border-top:2px solid var(--ink);padding-top:8px}
+.fact b{display:block;font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}
+.fact span{font-size:13px;color:var(--muted)}
+.modules{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--muted);background:var(--surface)}
+/* progress */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.sec{font-size:13px;color:var(--gold-ink);font-weight:700;letter-spacing:.08em}
+.count{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--track);border-radius:4px;overflow:hidden;margin:4px 0 26px}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.qwrap{display:flex;flex-direction:column;gap:14px}
+.hint{font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.opt{display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:1.5px solid var(--line);
+  border-radius:12px;padding:14px 16px;font:inherit;font-size:16px;color:var(--ink);cursor:pointer;min-height:54px}
+.opt .mark{flex:none;width:20px;height:20px;border:1.5px solid var(--muted);border-radius:50%;display:grid;place-items:center}
+.opt.multi .mark{border-radius:5px}
+.opt[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.opt[aria-pressed="true"] .mark{background:var(--ink);border-color:var(--ink)}
+.opt[aria-pressed="true"] .mark::after{content:"";width:8px;height:8px;background:var(--gold);border-radius:inherit}
+.opt.multi[aria-pressed="true"] .mark::after{border-radius:2px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:500}
+input[type=text],input[type=tel],select,textarea{width:100%;font:inherit;font-size:17px;color:var(--ink);background:var(--surface);
+  border:1.5px solid var(--line);border-radius:10px;padding:13px 14px}
+textarea{min-height:96px;resize:vertical}
+.err{color:var(--bad);font-size:14px;min-height:1.4em}
+.ok{color:var(--good);font-size:14px}
+.row3{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:8px}
+.actions{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.note{font-size:12.5px;color:var(--muted);line-height:1.6;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--ink);flex:none}
+/* result */
+.res{display:flex;flex-direction:column;gap:16px}
+.rhead{padding:6px 0 4px}
+.rhead .meta{font-size:13px;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:14px}
+.panel.dark{background:var(--panel);color:var(--on-panel);border-color:var(--panel)}
+.panel.dark .muted{color:var(--on-panel-muted)}
+.plabel{font-size:12px;letter-spacing:.22em;color:var(--gold-ink);font-weight:700}
+.panel.dark .plabel{color:var(--gold)}
+.matrix{display:grid;grid-template-columns:22px 1fr;gap:6px}
+.yax{writing-mode:vertical-rl;font-size:12px;color:var(--muted);text-align:center;letter-spacing:.1em}
+.grid{position:relative;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;aspect-ratio:1.25;max-width:100%;
+  border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cell{padding:10px;font-size:13px;font-weight:700;color:var(--muted);border:0.5px solid var(--line);display:flex;align-items:flex-start}
+.cell.on{background:var(--ink);color:var(--gold)}
+.cell.on.gamble{background:var(--bad);color:#fff}
+.dot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--gold);border:3px solid var(--surface);
+  box-shadow:0 0 0 1.5px var(--ink);transform:translate(-50%,-50%)}
+.xax{grid-column:2;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.mods{display:flex;flex-direction:column;gap:12px}
+.mod{display:grid;grid-template-columns:2.2em 1fr 3.6em;align-items:center;gap:10px}
+.mod b{font-size:17px;font-weight:900}
+.track{height:10px;background:var(--track);border-radius:6px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:6px}
+.pill{font-size:12px;font-weight:700;text-align:center;border-radius:999px;padding:2px 0;color:#fff}
+.g{background:var(--good)} .y{background:var(--warn)} .r{background:var(--bad)}
+.quote{font-size:18px;font-weight:700;line-height:1.55;border-left:3px solid var(--gold);padding-left:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 12px}
+.year{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.year .kw{font-size:34px;font-weight:900;color:var(--gold);line-height:1.1}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two div{border-top:1px solid #3A362F;padding-top:10px;font-size:14.5px;min-width:0}
+.two b{display:block;font-size:12px;letter-spacing:.18em;color:var(--gold);margin-bottom:4px}
+.lock{display:flex;flex-direction:column;gap:10px;border:1.5px dashed var(--line);border-radius:14px;padding:18px}
+.lock ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.contact{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:15px}
+.contact code{font-family:inherit;font-weight:700;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 10px;user-select:all}
+.mini{font-size:13px;padding:6px 12px;border-radius:8px;width:auto;background:var(--ink);color:var(--bg)}
+.foot{margin-top:28px;padding-top:14px;border-top:1.5px solid var(--ink);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.foot span:last-child{letter-spacing:.22em;color:var(--gold-ink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app" aria-live="polite"></div>
+
+<script>
+/* ===== SCORING (pure, mirrored in CLAUDE.md) ===== */
+const Q = [
+ {id:'role',sec:'企業輪廓',type:'single',q:'你在公司的角色是？',opts:['創辦人','二代，已接班','二代，正在接班','專業經理人','其他']},
+ {id:'taxid',sec:'企業輪廓',type:'taxid',q:'公司統一編號',hint:'填入後，公司成立年份與產業別會自動帶入，你不用另外填。'},
+ {id:'model',sec:'企業輪廓',type:'single',q:'公司主要的營運模式？',opts:['製造或代工','貿易','服務或外包','自有品牌與通路','以上混合']},
+ {id:'size',sec:'企業輪廓',type:'single',q:'公司目前大約多少人？',opts:['1–5 人','6–30 人','31–100 人','100 人以上']},
+ {id:'why',sec:'你的優勢',type:'multi',max:2,min:2,q:'客戶選擇你，最主要的兩個原因？',hint:'請選 2 項。',opts:['品質穩定','價格有競爭力','交期快、配合度高','技術或專利','客製彈性','長期關係與服務','品牌知名度','有國際認證']},
+ {id:'best',sec:'你的優勢',type:'text',q:'用一句話說，你們公司最厲害的是什麼？',hint:'選填。這句話會直接出現在你的報告裡。',ph:'例如：三十年只做一件事，精度做到 0.01 mm'},
+ {id:'esg',sec:'外部環境',type:'multi',min:1,exclusive:[8,9],q:'ESG 目前已經完成哪些？',hint:'可複選。',opts:['碳盤查','產品碳足跡','永續報告書','節能或綠電','廢棄物減量或循環','職安與員工制度','公司治理制度','回覆過客戶的 ESG 問卷','尚未開始','不清楚']},
+ {id:'prod',sec:'產',type:'single',q:'目前營收主要來自哪裡？',opts:['自有品牌為主','接單代工與自有品牌各半','正在嘗試做自有品牌','接單或代工為主']},
+ {id:'sales',sec:'銷',type:'single',q:'最大的一個客戶，約佔營收多少？',opts:['兩成以下','兩到四成','四成以上','不確定']},
+ {id:'people',sec:'人',type:'single',q:'行銷、設計這些事，現在誰在做？',opts:['老闆自己','特助或業務兼著做','有一位專職人員','有一個小團隊','全部外包']},
+ {id:'dev',sec:'發',type:'single',q:'推出新產品時，最常卡在哪裡？',opts:['大致順利','不知道市場要什麼','做好了賣不出去','沒有人負責上市推廣','很少推出新產品']},
+ {id:'fin',sec:'財',type:'single',q:'你多快能看到上個月的營收和毛利？',opts:['當月就知道','下個月中','月底或更晚','年底會計師告訴我']},
+ {id:'pain',sec:'產銷人發財',type:'multi',min:0,q:'這五件事，哪些讓你困擾？',hint:'可複選，也可以跳過。',opts:['產品沒有差異化','客戶太集中','找不到對的人','新產品推不動','數字看不清楚']},
+ {id:'unlock',sec:'解鎖報告',type:'unlock',q:'最後一步，解鎖你的體檢報告'}
+];
+
+function taxidValid(s){
+  if(!/^\d{8}$/.test(s)) return false;
+  const w=[1,2,1,2,1,2,4,1]; let sum=0;
+  for(let i=0;i<8;i++){const p=(+s[i])*w[i]; sum+=Math.floor(p/10)+p%10;}
+  return sum%5===0 || (s[6]==='7' && (sum+1)%5===0);
+}
+function digitSum(n){return String(n).split('').reduce((a,b)=>a+(+b),0)}
+function yearStrategy(m,d,target){let s=digitSum(target+m+d); while(s>16) s=digitSum(s); return s;}
+
+const YEAR = {
+ 5:{kw:'發聲',add:'老闆或接班人親自對外講，建立專業內容與講座曝光',stop:'關起門做事，等客戶自己發現你'},
+ 6:{kw:'關係',add:'重新經營關鍵客戶與合作夥伴的信任',stop:'只靠價格成交的訂單'},
+ 7:{kw:'開創',add:'設定一個明確目標，啟動新事業線',stop:'同時追太多目標'},
+ 8:{kw:'播種',add:'投資品牌與人才這類長期項目，成果約三年後浮現',stop:'用當年業績評斷長期投資'},
+ 9:{kw:'打底',add:'整理流程、數據與內部制度',stop:'急著對外擴張'},
+ 10:{kw:'擴張',add:'參展、拓展人脈與新通路',stop:'過度保守而錯過機會窗口'},
+ 11:{kw:'認可',add:'簽約、取得認證，建立專業地位',stop:'用低價接單稀釋專業'},
+ 12:{kw:'質感',add:'品牌美感、設計與情感溝通',stop:'在情緒上做重大決策'},
+ 13:{kw:'變革',add:'砍掉不賺錢的產品線，啟動組織轉型',stop:'該做的決定一直拖'},
+ 14:{kw:'整合',add:'整合現有資源，讓專業內容變現',stop:'資源分散在太多小項目'},
+ 15:{kw:'布局',add:'做中長期策略規劃，謹慎評估投資',stop:'衝動擴張'},
+ 16:{kw:'重建',add:'建立新制度與工作習慣',stop:'沿用過去的做法'}
+};
+
+const MODS = {
+ '產':{map:[85,65,50,35],pain:0,fix:'營收多靠接單，客戶記得的是價格與交期，不是你的名字。第一步是找出一個能掛上公司名字的產品。'},
+ '銷':{map:[85,60,30,40],pain:1,fix:'營收集中在少數客戶，一張訂單的變動就會牽動全公司。第一步是建立第二、第三條客戶來源。'},
+ '人':{map:[25,35,60,85,50],pain:2,fix:'行銷靠老闆或兼職撐著，做不深也做不久。第一步是釐清該找哪一種人、放在哪個位置。'},
+ '發':{map:[80,40,45,35,30],pain:3,fix:'新產品推不出去，問題常常不在研發，而在上市沒有人負責。第一步是指定一位上市負責人。'},
+ '財':{map:[90,70,45,20],pain:4,fix:'數字太晚看到，決策只能靠感覺。第一步是讓毛利在每月中以前就看得到。'}
+};
+const MOD_Q = {'產':'prod','銷':'sales','人':'people','發':'dev','財':'fin'};
+
+const QUAD = {
+ gamble:{name:'賭博區',text:'外部壓力大，判斷依據卻不足。現在的轉型投資比較像押注，還不算布局。'},
+ steady:{name:'穩健應戰區',text:'壓力大，你也有準備。接下來的重點是把資源集中在最弱的一個模組。'},
+ lead:{name:'領先布局區',text:'外部壓力還不大，你已經開始準備。這段時間是拉開差距的窗口。'},
+ watch:{name:'觀望區',text:'目前壓力不大，準備也還少。變化真的來的時候，反應時間會很短。'}
+};
+
+function score(A, targetYear){
+  // ESG 準備度（簡化版）
+  const esg=(A.esg||[]).filter(i=>i<8).length;
+  const readiness = Math.round(Math.min(1,esg/4)*100)/100;
+  // modules
+  const pain=A.pain||[]; const mods={};
+  for(const k in MODS){
+    let v=MODS[k].map[A[MOD_Q[k]]] ?? 0;
+    if(pain.includes(MODS[k].pain)) v-=15;
+    v=Math.max(5,v);
+    mods[k]={score:v,light:v>=70?'g':v>=45?'y':'r'};
+  }
+  const weakest=Object.keys(mods).reduce((a,b)=>mods[b].score<mods[a].score?b:a);
+  // annual
+  let ys=null; if(A.bm && A.bd) ys=yearStrategy(+A.bm,+A.bd,targetYear);
+  const reds=Object.values(mods).filter(m=>m.light==='r').length;
+  const flags=Math.max(2,reds);
+  // service fit
+  const fit = mods['人'].score<45 ? '02' : (A.people===2||A.people===3) ? '03' : '01';
+  return {readiness,mods,weakest,ys,flags,fit};
+}
+/* ===== END SCORING ===== */
+
+const TARGET_YEAR = 2027;
+const app = document.getElementById('app');
+let A = {}; let step = -1;
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function foot(){return `<div class="foot"><span>華翼品牌策略 · 企業轉型體檢</span><span>CONNECT · GROW</span></div>`}
+
+function renderIntro(){
+  app.innerHTML = `
+  <div class="intro">
+    <div>
+      <div class="eyebrow">BUSINESS CHECK-UP</div>
+      <h1>你的公司，<br>現在站在哪裡？</h1>
+      <p class="muted">14 題點選題，看懂公司在產、銷、人、發、財五個面向的狀態。最後拿到一份專屬儀表板，和 ${TARGET_YEAR} 年的年度方向。</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>3 分鐘</b><span>全部點選作答</span></div>
+      <div class="fact"><b>14 題</b><span>每題都可選不確定</span></div>
+      <div class="fact"><b>即時</b><span>填完立刻看報告</span></div>
+    </div>
+    <div class="modules">${['企業輪廓','你的優勢','ESG','產銷人發財','年度方向'].map(t=>`<span class="chip">${t}</span>`).join('')}</div>
+    <div class="actions">
+      <button class="btn btn-primary" id="start">開始體檢</button>
+      <button class="btn btn-ghost" id="sample">先看一份範例報告</button>
+    </div>
+  </div>${foot()}`;
+  document.getElementById('start').onclick=()=>{step=0;renderQ()};
+  document.getElementById('sample').onclick=()=>{A=SAMPLE();renderResult(true)};
+}
+
+function canNext(q){
+  const v=A[q.id];
+  if(q.type==='single') return v!==undefined;
+  if(q.type==='multi'){const n=(v||[]).length; return n>=(q.min||0) && (!q.max||n<=q.max)}
+  if(q.type==='taxid') return A.taxidSkip || taxidValid(A.taxid||'');
+  if(q.type==='text') return true;
+  if(q.type==='unlock') return A.by && A.bm && A.bd && (A.name||'').trim() && (A.contact||'').trim() && A.consent;
+  return true;
+}
+
+function renderQ(){
+  const q=Q[step]; const pct=Math.round(step/Q.length*100);
+  let body='';
+  if(q.type==='single'||q.type==='multi'){
+    const sel=q.type==='single'?[A[q.id]]:(A[q.id]||[]);
+    body=`<div class="opts" role="group" aria-label="${esc(q.q)}">${q.opts.map((o,i)=>`
+      <button class="opt ${q.type==='multi'?'multi':''}" data-i="${i}" aria-pressed="${sel.includes(i)}"><span class="mark"></span><span>${o}</span></button>`).join('')}</div>`;
+    if(q.other) body+=`<div class="field" id="otherBox" ${ (A[q.id]||[]).includes(q.opts.length-1)?'':'hidden'}><label for="other">其他獎項名稱</label><input type="text" id="other" value="${esc(A.awardOther||'')}" maxlength="40"></div>`;
+  } else if(q.type==='taxid'){
+    body=`<div class="field"><label for="tax">統一編號（8 碼）</label><input type="tel" id="tax" inputmode="numeric" maxlength="8" value="${esc(A.taxid||'')}" autocomplete="off"><div class="err" id="taxMsg"></div></div>`;
+  } else if(q.type==='text'){
+    body=`<div class="field"><textarea id="best" maxlength="80" placeholder="${esc(q.ph)}">${esc(A.best||'')}</textarea></div>`;
+  } else if(q.type==='unlock'){
+    const yrs=[];for(let y=2008;y>=1940;y--)yrs.push(y);
+    const sel=(arr,id,ph,v)=>`<select id="${id}" aria-label="${ph}"><option value="">${ph}</option>${arr.map(x=>`<option value="${x}" ${String(v)===String(x)?'selected':''}>${x}</option>`).join('')}</select>`;
+    body=`
+    <p class="hint">年度方向會依決策者個人的年度節奏推算，請填這份問卷填答人的出生年月日。</p>
+    <div class="field"><label>出生年月日</label><div class="row3">
+      ${sel(yrs,'by','年',A.by)}${sel([...Array(12)].map((_,i)=>i+1),'bm','月',A.bm)}${sel([...Array(31)].map((_,i)=>i+1),'bd','日',A.bd)}
+    </div></div>
+    <div class="field"><label for="nm">怎麼稱呼你</label><input type="text" id="nm" maxlength="20" placeholder="例如：林總、陳副總" value="${esc(A.name||'')}"></div>
+    <div class="field"><label for="ct">LINE ID 或 Email（完整報告會寄到這裡）</label><input type="text" id="ct" maxlength="60" value="${esc(A.contact||'')}"></div>
+    <label class="check"><input type="checkbox" id="cs" ${A.consent?'checked':''}><span>我同意華翼品牌策略蒐集以上資料，用於產出本份體檢報告與後續聯繫。</span></label>
+    <div class="note">個人資料告知：本問卷由華翼國際行銷有限公司蒐集統一編號、出生年月日、稱呼與聯絡方式，目的為產出企業體檢報告及提供後續諮詢服務，利用期間為服務提供期間，不會提供給第三方。你可隨時來信要求查詢、更正或刪除。</div>`;
+  }
+  const last=step===Q.length-1;
+  const needBtn=q.type!=='single';
+  app.innerHTML=`
+    <div class="top">
+      ${step>0?`<button class="btn btn-ghost" id="back">← 上一題</button>`:`<button class="btn btn-ghost" id="back">← 回首頁</button>`}
+      <span class="count">${step+1} / ${Q.length}</span>
+    </div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="qwrap">
+      <div class="sec">${q.sec}</div>
+      <h2 id="qh" tabindex="-1">${q.q}</h2>
+      ${q.hint && q.type!=='unlock'?`<p class="hint">${q.hint}</p>`:''}
+      ${body}
+      <div class="actions">
+        ${needBtn?`<button class="btn ${last?'btn-gold':'btn-primary'}" id="next">${last?'產出我的報告':'下一題'}</button>`:''}
+        ${q.type==='taxid'?`<button class="btn btn-ghost" id="skip">先跳過，之後再補</button>`:''}
+      </div>
+    </div>${foot()}`;
+  document.getElementById('qh').focus({preventScroll:true});
+  window.scrollTo(0,0);
+  document.getElementById('back').onclick=()=>{ if(step>0){step--;renderQ()} else {step=-1;renderIntro()} };
+  const next=document.getElementById('next');
+  const refresh=()=>{ if(next) next.disabled=!canNext(q) };
+  const go=()=>{ if(!canNext(q))return; if(last){renderResult(false)} else {step++;renderQ()} };
+  if(next) next.onclick=go;
+
+  app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;
+    if(q.type==='single'){A[q.id]=i; app.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-pressed',x===b)); setTimeout(go,180); return;}
+    let cur=[...(A[q.id]||[])];
+    if(cur.includes(i)) cur=cur.filter(x=>x!==i);
+    else{
+      if(q.exclusive && q.exclusive.includes(i)) cur=[i];
+      else{ cur=cur.filter(x=>!(q.exclusive||[]).includes(x)); if(q.max && cur.length>=q.max) cur.shift(); cur.push(i); }
+    }
+    A[q.id]=cur;
+    app.querySelectorAll('.opt').forEach(x=>x.setAttribute('aria-pressed',cur.includes(+x.dataset.i)));
+    const ob=document.getElementById('otherBox'); if(ob) ob.hidden=!cur.includes(q.opts.length-1);
+    refresh();
+  });
+  const other=document.getElementById('other'); if(other) other.oninput=e=>A.awardOther=e.target.value;
+  const tax=document.getElementById('tax');
+  if(tax){const msg=document.getElementById('taxMsg');
+    const chk=()=>{A.taxid=tax.value.replace(/\D/g,'');tax.value=A.taxid;A.taxidSkip=false;
+      msg.className=A.taxid.length===8?(taxidValid(A.taxid)?'ok':'err'):'err';
+      msg.textContent=A.taxid.length<8?'':(taxidValid(A.taxid)?'格式正確，公司資料會自動帶入。':'這組號碼看起來不太對，請再確認一次。');refresh()};
+    tax.oninput=chk; chk();
+    document.getElementById('skip').onclick=()=>{A.taxidSkip=true;A.taxid='';step++;renderQ()};}
+  const best=document.getElementById('best'); if(best) best.oninput=e=>A.best=e.target.value;
+  if(q.type==='unlock'){
+    ['by','bm','bd'].forEach(id=>document.getElementById(id).onchange=e=>{A[id]=e.target.value;refresh()});
+    document.getElementById('nm').oninput=e=>{A.name=e.target.value;refresh()};
+    document.getElementById('ct').oninput=e=>{A.contact=e.target.value;refresh()};
+    document.getElementById('cs').onchange=e=>{A.consent=e.target.checked;refresh()};
+  }
+  refresh();
+}
+
+function renderResult(isSample){
+  const R=score(A,TARGET_YEAR);
+  const whyQ=Q.find(q=>q.id==='why');
+  const why=(A.why||[]).map(i=>whyQ.opts[i]);
+  const y=R.ys?YEAR[R.ys]:null;
+  const lightTxt={g:'穩定',y:'留意',r:'優先'};
+  const roleQ=Q.find(q=>q.id==='role'); const modelQ=Q.find(q=>q.id==='model'); const sizeQ=Q.find(q=>q.id==='size');
+  const fitTxt={'01':'01 品牌健檢與人才需求診斷','02':'02 品牌部門建置專案','03':'03 外部品牌總監'};
+  const date=new Date(); const ds=`${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}.${String(date.getDate()).padStart(2,'0')}`;
+  app.innerHTML=`
+  <div class="res">
+    <div class="top"><button class="btn btn-ghost" id="restart">← 重新作答</button>${isSample?'<span class="chip">範例報告</span>':''}</div>
+    <div class="rhead">
+      <div class="eyebrow">CHECK-UP REPORT</div>
+      <h1 style="font-size:clamp(26px,7vw,34px)">${esc(A.name||'')}，這是你公司的體檢結果</h1>
+      <p class="meta">${roleQ.opts[A.role]} · ${modelQ.opts[A.model]} · ${sizeQ.opts[A.size]}${A.taxid?` · 統編 ${esc(A.taxid)}`:''} · ${ds}</p>
+    </div>
+
+    <section class="panel">
+      <div class="plabel">五大模組健康度</div>
+      <div class="mods">${Object.entries(R.mods).map(([k,m])=>`
+        <div class="mod"><b>${k}</b><div class="track"><i class="${m.light}" style="width:${m.score}%"></i></div><span class="pill ${m.light}">${lightTxt[m.light]}</span></div>`).join('')}
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="plabel">你的優勢</div>
+      ${A.best?`<p class="quote">「${esc(A.best)}」</p>`:''}
+      <p>客戶選擇你，是因為<b>${why.join('</b>和<b>')}</b>。${why.length>=2?'這兩件事放在一起，就是品牌定位的起點。':'這是品牌定位的起點。'}</p>
+    </section>
+
+    <section class="panel">
+      <div class="plabel">最先要處理的一件事</div>
+      <h3>「${R.weakest}」是目前最弱的一環</h3>
+      <p>${MODS[R.weakest].fix}</p>
+    </section>
+
+    ${y?`<section class="panel dark">
+      <div class="plabel">${TARGET_YEAR} 年度方向</div>
+      <div class="year"><span class="kw">${y.kw}</span><span class="muted">決策者在 ${TARGET_YEAR} 年的主題</span></div>
+      <div class="two"><div><b>加碼</b>${y.add}</div><div><b>先停</b>${y.stop}</div></div>
+    </section>`:''}
+
+    <section class="lock">
+      <div class="plabel">還沒寫進這份報告的</div>
+      <h3>我們另外看到 ${Math.max(2,R.flags)} 個需要當面確認的地方</h3>
+      <ul class="muted">
+        <li>${A.taxid?'企業本身的年度能量，和決策者節奏是否同步':'填入統編後，可加看企業本身的年度能量'}</li>
+        <li>「${R.weakest}」模組背後的人才配置與補位條件</li>
+        <li>完整三年路線圖：每年加碼什麼、停止什麼、不能碰什麼</li>
+      </ul>
+      <p style="font-size:14.5px">以你的狀況，建議從<b>${fitTxt['01']}</b>開始，${R.fit==='01'?'先把問題的優先順序排出來。':`健檢後再評估是否進入 ${fitTxt[R.fit]}。`}</p>
+      <div class="contact"><span>加 LINE 預約</span><code id="lineid">@244udadm</code><button class="btn mini" id="copy">複製</button><span class="muted" id="copied" aria-live="polite"></span></div>
+    </section>
+  </div>${foot()}`;
+  window.scrollTo(0,0);
+  document.getElementById('restart').onclick=()=>{A={};step=-1;renderIntro()};
+  document.getElementById('copy').onclick=()=>{
+    const t=document.getElementById('copied');
+    try{navigator.clipboard.writeText('@244udadm').then(()=>t.textContent='已複製',()=>{selectId();t.textContent='已選取，請長按複製'})}catch(e){selectId()}
+  };
+}
+function selectId(){const r=document.createRange();r.selectNodeContents(document.getElementById('lineid'));const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+function SAMPLE(){return {role:2,taxid:'',taxidSkip:true,model:0,size:1,why:[0,2],best:'三十年只做精密沖壓，交期從沒延誤過',
+  esg:[5],prod:3,sales:2,people:1,dev:3,fin:2,pain:[0,2],by:'1988',bm:'6',bd:'15',name:'林副總',contact:'',consent:true}}
+
+renderIntro();
+</script>
